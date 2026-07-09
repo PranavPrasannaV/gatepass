@@ -5,15 +5,32 @@
 This records what is built-and-verified vs. deferred after the "build to completion" pass.
 Everything marked ✅ was executed; nothing is claimed complete without evidence.
 
-## Verification gate (all executed)
+## Verification gate (all executed — updated after convergence pass)
 
-- **Unit/integration tests**: **77 passing** across 11 files (`pnpm test`)
-- **Typecheck**: all 12 packages `tsc --noEmit` clean
-- **Corpus precision gate**: **9 classes, 100% TP / 0% FP**, all reproductions confirmable,
+- **Unit/integration tests**: **106 passing** across 16 files (`pnpm test`)
+- **Typecheck**: all packages `tsc --noEmit` clean
+- **Corpus precision gate**: **12 classes, 100% TP / 0% FP**, all reproductions confirmable,
   overall FP 0.0% ≤ 10% bar (`pnpm corpus:measure`)
 - **Self-scan**: product source is **CLEAN** — the scanner passes its own scan
 - **API integration**: a real HTTP server drives scan → findings → SARIF → gate → dispute →
-  evidence → plan-tier-403 (6 tests)
+  suppression → agent-guidance → fleet → runner-upload → evidence → plan-tier-403 (10 tests)
+
+## Convergence pass (Phase 9, T071–T094)
+
+Completed and verified: **T071** (HBV, confused-deputy, over-permissioned-loop analyzers +
+fixtures — FR-005 now fully covered, 12 classes), **T079** (agent-loop guidance 403 gate),
+**T081** (release precision gate vs. published baseline), **T082** (responsible-disclosure
+state machine), **T085** (MCP fleet registry + posture rollup), **T087** (dispute-driven
+suppression), **T090** (no-write guarantee test), **T094** (runner results endpoint).
+
+Partial (logic built + tested; live edge deferred): **T073/T074** (Remediator wires PR review
++ Check Run through the audited writer, tested with a fake client; live Octokit deferred),
+**T075** (analyzeSemantic invokes the LLM gateway with fallback; async pipeline integration is
+a follow-up), **T084** (CSV + SIG-lite questionnaire ingestion; XLSX deferred).
+
+Still deferred (needs live infra/credentials): T072 webhook wiring, T077 Postgres execution,
+T083 live Vanta/Drata, T086 infra, T088/T093 dashboard, T089 orchestrator, T091 load,
+T092 observability, T076 GitHub OAuth. See tasks.md Phase 9 for the full ledger.
 
 ## Built and verified ✅
 

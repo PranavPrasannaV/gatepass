@@ -6,5 +6,8 @@ export * from "./cors.js";
 export * from "./dependencies.js";
 export * from "./tool-params.js";
 export * from "./cross-surface.js";
+export * from "./hbv.js";
+export * from "./confused-deputy.js";
+export * from "./over-permissioned-loop.js";
 export * from "./fixes.js";
 export * from "./pipeline.js";

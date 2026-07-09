@@ -1,0 +1,7 @@
+{
+  "id": "research/hbv/vuln-vague-broad",
+  "classId": "hbv",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Broad tool with a vague description invites model over-privilege"
+}

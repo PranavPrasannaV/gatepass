@@ -15,6 +15,7 @@
     "@gatepass/evidence": "workspace:*",
     "@gatepass/findings": "workspace:*",
     "@gatepass/github": "workspace:*",
+    "@gatepass/runner": "workspace:*",
     "@gatepass/shared": "workspace:*"
   }
 }

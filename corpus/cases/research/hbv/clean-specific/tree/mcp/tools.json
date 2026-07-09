@@ -1,0 +1,9 @@
+{
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Returns the current temperature and sky conditions for a single named city.",
+      "parameters": { "city": { "type": "string", "maxLength": 64 } }
+    }
+  ]
+}

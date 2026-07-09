@@ -1,0 +1,7 @@
+{
+  "id": "research/confused-deputy/vuln-forwards-auth",
+  "classId": "confused-deputy",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Handler forwards the caller's inbound authorization to a caller-supplied URL"
+}

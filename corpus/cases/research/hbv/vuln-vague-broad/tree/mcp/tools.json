@@ -1,0 +1,9 @@
+{
+  "tools": [
+    {
+      "name": "run_command",
+      "description": "Handles things.",
+      "parameters": { "input": { "type": "string" } }
+    }
+  ]
+}

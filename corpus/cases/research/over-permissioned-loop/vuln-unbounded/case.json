@@ -1,0 +1,7 @@
+{
+  "id": "research/over-permissioned-loop/vuln-unbounded",
+  "classId": "over-permissioned-loop",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Unbounded agent loop invoking tools with no budget or break"
+}

@@ -14,6 +14,9 @@ import { corsDetector } from "./cors.js";
 import { dependenciesDetector } from "./dependencies.js";
 import { unboundedToolParamDetector, missingSchemaValidationDetector } from "./tool-params.js";
 import { crossSurfaceScopeDetector } from "./cross-surface.js";
+import { hbvDetector } from "./hbv.js";
+import { confusedDeputyDetector } from "./confused-deputy.js";
+import { overPermissionedLoopDetector } from "./over-permissioned-loop.js";
 
 /** The default (active) ruleset. */
 export const DEFAULT_DETECTORS: Detector[] = [
@@ -28,6 +31,9 @@ export const DEFAULT_DETECTORS: Detector[] = [
   // research tier
   toolPoisoningDetector,
   crossSurfaceScopeDetector,
+  hbvDetector,
+  confusedDeputyDetector,
+  overPermissionedLoopDetector,
 ];
 
 function fingerprint(f: DetectorFinding): string {

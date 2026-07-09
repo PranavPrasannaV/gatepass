@@ -11,7 +11,7 @@ export { MemoryStore } from "./store.js";
 const isEntry = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isEntry) {
   const store = new MemoryStore();
-  store.upsertOrg({ id: "demo", planTier: "scale", llmEnabled: false });
+  store.upsertOrg({ id: "demo", planTier: "scale", llmEnabled: false, agentLoopEnabled: true });
   const { server } = createServer(store);
   const port = Number(process.env.PORT ?? 3000);
   server.listen(port, () => console.log(`Gatepass API on :${port} (org "demo" seeded)`));

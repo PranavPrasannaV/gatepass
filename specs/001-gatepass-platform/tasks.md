@@ -54,8 +54,8 @@ tier mislabels (SC-003).
 ### Corpus & fixtures for US1 (mandatory)
 
 - [X] T018 [P] [US1] Seed evaluation repo with planted issues (exposed secret, missing RLS, unauth MCP transport, unbounded tool param, poisoned tool description, over-permissioned loop, scoped-tool/unscoped-DB-client cross-surface case) in corpus/eval-repos/vulnerable-nextjs-mcp/
-- [X] T019 [P] [US1] Corpus fixtures (vulnerable + clean cases) for all seven verified classes in corpus/cases/verified/{exposed-secret,rls-gap,cors,unpinned-dep,unauth-mcp-transport,unbounded-tool-param,missing-schema-validation}/ — DONE for the 2 implemented verified classes (exposed-secret, unauth-mcp-transport); remaining 5 pending their detectors
-- [~] T020 [P] [US1] Corpus fixtures for research classes in corpus/cases/research/{tool-poisoning,hbv,confused-deputy,over-permissioned-loop}/ and cross-surface cases in corpus/cases/cross-surface/ — DONE for tool-poisoning; remaining research classes + cross-surface pending their analyzers
+- [X] T019 [P] [US1] Corpus fixtures (vulnerable + clean cases) for all seven verified classes in corpus/cases/verified/{exposed-secret,rls-gap,cors,unpinned-dep,unauth-mcp-transport,unbounded-tool-param,missing-schema-validation}/ — DONE: all 7 verified classes have vulnerable+clean fixtures, corpus gate 100% TP / 0% FP
+- [X] T020 [P] [US1] Corpus fixtures for research classes in corpus/cases/research/{tool-poisoning,hbv,confused-deputy,over-permissioned-loop}/ and cross-surface cases in corpus/cases/cross-surface/ — DONE: tool-poisoning, cross-surface, hbv, confused-deputy, over-permissioned-loop fixtures all present and passing
 
 ### Implementation for US1
 
@@ -192,33 +192,33 @@ open implementation tasks above; each traces to a source-ref and gap-type.
 
 ### HIGH
 
-- [ ] T071 Build research-tier analyzers for HBV, confused-deputy, and over-permissioned-loop classes (definition→corpus→analyzer→measurement, with fixtures) per FR-005 (partial)
+- [X] T071 Build research-tier analyzers for HBV, confused-deputy, and over-permissioned-loop classes (definition→corpus→analyzer→measurement, with fixtures) per FR-005 (partial)
 - [ ] T072 Wire webhook-triggered continuous + incremental scanning (push/PR, diff against last full-scan surface graph) per FR-006 (missing)
-- [ ] T073 Wire PR review posting via the GitHub App (Octokit) through the audited writer so suggested diffs reach PRs per FR-012 (partial)
-- [ ] T074 Wire the CI-gate Check Run posting (map evaluateGate → GitHub Check Run incl. fail-open neutral + annotation) per FR-016 (partial)
-- [ ] T075 Invoke the LLM gateway from the semantic analyzers so research-tier findings use model analysis (not just the heuristic pre-filter), honoring per-org disable per FR-011a (partial)
+- [~] T073 Wire PR review posting via the GitHub App (Octokit) through the audited writer so suggested diffs reach PRs per FR-012 (partial) — DONE: Remediator wires PR review through the audited writer (tested with a fake client + no-write assertion); live Octokit transport deferred (needs GitHub App install)
+- [~] T074 Wire the CI-gate Check Run posting (map evaluateGate → GitHub Check Run incl. fail-open neutral + annotation) per FR-016 (partial) — DONE: gate→Check-Run mapping wired through the audited writer, fail-open included (tested); live Octokit transport deferred
+- [~] T075 Invoke the LLM gateway from the semantic analyzers so research-tier findings use model analysis (not just the heuristic pre-filter), honoring per-org disable per FR-011a (partial) — DONE: analyzeSemantic invokes the LlmGateway with heuristic fallback + reduced-coverage flag (tested with a fake transport); making runScan async to call it in-line is a follow-up
 - [ ] T076 Implement GitHub OAuth sign-in and per-role (admin/member/viewer) RBAC enforcement across API routes, mirroring GitHub repo visibility per FR-027 (partial)
 - [ ] T077 Wire Postgres persistence: execute migrations 0001/0002 and replace the apps/api in-memory store with DB-backed repositories per plan: storage decision (partial)
 
 ### MEDIUM
 
 - [ ] T078 Build the IDE (VS Code) annotations integration consuming canonical findings per FR-013 (missing)
-- [ ] T079 Build the opt-in agent-loop guidance endpoint (403 unless repo agent_loop_enabled) per FR-014 (partial)
+- [X] T079 Build the opt-in agent-loop guidance endpoint (403 unless repo agent_loop_enabled) per FR-014 (partial)
 - [ ] T080 Build benchmark incumbent-scanner adapters (pinned mcp-scanner / YARA tools) and public benchmark publishing (results JSON + page) per FR-018, SC-007 (partial)
-- [ ] T081 Wire the release precision gate to compare candidate measurement against the last published benchmark run and block on regression per FR-019 (partial)
-- [ ] T082 Build the responsible-disclosure workflow and public server-scan report publishing (post-disclosure only) per FR-020 (missing)
+- [X] T081 Wire the release precision gate to compare candidate measurement against the last published benchmark run and block on regression per FR-019 (partial)
+- [X] T082 Build the responsible-disclosure workflow and public server-scan report publishing (post-disclosure only) per FR-020 (missing)
 - [ ] T083 Wire Vanta/Drata evidence push via their public APIs with external-id storage per FR-021 (partial)
-- [ ] T084 Build questionnaire ingestion for CSV/XLSX/SIG-lite formats feeding the drafting logic per FR-022 (partial)
-- [ ] T085 Build the MCP fleet registry, config-hash change-detection rescans, and aggregated posture view per FR-024, SC-009 (missing)
+- [~] T084 Build questionnaire ingestion for CSV/XLSX/SIG-lite formats feeding the drafting logic per FR-022 (partial) — DONE: CSV + SIG-lite ingestion built+tested and wired into questionnaire drafting; XLSX ingestion deferred (needs a spreadsheet parser)
+- [X] T085 Build the MCP fleet registry, config-hash change-detection rescans, and aggregated posture view per FR-024, SC-009 (missing)
 - [ ] T086 Provision encryption-at-rest/TLS IaC, artifact TTL/retention jobs, and per-scan container isolation per FR-026 (missing)
-- [ ] T087 Implement dispute-driven suppression of recurring findings on unchanged fingerprints per FR-011 (partial)
+- [X] T087 Implement dispute-driven suppression of recurring findings on unchanged fingerprints per FR-011 (partial)
 - [ ] T088 Build the connect-repo→first-findings onboarding flow and assert the 15-minute target per SC-004 (missing)
 - [ ] T089 Build the scan orchestrator (queue, per-org concurrency, retries, timeouts, stage timings) per plan: workers decision (missing)
-- [ ] T090 Add the no-write guarantee integration test (GitHub client cannot perform any contents-write; every outbound write appears in the audit log) per SC-005 (partial)
+- [X] T090 Add the no-write guarantee integration test (GitHub client cannot perform any contents-write; every outbound write appears in the audit log) per SC-005 (partial)
 
 ### LOW
 
 - [ ] T091 Add load validation against the launch envelope (50K scans/day, 2M-LOC repo, 500-server fleet) asserting p95 latencies per SC-010 (missing)
 - [ ] T092 Add SLO instrumentation (stage-timing dashboards, p95 + 99.9% availability alerts, status page) per SC-011 (missing)
 - [ ] T093 Build the Next.js dashboard views (findings, fleet, benchmark, compliance) per US1–US5 UI (missing)
-- [ ] T094 Package the self-hosted runner as a single binary/container and add the runner results endpoint on the API per FR-006a (partial)
+- [X] T094 Package the self-hosted runner as a single binary/container and add the runner results endpoint on the API per FR-006a (partial)

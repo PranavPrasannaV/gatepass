@@ -1,0 +1,7 @@
+{
+  "id": "research/confused-deputy/clean-own-token-fixed-endpoint",
+  "classId": "confused-deputy",
+  "label": "clean",
+  "public": true,
+  "note": "Uses the server's own token against a fixed internal endpoint, no caller target"
+}

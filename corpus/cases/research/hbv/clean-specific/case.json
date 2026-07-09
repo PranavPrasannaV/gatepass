@@ -1,0 +1,7 @@
+{
+  "id": "research/hbv/clean-specific",
+  "classId": "hbv",
+  "label": "clean",
+  "public": true,
+  "note": "Narrow tool with a specific description and constrained params"
+}
