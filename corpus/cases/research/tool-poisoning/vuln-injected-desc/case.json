@@ -1,0 +1,7 @@
+{
+  "id": "research/tool-poisoning/vuln-injected-desc",
+  "classId": "tool-poisoning",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Tool description embeds model-directed injection instructions"
+}

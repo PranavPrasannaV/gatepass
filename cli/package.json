@@ -1,0 +1,14 @@
+{
+  "name": "@gatepass/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "gatepass": "./src/index.ts"
+  },
+  "dependencies": {
+    "@gatepass/detectors": "workspace:*",
+    "@gatepass/engine": "workspace:*",
+    "@gatepass/findings": "workspace:*"
+  }
+}

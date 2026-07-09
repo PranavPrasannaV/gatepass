@@ -1,0 +1,7 @@
+{
+  "id": "verified/exposed-secret/clean-env-usage",
+  "classId": "exposed-secret",
+  "label": "clean",
+  "public": true,
+  "note": "Secret read from environment, no literal value present"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "verified/unauth-mcp-transport/vuln-open-sse",
+  "classId": "unauth-mcp-transport",
+  "label": "vulnerable",
+  "public": true,
+  "note": "MCP SSE transport bound to network with no auth"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "verified/exposed-secret/vuln-aws-in-bundle",
+  "classId": "exposed-secret",
+  "label": "vulnerable",
+  "public": true,
+  "note": "AWS access key id shipped in a client bundle"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "verified/unauth-mcp-transport/clean-authed",
+  "classId": "unauth-mcp-transport",
+  "label": "clean",
+  "public": true,
+  "note": "MCP transport with bearer-token auth middleware"
+}

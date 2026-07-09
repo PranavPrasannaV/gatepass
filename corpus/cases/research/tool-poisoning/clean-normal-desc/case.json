@@ -1,0 +1,7 @@
+{
+  "id": "research/tool-poisoning/clean-normal-desc",
+  "classId": "tool-poisoning",
+  "label": "clean",
+  "public": true,
+  "note": "Ordinary human-facing tool description"
+}

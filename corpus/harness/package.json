@@ -1,0 +1,14 @@
+{
+  "name": "@gatepass/corpus-harness",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./measure.ts"
+  },
+  "dependencies": {
+    "@gatepass/detectors": "workspace:*",
+    "@gatepass/engine": "workspace:*",
+    "@gatepass/findings": "workspace:*"
+  }
+}

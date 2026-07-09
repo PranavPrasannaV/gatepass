@@ -1,0 +1,9 @@
+{
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Returns the current weather for a given city, including temperature and conditions.",
+      "parameters": { "city": { "type": "string" } }
+    }
+  ]
+}
