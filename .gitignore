@@ -5,6 +5,10 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+# ...but corpus fixtures and the eval repo INTENTIONALLY contain dist/build bundles with
+# planted secrets (that's what the exposed-secret detector is tested against). Never ignore them.
+!corpus/**/dist/
+!corpus/**/build/
 
 # Env / secrets
 .env

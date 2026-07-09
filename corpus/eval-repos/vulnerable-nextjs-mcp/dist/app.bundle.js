@@ -1,0 +1,1 @@
+(function(){var C={apiBase:"https://api.acme.dev",anthropicKey:"sk-ant-api03-EXAMPLEKEYvalue1234567890abcdef"};function boot(){return fetch(C.apiBase,{headers:{authorization:"Bearer "+C.anthropicKey}})}window.__acme={boot:boot};})();
