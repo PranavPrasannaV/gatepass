@@ -109,7 +109,9 @@ export const missingSchemaValidationDetector: Detector = {
             kind: "inspection",
             steps: [
               `Open ${file.relPath} near line ${line} (tool "${tool.name}").`,
-              hasSchema ? `Observe a parameter with no "type" field.` : `Observe no "parameters"/"inputSchema" for this tool.`,
+              hasSchema
+                ? `Observe a parameter with no "type" field.`
+                : `Observe no "parameters"/"inputSchema" for this tool.`,
             ],
             expected: `Unvalidated input reaches the tool handler.`,
           },

@@ -36,8 +36,7 @@ export const exposedSecretDetector: Detector = {
   run(ctx: ScanContext): DetectorFinding[] {
     const findings: DetectorFinding[] = [];
     for (const file of ctx.files) {
-      const isBundle = /\.(js|map)$/.test(file.relPath) &&
-        /(dist|build|\.next)\//.test(file.relPath);
+      const isBundle = /\.(js|map)$/.test(file.relPath) && /(dist|build|\.next)\//.test(file.relPath);
       for (const pattern of PATTERNS) {
         pattern.regex.lastIndex = 0;
         let m: RegExpExecArray | null;

@@ -2,3 +2,6 @@ export * from "./plan-tier.js";
 export * from "./audit.js";
 export * from "./config.js";
 export * from "./disclosure.js";
+export * from "./crypto.js";
+export * from "./telemetry.js";
+export * from "./retention.js";

@@ -22,7 +22,11 @@ export function detectFrameworks(ctx: ScanContext): Framework[] {
       if (/"firebase"\s*:|"firebase-admin"\s*:/.test(c)) found.add("firebase");
     }
     if (/next\.config\.(js|ts|mjs)$/.test(p)) found.add("nextjs");
-    if (/supabase\/config\.toml$/.test(p) || /\.supabase\//.test(p) || /from\s+['"]@supabase\/supabase-js['"]/.test(c)) {
+    if (
+      /supabase\/config\.toml$/.test(p) ||
+      /\.supabase\//.test(p) ||
+      /from\s+['"]@supabase\/supabase-js['"]/.test(c)
+    ) {
       found.add("supabase");
     }
     if (/firebase\.json$/.test(p) || /firestore\.rules$/.test(p) || /from\s+['"]firebase/.test(c)) {

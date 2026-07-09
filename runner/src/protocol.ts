@@ -42,9 +42,10 @@ export const HANDSHAKE_OK = "accept" as const;
 export const HANDSHAKE_UPGRADE = "upgrade_required" as const;
 
 /** Runner handshake version-floor check (R10): reject runners below the org's minimum. */
-export function handshake(runnerRulesetVersion: string, minRulesetVersion: string):
-  | { status: typeof HANDSHAKE_OK }
-  | { status: typeof HANDSHAKE_UPGRADE; httpStatus: 426 } {
+export function handshake(
+  runnerRulesetVersion: string,
+  minRulesetVersion: string,
+): { status: typeof HANDSHAKE_OK } | { status: typeof HANDSHAKE_UPGRADE; httpStatus: 426 } {
   if (compareVersions(runnerRulesetVersion, minRulesetVersion) < 0) {
     return { status: HANDSHAKE_UPGRADE, httpStatus: 426 };
   }

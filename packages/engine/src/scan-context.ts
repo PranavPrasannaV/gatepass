@@ -20,9 +20,7 @@ export interface ScanContext {
 // NOTE: build output dirs (dist/build/.next) are intentionally NOT ignored — shipped
 // bundles are a primary surface for exposed-secret findings. Only dependency/vcs dirs are
 // skipped.
-const IGNORED_DIRS = new Set([
-  "node_modules", ".git", "coverage", "vendor", ".venv", "venv", "__pycache__",
-]);
+const IGNORED_DIRS = new Set(["node_modules", ".git", "coverage", "vendor", ".venv", "venv", "__pycache__"]);
 
 const SCANNABLE = /\.(ts|tsx|js|jsx|mjs|cjs|py|go|sql|json|ya?ml|toml|env|map)$/i;
 // Manifest files without a scannable extension that still carry security-relevant signal.

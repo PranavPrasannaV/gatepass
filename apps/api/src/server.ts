@@ -54,11 +54,19 @@ export function createServer(store = new MemoryStore()): { server: http.Server; 
     }
     // POST /v1/orgs/:org/questionnaires { scanId, format, content }
     if (M === "POST" && p[1] === "orgs" && p[3] === "questionnaires") {
-      return sendJson(res, 200, h.draftQuestionnaire(p[2]!, String(body.scanId), (body.format as never) ?? "csv", String(body.content)));
+      return sendJson(
+        res,
+        200,
+        h.draftQuestionnaire(p[2]!, String(body.scanId), (body.format as never) ?? "csv", String(body.content)),
+      );
     }
     // POST /v1/orgs/:org/fleet/servers { name, endpointOrRepo, configHash }
     if (M === "POST" && p[1] === "orgs" && p[3] === "fleet" && p[4] === "servers") {
-      return sendJson(res, 201, h.registerFleetServer(p[2]!, String(body.name), String(body.endpointOrRepo), String(body.configHash ?? "")));
+      return sendJson(
+        res,
+        201,
+        h.registerFleetServer(p[2]!, String(body.name), String(body.endpointOrRepo), String(body.configHash ?? "")),
+      );
     }
     // GET /v1/orgs/:org/fleet
     if (M === "GET" && p[1] === "orgs" && p[3] === "fleet" && p.length === 4) {
@@ -71,6 +79,23 @@ export function createServer(store = new MemoryStore()): { server: http.Server; 
     // POST /v1/runner/results  (canonical findings document; validated as findings-only)
     if (M === "POST" && p[1] === "runner" && p[2] === "results") {
       return sendJson(res, 201, h.ingestRunnerResults(String(body.orgId ?? q.get("orgId")), body.document ?? body));
+    }
+    // POST /v1/benchmark/publish { tool, corpusVersion, labels, detections }
+    if (M === "POST" && p[1] === "benchmark" && p[2] === "publish") {
+      return sendJson(
+        res,
+        201,
+        h.publishBenchmark(
+          String(body.tool),
+          String(body.corpusVersion),
+          body.labels as never,
+          body.detections as never,
+        ),
+      );
+    }
+    // GET /v1/public/benchmark[/:corpusVersion]  (no auth)
+    if (M === "GET" && p[1] === "public" && p[2] === "benchmark") {
+      return sendJson(res, 200, h.getPublicBenchmark(p[3]));
     }
     sendJson(res, 404, { error: "not found" });
   }
@@ -85,7 +110,8 @@ function sendJson(res: http.ServerResponse, status: number, data: unknown): void
 
 function sendError(res: http.ServerResponse, err: unknown): void {
   if (err instanceof NotFoundError) return sendJson(res, 404, { error: err.message });
-  if (err instanceof ForbiddenError || err instanceof PlanTierError) return sendJson(res, 403, { error: (err as Error).message });
+  if (err instanceof ForbiddenError || err instanceof PlanTierError)
+    return sendJson(res, 403, { error: (err as Error).message });
   if (err instanceof RunnerUploadError) return sendJson(res, 422, { error: err.message });
   sendJson(res, 500, { error: (err as Error).message });
 }

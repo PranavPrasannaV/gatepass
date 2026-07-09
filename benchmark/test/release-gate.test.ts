@@ -5,8 +5,14 @@ const labels: CorpusCaseLabel[] = [
   { caseId: "c1", classId: "exposed-secret", label: "vulnerable" },
   { caseId: "c2", classId: "exposed-secret", label: "clean" },
 ];
-const perfect: Detection[] = [{ caseId: "c1", flaggedClassIds: ["exposed-secret"] }, { caseId: "c2", flaggedClassIds: [] }];
-const noisy: Detection[] = [{ caseId: "c1", flaggedClassIds: ["exposed-secret"] }, { caseId: "c2", flaggedClassIds: ["exposed-secret"] }];
+const perfect: Detection[] = [
+  { caseId: "c1", flaggedClassIds: ["exposed-secret"] },
+  { caseId: "c2", flaggedClassIds: [] },
+];
+const noisy: Detection[] = [
+  { caseId: "c1", flaggedClassIds: ["exposed-secret"] },
+  { caseId: "c2", flaggedClassIds: ["exposed-secret"] },
+];
 
 describe("release precision gate (FR-019)", () => {
   const published = scoreTool("gatepass", "corpus-v1", labels, perfect);

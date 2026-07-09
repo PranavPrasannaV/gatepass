@@ -3,9 +3,14 @@ import { evaluatePosture, draftAnswers, NoPostureError, type Scan } from "../src
 import type { Finding } from "@gatepass/findings";
 
 const secret: Finding = {
-  fingerprint: "sha256:a", tier: "verified", classId: "exposed-secret", severity: "critical",
-  surfaces: ["app_code"], locations: [{ path: "a.js", startLine: 1, endLine: 1, surface: "app_code" }],
-  explanation: "secret", reproduction: { kind: "inspection", steps: ["s"], expected: "e" },
+  fingerprint: "sha256:a",
+  tier: "verified",
+  classId: "exposed-secret",
+  severity: "critical",
+  surfaces: ["app_code"],
+  locations: [{ path: "a.js", startLine: 1, endLine: 1, surface: "app_code" }],
+  explanation: "secret",
+  reproduction: { kind: "inspection", steps: ["s"], expected: "e" },
 };
 
 const cleanScan: Scan = { id: "scan1", rulesetVersion: "2026.07.0", findings: [] };
@@ -36,7 +41,10 @@ describe("posture evidence (FR-021/023, SC-008)", () => {
 
 describe("questionnaire drafting (FR-022)", () => {
   it("drafts a posture-cited answer for a matched question", () => {
-    const [ans] = draftAnswers([{ id: "q1", question: "How do you prevent hardcoded secrets and credentials?" }], cleanScan);
+    const [ans] = draftAnswers(
+      [{ id: "q1", question: "How do you prevent hardcoded secrets and credentials?" }],
+      cleanScan,
+    );
     expect(ans!.status).toBe("answered");
     expect(ans!.citations[0]!.scanId).toBe("scan1");
     expect(ans!.reviewStatus).toBe("draft");

@@ -18,12 +18,48 @@ export interface ControlDef {
 }
 
 export const CONTROLS: ControlDef[] = [
-  { id: "no-exposed-secrets", description: "No exposed secrets in the default branch", soc2: "CC6.1", iso27001: "A.8.24", failingClasses: ["exposed-secret"] },
-  { id: "tenant-isolation", description: "Tenant isolation rules present (RLS/security rules)", soc2: "CC6.3", iso27001: "A.8.3", failingClasses: ["rls-gap", "cross-surface-scope-mismatch"] },
-  { id: "deps-pinned", description: "Dependencies pinned; no hallucinated packages", soc2: "CC8.1", iso27001: "A.8.28", failingClasses: ["unpinned-dependency"] },
-  { id: "mcp-authenticated", description: "MCP transports authenticated", soc2: "CC6.6", iso27001: "A.8.21", failingClasses: ["unauth-mcp-transport"] },
-  { id: "tool-inputs-bounded", description: "Tool parameters bounded and schema-validated", soc2: "CC8.1", iso27001: "A.8.28", failingClasses: ["unbounded-tool-param", "missing-schema-validation"] },
-  { id: "cors-restricted", description: "CORS restricted to explicit origins", soc2: "CC6.6", iso27001: "A.8.21", failingClasses: ["cors-misconfig"] },
+  {
+    id: "no-exposed-secrets",
+    description: "No exposed secrets in the default branch",
+    soc2: "CC6.1",
+    iso27001: "A.8.24",
+    failingClasses: ["exposed-secret"],
+  },
+  {
+    id: "tenant-isolation",
+    description: "Tenant isolation rules present (RLS/security rules)",
+    soc2: "CC6.3",
+    iso27001: "A.8.3",
+    failingClasses: ["rls-gap", "cross-surface-scope-mismatch"],
+  },
+  {
+    id: "deps-pinned",
+    description: "Dependencies pinned; no hallucinated packages",
+    soc2: "CC8.1",
+    iso27001: "A.8.28",
+    failingClasses: ["unpinned-dependency"],
+  },
+  {
+    id: "mcp-authenticated",
+    description: "MCP transports authenticated",
+    soc2: "CC6.6",
+    iso27001: "A.8.21",
+    failingClasses: ["unauth-mcp-transport"],
+  },
+  {
+    id: "tool-inputs-bounded",
+    description: "Tool parameters bounded and schema-validated",
+    soc2: "CC8.1",
+    iso27001: "A.8.28",
+    failingClasses: ["unbounded-tool-param", "missing-schema-validation"],
+  },
+  {
+    id: "cors-restricted",
+    description: "CORS restricted to explicit origins",
+    soc2: "CC6.6",
+    iso27001: "A.8.21",
+    failingClasses: ["cors-misconfig"],
+  },
 ];
 
 export interface Scan {

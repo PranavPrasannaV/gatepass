@@ -1,11 +1,13 @@
 import { randomUUID, createHash } from "node:crypto";
 import { buildScanContext, detectFrameworks } from "@gatepass/engine";
-import { runScan, generateSuggestedFix } from "@gatepass/detectors";
+import { runScan, runScanAsync, generateSuggestedFix } from "@gatepass/detectors";
+import { LlmGateway } from "@gatepass/semantic";
 import { toSarif, parseFindingsDocument, type Finding } from "@gatepass/findings";
 import { evaluateGate, type GateConfig } from "@gatepass/github";
 import { evaluatePosture, draftAnswers, ingest, type Scan as PostureScan, type SourceFormat } from "@gatepass/evidence";
 import { requireFeature, type PlanTier } from "@gatepass/shared";
 import { validateRunnerUpload } from "@gatepass/runner";
+import { scoreTool, type CorpusCaseLabel, type Detection } from "@gatepass/benchmark";
 import { MemoryStore, type StoredScan, type FleetServer } from "./store.js";
 
 /**
@@ -20,7 +22,16 @@ const RULESET_VERSION = "2026.07.0";
 export class NotFoundError extends Error {}
 export class ForbiddenError extends Error {}
 
-export function makeHandlers(store: MemoryStore) {
+import type { LlmTransport } from "@gatepass/semantic";
+
+export interface HandlerOptions {
+  /** LLM transport for research-tier refinement. Production wires the Anthropic transport;
+   *  absent means static-only (research findings keep heuristic confidence). */
+  llmTransport?: LlmTransport;
+  llmModel?: string;
+}
+
+export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
   const requireScan = (scanId: string): StoredScan => {
     const s = store.scans.get(scanId);
     if (!s) throw new NotFoundError(`scan ${scanId}`);
@@ -41,7 +52,23 @@ export function makeHandlers(store: MemoryStore) {
     async createScan(orgId: string, repoPath: string) {
       const org = requireOrg(orgId);
       const ctx = await buildScanContext(repoPath);
-      const doc = runScan(ctx, { scanId: randomUUID(), rulesetVersion: RULESET_VERSION, executionMode: "hosted", semanticEnabled: org.llmEnabled });
+      // Build a per-org gateway; refines research-tier confidence in-line when enabled+wired.
+      const gateway = new LlmGateway({
+        enabled: org.llmEnabled,
+        apiKey: options.llmTransport ? "configured" : undefined,
+        model: options.llmModel,
+        transport: options.llmTransport,
+      });
+      const doc = await runScanAsync(
+        ctx,
+        {
+          scanId: randomUUID(),
+          rulesetVersion: RULESET_VERSION,
+          executionMode: "hosted",
+          semanticEnabled: org.llmEnabled,
+        },
+        gateway,
+      );
       store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
       const visible = store.findingsOf(doc.scan.id);
       return {
@@ -64,7 +91,8 @@ export function makeHandlers(store: MemoryStore) {
     // Dispute → suppress this fingerprint org-wide so it does not recur on unchanged code (FR-011, T087).
     disputeFinding(scanId: string, fingerprint: string, reason: string) {
       const scan = requireScan(scanId);
-      if (!scan.doc.findings.some((f) => f.fingerprint === fingerprint)) throw new NotFoundError(`finding ${fingerprint}`);
+      if (!scan.doc.findings.some((f) => f.fingerprint === fingerprint))
+        throw new NotFoundError(`finding ${fingerprint}`);
       scan.disputes.set(fingerprint, reason);
       store.suppress(scan.orgId, fingerprint);
       return { ok: true, suppressed: fingerprint };
@@ -78,7 +106,10 @@ export function makeHandlers(store: MemoryStore) {
       const finding = scan.doc.findings.find((f) => f.fingerprint === fingerprint);
       if (!finding) throw new NotFoundError(`finding ${fingerprint}`);
       const fix = generateSuggestedFix(finding);
-      return { fingerprint, guidance: fix ?? { kind: "agent_guidance", content: "No automated guidance; review manually." } };
+      return {
+        fingerprint,
+        guidance: fix ?? { kind: "agent_guidance", content: "No automated guidance; review manually." },
+      };
     },
 
     evaluateGate(scanId: string, config: GateConfig) {
@@ -112,7 +143,12 @@ export function makeHandlers(store: MemoryStore) {
       const server = store.fleetServers.get(serverId);
       if (!server) throw new NotFoundError(`fleet server ${serverId}`);
       const ctx = await buildScanContext(repoPath);
-      const doc = runScan(ctx, { scanId: randomUUID(), rulesetVersion: RULESET_VERSION, executionMode: "hosted", semanticEnabled: true });
+      const doc = runScan(ctx, {
+        scanId: randomUUID(),
+        rulesetVersion: RULESET_VERSION,
+        executionMode: "hosted",
+        semanticEnabled: true,
+      });
       store.putScan({ id: doc.scan.id, orgId: server.orgId, doc, disputes: new Map() });
       server.lastScanId = doc.scan.id;
       server.posture = posture(doc.findings);
@@ -132,7 +168,10 @@ export function makeHandlers(store: MemoryStore) {
     fleetView(orgId: string) {
       requireOrg(orgId);
       const servers = [...store.fleetServers.values()].filter((s) => s.orgId === orgId);
-      const rollup = { total: servers.length, unscanned: 0, passing: 0, findings_open: 0, critical: 0 } as Record<string, number>;
+      const rollup = { total: servers.length, unscanned: 0, passing: 0, findings_open: 0, critical: 0 } as Record<
+        string,
+        number
+      >;
       for (const s of servers) rollup[s.posture]!++;
       return { servers, rollup };
     },
@@ -144,6 +183,32 @@ export function makeHandlers(store: MemoryStore) {
       const doc = parseFindingsDocument(payload);
       store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
       return { scanId: doc.scan.id, findings: doc.findings.length };
+    },
+
+    // Publish a benchmark run for a corpus version (FR-018, T046). Immutable once set.
+    publishBenchmark(tool: string, corpusVersion: string, labels: CorpusCaseLabel[], detections: Detection[]) {
+      if (store.benchmarks.has(corpusVersion)) {
+        const existing = store.benchmarks.get(corpusVersion) as { runs: unknown[] };
+        existing.runs.push(scoreTool(tool, corpusVersion, labels, detections));
+        return existing;
+      }
+      const record = {
+        corpusVersion,
+        publishedAt: new Date().toISOString(),
+        runs: [scoreTool(tool, corpusVersion, labels, detections)],
+      };
+      store.benchmarks.set(corpusVersion, record);
+      return record;
+    },
+
+    // Public benchmark (no auth): latest across versions, or a specific version.
+    getPublicBenchmark(corpusVersion?: string) {
+      if (corpusVersion) {
+        const rec = store.benchmarks.get(corpusVersion);
+        if (!rec) throw new NotFoundError(`benchmark ${corpusVersion}`);
+        return rec;
+      }
+      return [...store.benchmarks.values()];
     },
   };
 }

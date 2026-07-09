@@ -13,13 +13,7 @@ import { z } from "zod";
 export const TIERS = ["verified", "research"] as const;
 export type Tier = (typeof TIERS)[number];
 
-export const SURFACES = [
-  "app_code",
-  "agent_code",
-  "mcp_server",
-  "tool_defs",
-  "permission_scopes",
-] as const;
+export const SURFACES = ["app_code", "agent_code", "mcp_server", "tool_defs", "permission_scopes"] as const;
 export type Surface = (typeof SURFACES)[number];
 
 export const SEVERITIES = ["critical", "high", "medium", "low"] as const;
@@ -69,10 +63,7 @@ export const researchFindingSchema = findingBase.extend({
   reproduction: z.undefined().optional(),
 });
 
-export const findingSchema = z.discriminatedUnion("tier", [
-  verifiedFindingSchema,
-  researchFindingSchema,
-]);
+export const findingSchema = z.discriminatedUnion("tier", [verifiedFindingSchema, researchFindingSchema]);
 export type Finding = z.infer<typeof findingSchema>;
 
 export const scanMetaSchema = z.object({

@@ -9,8 +9,10 @@ import { lineAtIndex } from "@gatepass/engine";
  */
 
 const OUTBOUND = /(fetch\s*\(|axios\.(get|post|put|delete|request)\s*\(|https?\.request\s*\(|got\s*\()/i;
-const INBOUND_AUTH = /(req\.headers?\.authorization|headers?\[["']authorization["']\]|ctx\.(auth|token)|incoming(Auth|Token)|request\.headers?\.authorization)/i;
-const FORWARDS_AUTH = /(authorization\s*[:=][^,\n}]*(req|ctx|incoming|request|caller))|(headers?\s*[:=][^)]*authorization[^)]*(req|ctx|incoming))|forward\w*\s*\(?\s*(auth|token)/i;
+const INBOUND_AUTH =
+  /(req\.headers?\.authorization|headers?\[["']authorization["']\]|ctx\.(auth|token)|incoming(Auth|Token)|request\.headers?\.authorization)/i;
+const FORWARDS_AUTH =
+  /(authorization\s*[:=][^,\n}]*(req|ctx|incoming|request|caller))|(headers?\s*[:=][^)]*authorization[^)]*(req|ctx|incoming))|forward\w*\s*\(?\s*(auth|token)/i;
 const AMBIENT_PRIVILEGE = /(service_role|admin[_-]?token|root[_-]?token|process\.env\.\w*(ADMIN|SERVICE|ROOT)\w*)/i;
 const CALLER_TARGET = /(params?\.(url|endpoint|target|host|uri)|args?\.(url|endpoint|target|host|uri))/i;
 
@@ -44,7 +46,14 @@ export const confusedDeputyDetector: Detector = {
         classId: "confused-deputy",
         severity: "high",
         surfaces: file.surfaces,
-        locations: [{ path: file.relPath, startLine: line, endLine: line, surface: file.surfaces.includes("mcp_server") ? "mcp_server" : "agent_code" }],
+        locations: [
+          {
+            path: file.relPath,
+            startLine: line,
+            endLine: line,
+            surface: file.surfaces.includes("mcp_server") ? "mcp_server" : "agent_code",
+          },
+        ],
         explanation:
           `${file.relPath}:${line} ${reason}. The server acts as a confused deputy — the caller borrows ` +
           `its authority to reach resources they should not. Scope outbound calls to the caller's own ` +

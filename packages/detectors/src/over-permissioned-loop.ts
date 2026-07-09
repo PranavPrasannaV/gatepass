@@ -1,5 +1,4 @@
 import type { Detector, DetectorFinding, ScanContext } from "@gatepass/engine";
-import { lineAtIndex } from "@gatepass/engine";
 
 /**
  * Research-tier detector: over-permissioned autonomous loop. An agent loop that invokes tools
@@ -7,8 +6,10 @@ import { lineAtIndex } from "@gatepass/engine";
  * research-tier with confidence.
  */
 
-const UNBOUNDED_LOOP = /(while\s*\(\s*true\s*\))|(while\s*\(\s*!\s*\w*(done|finished|complete)\w*\s*\))|(for\s*\(\s*;\s*;\s*\))/i;
-const TOOL_CALL = /(agent\.run|runtool|calltool|executetool|invoke(tool|agent)?|tools?\.\w+\s*\(|llm\.(run|call|complete))/i;
+const UNBOUNDED_LOOP =
+  /(while\s*\(\s*true\s*\))|(while\s*\(\s*!\s*\w*(done|finished|complete)\w*\s*\))|(for\s*\(\s*;\s*;\s*\))/i;
+const TOOL_CALL =
+  /(agent\.run|runtool|calltool|executetool|invoke(tool|agent)?|tools?\.\w+\s*\(|llm\.(run|call|complete))/i;
 const BOUND = /(max[_-]?iter|max[_-]?steps?|iteration\s*[<>]=?|step\s*[<>]=?|budget|\bbreak\b|\breturn\b|maxturns)/i;
 
 export const overPermissionedLoopDetector: Detector = {
@@ -31,7 +32,14 @@ export const overPermissionedLoopDetector: Detector = {
           classId: "over-permissioned-loop",
           severity: "high",
           surfaces: file.surfaces,
-          locations: [{ path: file.relPath, startLine: line, endLine: line, surface: file.surfaces.includes("agent_code") ? "agent_code" : "mcp_server" }],
+          locations: [
+            {
+              path: file.relPath,
+              startLine: line,
+              endLine: line,
+              surface: file.surfaces.includes("agent_code") ? "agent_code" : "mcp_server",
+            },
+          ],
           explanation:
             `${file.relPath}:${line} runs an unbounded agent loop that invokes tools with no iteration ` +
             `limit or break condition. An autonomous loop with broad tool access and no budget can take ` +

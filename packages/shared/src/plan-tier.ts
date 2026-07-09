@@ -21,7 +21,14 @@ export type Feature =
   | "sso_scim";
 
 const FREE: Feature[] = ["open_scanner", "public_reports"];
-const TEAM: Feature[] = [...FREE, "private_repos", "continuous_scanning", "pr_remediation", "ide_remediation", "agent_loop"];
+const TEAM: Feature[] = [
+  ...FREE,
+  "private_repos",
+  "continuous_scanning",
+  "pr_remediation",
+  "ide_remediation",
+  "agent_loop",
+];
 const SCALE: Feature[] = [
   ...TEAM,
   "multi_repo",
@@ -43,7 +50,10 @@ export function hasFeature(tier: PlanTier, feature: Feature): boolean {
 }
 
 export class PlanTierError extends Error {
-  constructor(public readonly tier: PlanTier, public readonly feature: Feature) {
+  constructor(
+    public readonly tier: PlanTier,
+    public readonly feature: Feature,
+  ) {
     super(`Feature "${feature}" requires a higher plan than "${tier}"`);
     this.name = "PlanTierError";
   }

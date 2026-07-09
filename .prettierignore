@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+coverage/
+pnpm-lock.yaml
+corpus/cases/
+corpus/eval-repos/
+**/*.md
+specs/
+.specify/
+*.sql
+.github/

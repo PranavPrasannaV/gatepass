@@ -28,7 +28,10 @@ export interface GitHubClient {
 }
 
 export class Remediator {
-  constructor(private readonly client: GitHubClient, private readonly writer: AuditedWriter) {}
+  constructor(
+    private readonly client: GitHubClient,
+    private readonly writer: AuditedWriter,
+  ) {}
 
   /** Post PR review findings as suggestions; recorded in the audit log. */
   async deliverReview(orgId: string, repo: string, prNumber: number, findings: Finding[]): Promise<PostedReview> {

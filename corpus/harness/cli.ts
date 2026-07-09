@@ -7,7 +7,7 @@ import { measure } from "./measure.js";
  */
 async function main(): Promise<void> {
   const arg = process.argv.indexOf("--corpus");
-  const version = arg >= 0 ? process.argv[arg + 1] ?? "corpus-v1" : "corpus-v1";
+  const version = arg >= 0 ? (process.argv[arg + 1] ?? "corpus-v1") : "corpus-v1";
 
   const result = await measure(version);
 

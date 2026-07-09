@@ -3,14 +3,24 @@ import { evaluateGate, buildReview, type GateConfig } from "../src/index.js";
 import type { Finding } from "@gatepass/findings";
 
 const verified: Finding = {
-  fingerprint: "sha256:a", tier: "verified", classId: "exposed-secret", severity: "critical",
-  surfaces: ["app_code"], locations: [{ path: "a.js", startLine: 1, endLine: 1, surface: "app_code" }],
-  explanation: "secret", reproduction: { kind: "inspection", steps: ["look"], expected: "leak" },
+  fingerprint: "sha256:a",
+  tier: "verified",
+  classId: "exposed-secret",
+  severity: "critical",
+  surfaces: ["app_code"],
+  locations: [{ path: "a.js", startLine: 1, endLine: 1, surface: "app_code" }],
+  explanation: "secret",
+  reproduction: { kind: "inspection", steps: ["look"], expected: "leak" },
 };
 const research: Finding = {
-  fingerprint: "sha256:b", tier: "research", classId: "tool-poisoning", severity: "medium",
-  surfaces: ["tool_defs"], locations: [{ path: "t.json", startLine: 2, endLine: 2, surface: "tool_defs" }],
-  explanation: "maybe poisoned", confidence: 0.6,
+  fingerprint: "sha256:b",
+  tier: "research",
+  classId: "tool-poisoning",
+  severity: "medium",
+  surfaces: ["tool_defs"],
+  locations: [{ path: "t.json", startLine: 2, endLine: 2, surface: "tool_defs" }],
+  explanation: "maybe poisoned",
+  confidence: 0.6,
 };
 
 describe("CI gate decision (FR-016, FR-016a)", () => {
@@ -38,7 +48,11 @@ describe("CI gate decision (FR-016, FR-016a)", () => {
   });
 
   it("block_threshold respects minSeverity and maxAllowed", () => {
-    const cfg: GateConfig = { mode: "block_threshold", failureMode: "fail_open", threshold: { minSeverity: "high", maxAllowed: 0 } };
+    const cfg: GateConfig = {
+      mode: "block_threshold",
+      failureMode: "fail_open",
+      threshold: { minSeverity: "high", maxAllowed: 0 },
+    };
     expect(evaluateGate(cfg, { findings: [research], scanCompleted: true }).conclusion).toBe("success"); // medium < high
     expect(evaluateGate(cfg, { findings: [verified], scanCompleted: true }).conclusion).toBe("failure"); // critical >= high
   });

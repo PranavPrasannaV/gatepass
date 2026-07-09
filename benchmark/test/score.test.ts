@@ -31,7 +31,11 @@ describe("benchmark scoring (FR-018, SC-007)", () => {
   });
 
   it("is deterministic across runs (SC-007 reproducibility)", () => {
-    const detections: Detection[] = [{ caseId: "c1", flaggedClassIds: ["exposed-secret"] }, { caseId: "c2", flaggedClassIds: [] }, { caseId: "c3", flaggedClassIds: ["tool-poisoning"] }];
+    const detections: Detection[] = [
+      { caseId: "c1", flaggedClassIds: ["exposed-secret"] },
+      { caseId: "c2", flaggedClassIds: [] },
+      { caseId: "c3", flaggedClassIds: ["tool-poisoning"] },
+    ];
     const a = scoreTool("gatepass", "corpus-v1", labels, detections);
     const b = scoreTool("gatepass", "corpus-v1", labels, detections);
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
@@ -39,10 +43,14 @@ describe("benchmark scoring (FR-018, SC-007)", () => {
 
   it("detects a precision regression (FR-019 release gate)", () => {
     const published = scoreTool("gatepass", "corpus-v1", labels, [
-      { caseId: "c1", flaggedClassIds: ["exposed-secret"] }, { caseId: "c2", flaggedClassIds: [] }, { caseId: "c3", flaggedClassIds: ["tool-poisoning"] },
+      { caseId: "c1", flaggedClassIds: ["exposed-secret"] },
+      { caseId: "c2", flaggedClassIds: [] },
+      { caseId: "c3", flaggedClassIds: ["tool-poisoning"] },
     ]);
     const regressed = scoreTool("gatepass", "corpus-v1", labels, [
-      { caseId: "c1", flaggedClassIds: ["exposed-secret"] }, { caseId: "c2", flaggedClassIds: ["exposed-secret"] }, { caseId: "c3", flaggedClassIds: ["tool-poisoning"] },
+      { caseId: "c1", flaggedClassIds: ["exposed-secret"] },
+      { caseId: "c2", flaggedClassIds: ["exposed-secret"] },
+      { caseId: "c3", flaggedClassIds: ["tool-poisoning"] },
     ]);
     expect(isPrecisionRegression(published, regressed)).toBe(true);
     expect(isPrecisionRegression(published, published)).toBe(false);

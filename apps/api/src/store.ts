@@ -35,6 +35,8 @@ export class MemoryStore {
   readonly orgs = new Map<string, OrgRecord>();
   readonly scans = new Map<string, StoredScan>();
   readonly fleetServers = new Map<string, FleetServer>();
+  /** Published benchmark runs keyed by corpus version (public, immutable once set). */
+  readonly benchmarks = new Map<string, unknown>();
   /** Org-level fingerprints suppressed by an accepted dispute (FR-011). */
   private readonly suppressed = new Map<string, Set<string>>();
 

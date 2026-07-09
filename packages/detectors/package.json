@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@gatepass/engine": "workspace:*",
-    "@gatepass/findings": "workspace:*"
+    "@gatepass/findings": "workspace:*",
+    "@gatepass/semantic": "workspace:*"
   }
 }

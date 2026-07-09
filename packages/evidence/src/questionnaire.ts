@@ -38,7 +38,13 @@ export function draftAnswers(questions: QuestionnaireItem[], scan: Scan | null):
     const route = ROUTES.find((r) => r.keywords.test(q.question));
     const item = route ? byControl.get(route.controlId) : undefined;
     if (!route || !item) {
-      return { questionId: q.id, question: q.question, status: "needs_human_input", citations: [], reviewStatus: "draft" };
+      return {
+        questionId: q.id,
+        question: q.question,
+        status: "needs_human_input",
+        citations: [],
+        reviewStatus: "draft",
+      };
     }
     const answer =
       item.status === "pass"

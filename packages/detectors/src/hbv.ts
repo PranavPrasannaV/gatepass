@@ -8,8 +8,10 @@ import { lineAtIndex } from "@gatepass/engine";
  * research-tier with a confidence score (Principle II).
  */
 
-const VAGUE_DESC = /^(.{0,24}|.*\b(manage|handle|process|do|perform|access|interact|work with|deal with|stuff|things|anything|various)\b.*)$/i;
-const BROAD_NAME = /(exec|shell|run|command|cmd|query|sql|delete|drop|admin|root|file|write|fetch|http|eval|proxy|forward|all|any)/i;
+const VAGUE_DESC =
+  /^(.{0,24}|.*\b(manage|handle|process|do|perform|access|interact|work with|deal with|stuff|things|anything|various)\b.*)$/i;
+const BROAD_NAME =
+  /(exec|shell|run|command|cmd|query|sql|delete|drop|admin|root|file|write|fetch|http|eval|proxy|forward|all|any)/i;
 const CONSTRAINED = /(enum|maxLength|pattern|maximum|maxItems|format)/;
 
 interface ToolDef {

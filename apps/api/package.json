@@ -10,12 +10,14 @@
     "start": "tsx src/index.ts"
   },
   "dependencies": {
+    "@gatepass/benchmark": "workspace:*",
     "@gatepass/detectors": "workspace:*",
     "@gatepass/engine": "workspace:*",
     "@gatepass/evidence": "workspace:*",
     "@gatepass/findings": "workspace:*",
     "@gatepass/github": "workspace:*",
     "@gatepass/runner": "workspace:*",
+    "@gatepass/semantic": "workspace:*",
     "@gatepass/shared": "workspace:*"
   }
 }

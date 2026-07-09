@@ -5,15 +5,31 @@
 This records what is built-and-verified vs. deferred after the "build to completion" pass.
 Everything marked ✅ was executed; nothing is claimed complete without evidence.
 
-## Verification gate (all executed — updated after convergence pass)
+## Verification gate (all executed — updated after 2nd convergence-implement pass)
 
-- **Unit/integration tests**: **106 passing** across 16 files (`pnpm test`)
+- **Unit/integration tests**: **131 passing** across 19 files (`pnpm test`)
 - **Typecheck**: all packages `tsc --noEmit` clean
+- **Lint + format**: `pnpm lint` 0 errors, `pnpm format:check` clean (ESLint flat + Prettier)
 - **Corpus precision gate**: **12 classes, 100% TP / 0% FP**, all reproductions confirmable,
   overall FP 0.0% ≤ 10% bar (`pnpm corpus:measure`)
 - **Self-scan**: product source is **CLEAN** — the scanner passes its own scan
 - **API integration**: a real HTTP server drives scan → findings → SARIF → gate → dispute →
-  suppression → agent-guidance → fleet → runner-upload → evidence → plan-tier-403 (10 tests)
+  suppression → agent-guidance → fleet → benchmark-publish → runner-upload → evidence →
+  plan-tier-403 (12 tests)
+
+## Second convergence-implement pass (offline-completable subset)
+
+Completed & verified this pass: **T014** in-process scan orchestrator (state machine,
+per-org concurrency, retries, timeouts, tracer timings), **T046** benchmark public API,
+**T095** async pipeline invoking the LLM gateway in-line, **T097** dependency-free XLSX
+ingestion (+ ZIP reader/writer), **T099** OpenTelemetry-style telemetry + crypto helpers,
+**T100** ESLint + Prettier + CI lint, **T008** shared library complete, **T066** artifact
+retention logic. Partial: **T096** RestGitHubClient builds correct REST requests (unit-tested
+with injected fetch; live call needs a GitHub App token).
+
+**tree-sitter (T098) intentionally NOT done**: native modules are a heavy, Windows-fragile
+install for a precision refinement of already-passing detectors — deferred rather than risk
+the toolchain.
 
 ## Convergence pass (Phase 9, T071–T094)
 

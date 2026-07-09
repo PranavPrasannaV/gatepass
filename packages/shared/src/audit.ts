@@ -6,12 +6,7 @@
  * the structural proof behind "zero repo mutations".
  */
 
-export type AuditAction =
-  | "pr_comment"
-  | "check_run"
-  | "evidence_push"
-  | "questionnaire_export"
-  | "public_report";
+export type AuditAction = "pr_comment" | "check_run" | "evidence_push" | "questionnaire_export" | "public_report";
 
 export interface AuditEvent {
   seq: number;
@@ -36,7 +31,10 @@ export class InMemoryAuditSink implements AuditSink {
 
 export class AuditedWriter {
   private seq = 0;
-  constructor(private readonly sink: AuditSink, private readonly actor: string) {}
+  constructor(
+    private readonly sink: AuditSink,
+    private readonly actor: string,
+  ) {}
 
   /**
    * Perform an outbound write through `fn`, recording an audit event. `action` is a closed

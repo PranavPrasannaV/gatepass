@@ -98,7 +98,16 @@ export async function measure(corpusVersion = "corpus-v1"): Promise<MeasureResul
   const ensure = (classId: string): ClassMetrics => {
     let m = byClass.get(classId);
     if (!m) {
-      m = { classId, vulnerable: 0, clean: 0, truePositives: 0, falseNegatives: 0, falsePositives: 0, tpRate: 0, fpRate: 0 };
+      m = {
+        classId,
+        vulnerable: 0,
+        clean: 0,
+        truePositives: 0,
+        falseNegatives: 0,
+        falsePositives: 0,
+        tpRate: 0,
+        fpRate: 0,
+      };
       byClass.set(classId, m);
     }
     return m;

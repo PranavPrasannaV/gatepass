@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { notifyMaintainer, markRemediated, canPublish, publish, DisclosureError, DEFAULT_WINDOW_DAYS, type DisclosureRecord } from "../src/index.js";
+import {
+  notifyMaintainer,
+  markRemediated,
+  canPublish,
+  publish,
+  DisclosureError,
+  DEFAULT_WINDOW_DAYS,
+  type DisclosureRecord,
+} from "../src/index.js";
 
 const draft = (): DisclosureRecord => ({ server: "acme/mcp", state: "draft", windowDays: DEFAULT_WINDOW_DAYS });
 

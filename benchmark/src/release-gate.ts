@@ -18,7 +18,11 @@ export function releaseGate(
   demotedClasses: readonly string[] = [],
 ): ReleaseGateResult {
   if (published.corpusVersion !== candidate.corpusVersion) {
-    return { pass: false, reason: `corpus version mismatch (${published.corpusVersion} vs ${candidate.corpusVersion})`, regressedClasses: [] };
+    return {
+      pass: false,
+      reason: `corpus version mismatch (${published.corpusVersion} vs ${candidate.corpusVersion})`,
+      regressedClasses: [],
+    };
   }
   const demoted = new Set(demotedClasses);
   const publishedByClass = new Map(published.perClass.map((c) => [c.classId, c]));

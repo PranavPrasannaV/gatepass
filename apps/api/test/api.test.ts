@@ -21,7 +21,11 @@ beforeAll(async () => {
 afterAll(() => close());
 
 async function post(path: string, body: unknown) {
-  const res = await fetch(base + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const res = await fetch(base + path, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
   return { status: res.status, json: await res.json() };
 }
 async function get(path: string) {
@@ -100,7 +104,11 @@ describe("API integration (T013/T030/T031 wiring)", () => {
   });
 
   it("registers and scans an MCP fleet server with posture rollup (FR-024/T085)", async () => {
-    const reg = await post("/v1/orgs/demo/fleet/servers", { name: "reports-mcp", endpointOrRepo: "internal/reports", configHash: "h1" });
+    const reg = await post("/v1/orgs/demo/fleet/servers", {
+      name: "reports-mcp",
+      endpointOrRepo: "internal/reports",
+      configHash: "h1",
+    });
     expect(reg.status).toBe(201);
     await post(`/v1/fleet/servers/${reg.json.id}/rescan`, { path: "corpus/eval-repos/vulnerable-nextjs-mcp" });
     const view = await get("/v1/orgs/demo/fleet");
@@ -108,15 +116,52 @@ describe("API integration (T013/T030/T031 wiring)", () => {
     expect(view.json.servers.some((s: { posture: string }) => s.posture === "critical")).toBe(true);
   });
 
+  it("publishes and serves a public benchmark (FR-018/T046)", async () => {
+    const labels = [
+      { caseId: "c1", classId: "exposed-secret", label: "vulnerable" },
+      { caseId: "c2", classId: "exposed-secret", label: "clean" },
+    ];
+    const detections = [
+      { caseId: "c1", flaggedClassIds: ["exposed-secret"] },
+      { caseId: "c2", flaggedClassIds: [] },
+    ];
+    const pub = await post("/v1/benchmark/publish", {
+      tool: "gatepass",
+      corpusVersion: "corpus-v1",
+      labels,
+      detections,
+    });
+    expect(pub.status).toBe(201);
+    const view = await get("/v1/public/benchmark/corpus-v1");
+    expect(view.json.corpusVersion).toBe("corpus-v1");
+    expect(view.json.runs[0].tool).toBe("gatepass");
+    const all = await get("/v1/public/benchmark");
+    expect(Array.isArray(all.json)).toBe(true);
+  });
+
   it("ingests runner results (findings-only) and rejects source-bearing payloads (T094)", async () => {
     // build a valid findings document from a real scan, then upload it runner-style
-    const scanRes = await post("/v1/orgs/demo/scans", { path: "corpus/cases/verified/cors-misconfig/vuln-wildcard-creds/tree" });
+    const scanRes = await post("/v1/orgs/demo/scans", {
+      path: "corpus/cases/verified/cors-misconfig/vuln-wildcard-creds/tree",
+    });
     const findings = (await get(`/v1/scans/${scanRes.json.scanId}/findings`)).json;
-    const validDoc = { schema: "gatepass.findings/1", scan: { id: "runner-" + Date.now(), rulesetVersion: "2026.07.0", executionMode: "runner", surfacesScanned: ["app_code"] }, findings };
+    const validDoc = {
+      schema: "gatepass.findings/1",
+      scan: {
+        id: "runner-" + Date.now(),
+        rulesetVersion: "2026.07.0",
+        executionMode: "runner",
+        surfacesScanned: ["app_code"],
+      },
+      findings,
+    };
     const okUpload = await post("/v1/runner/results", { orgId: "demo", document: validDoc });
     expect(okUpload.status).toBe(201);
     // smuggling source is rejected
-    const bad = { orgId: "demo", document: { ...validDoc, findings: findings.map((f: object) => ({ ...f, content: "SOURCE CODE" })) } };
+    const bad = {
+      orgId: "demo",
+      document: { ...validDoc, findings: findings.map((f: object) => ({ ...f, content: "SOURCE CODE" })) },
+    };
     const badUpload = await post("/v1/runner/results", bad);
     expect(badUpload.status).toBe(422);
   });

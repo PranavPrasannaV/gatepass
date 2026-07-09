@@ -31,13 +31,13 @@ describe("runner results upload validation (FR-006a boundary)", () => {
   });
 
   it("rejects a payload smuggling source via a 'content' field", async () => {
-    const doc = await scanTree(tree, "runner") as any;
+    const doc = (await scanTree(tree, "runner")) as any;
     doc.findings[0].content = "the entire source file...";
     expect(() => validateRunnerUpload(doc)).toThrow(RunnerUploadError);
   });
 
   it("rejects an oversized text field", async () => {
-    const doc = await scanTree(tree, "runner") as any;
+    const doc = (await scanTree(tree, "runner")) as any;
     doc.findings[0].explanation = "x".repeat(5000);
     expect(() => validateRunnerUpload(doc)).toThrow(RunnerUploadError);
   });

@@ -24,8 +24,10 @@ function parseArgs(argv: string[]): Args {
     else if (a === "--json") args.json = true;
     else if (a === "--no-semantic") args.noSemantic = true;
     else if (a === "--fail-on") args.failOn = (argv[++i] as Args["failOn"]) ?? "none";
-    else if (a === "--help" || a === "-h") { printHelp(); process.exit(0); }
-    else if (a && !a.startsWith("-")) positionals.push(a);
+    else if (a === "--help" || a === "-h") {
+      printHelp();
+      process.exit(0);
+    } else if (a && !a.startsWith("-")) positionals.push(a);
   }
   if (positionals[0]) args.path = positionals[0];
   return args;

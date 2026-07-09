@@ -34,7 +34,7 @@ export function generateSuggestedFix(finding: Finding): SuggestedFix | undefined
     case "unpinned-dependency":
       return {
         kind: "diff",
-        content: "// Pin this dependency to an exact, reviewed version (e.g. \"1.2.3\") instead of a range.",
+        content: '// Pin this dependency to an exact, reviewed version (e.g. "1.2.3") instead of a range.',
       };
     case "unbounded-tool-param":
       return {
@@ -46,7 +46,8 @@ export function generateSuggestedFix(finding: Finding): SuggestedFix | undefined
     case "missing-schema-validation":
       return {
         kind: "agent_guidance",
-        content: "Declare a typed JSON schema for every tool parameter (at minimum a `type`), and validate input before use.",
+        content:
+          "Declare a typed JSON schema for every tool parameter (at minimum a `type`), and validate input before use.",
       };
     default:
       return undefined; // e.g. exposed-secret → rotate the credential, not a code diff

@@ -65,7 +65,13 @@ function stripComments(content: string): string {
     .split(/\r?\n/)
     .filter((l) => {
       const t = l.trim();
-      return !(t.startsWith("//") || t.startsWith("*") || t.startsWith("/*") || t.startsWith("#") || t.startsWith("--"));
+      return !(
+        t.startsWith("//") ||
+        t.startsWith("*") ||
+        t.startsWith("/*") ||
+        t.startsWith("#") ||
+        t.startsWith("--")
+      );
     })
     .join("\n");
 }

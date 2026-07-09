@@ -4,9 +4,14 @@ import { AuditedWriter, InMemoryAuditSink } from "@gatepass/shared";
 import type { Finding } from "@gatepass/findings";
 
 const verified: Finding = {
-  fingerprint: "sha256:a", tier: "verified", classId: "exposed-secret", severity: "critical",
-  surfaces: ["app_code"], locations: [{ path: "a.js", startLine: 1, endLine: 1, surface: "app_code" }],
-  explanation: "secret", reproduction: { kind: "inspection", steps: ["look"], expected: "leak" },
+  fingerprint: "sha256:a",
+  tier: "verified",
+  classId: "exposed-secret",
+  severity: "critical",
+  surfaces: ["app_code"],
+  locations: [{ path: "a.js", startLine: 1, endLine: 1, surface: "app_code" }],
+  explanation: "secret",
+  reproduction: { kind: "inspection", steps: ["look"], expected: "leak" },
 };
 
 class FakeGitHub implements GitHubClient {
@@ -35,7 +40,14 @@ describe("GitHub delivery + no-write guarantee (FR-012/016, SC-005, Principle II
     const sink = new InMemoryAuditSink();
     const client = new FakeGitHub();
     const r = new Remediator(client, new AuditedWriter(sink, "gatepass-app"));
-    const posted = await r.publishGate("org1", "acme/app", "abc123", { mode: "block_verified", failureMode: "fail_open" }, [verified], true);
+    const posted = await r.publishGate(
+      "org1",
+      "acme/app",
+      "abc123",
+      { mode: "block_verified", failureMode: "fail_open" },
+      [verified],
+      true,
+    );
     expect(posted.conclusion).toBe("failure");
     expect(sink.events.some((e) => e.action === "check_run")).toBe(true);
   });
@@ -43,7 +55,14 @@ describe("GitHub delivery + no-write guarantee (FR-012/016, SC-005, Principle II
   it("fails open (neutral) when the scan did not complete", async () => {
     const client = new FakeGitHub();
     const r = new Remediator(client, new AuditedWriter(new InMemoryAuditSink(), "gatepass-app"));
-    const posted = await r.publishGate("org1", "acme/app", "abc", { mode: "block_verified", failureMode: "fail_open" }, undefined, false);
+    const posted = await r.publishGate(
+      "org1",
+      "acme/app",
+      "abc",
+      { mode: "block_verified", failureMode: "fail_open" },
+      undefined,
+      false,
+    );
     expect(posted.conclusion).toBe("neutral");
   });
 

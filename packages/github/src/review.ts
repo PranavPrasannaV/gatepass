@@ -26,7 +26,9 @@ function badge(f: Finding): string {
 
 function commentBody(f: Finding): string {
   const lines: string[] = [];
-  lines.push(`${badge(f)} · \`${f.classId}\` · ${f.severity.toUpperCase()}${isCrossSurface(f) ? " · cross-surface" : ""}`);
+  lines.push(
+    `${badge(f)} · \`${f.classId}\` · ${f.severity.toUpperCase()}${isCrossSurface(f) ? " · cross-surface" : ""}`,
+  );
   lines.push("");
   lines.push(f.explanation);
   if (f.tier === "verified") {

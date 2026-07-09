@@ -1,8 +1,12 @@
 import { describe, it, expect } from "vitest";
 import {
-  hasFeature, requireFeature, PlanTierError,
-  AuditedWriter, InMemoryAuditSink,
-  loadConfig, requireConfig,
+  hasFeature,
+  requireFeature,
+  PlanTierError,
+  AuditedWriter,
+  InMemoryAuditSink,
+  loadConfig,
+  requireConfig,
 } from "../src/index.js";
 
 describe("plan-tier gating (FR-025)", () => {

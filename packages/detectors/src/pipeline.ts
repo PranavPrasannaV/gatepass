@@ -1,11 +1,7 @@
 import { createHash } from "node:crypto";
 import type { Detector, DetectorFinding, ScanContext } from "@gatepass/engine";
-import {
-  parseFinding,
-  assertRedacted,
-  type Finding,
-  type FindingsDocument,
-} from "@gatepass/findings";
+import { parseFinding, assertRedacted, type Finding, type FindingsDocument } from "@gatepass/findings";
+import { LlmGateway, analyzeSemantic } from "@gatepass/semantic";
 import { exposedSecretDetector } from "./exposed-secret.js";
 import { unauthMcpTransportDetector } from "./unauth-mcp-transport.js";
 import { toolPoisoningDetector } from "./tool-poisoning.js";
@@ -95,4 +91,40 @@ export function runScan(ctx: ScanContext, opts: RunScanOptions): FindingsDocumen
     },
     findings,
   };
+}
+
+const ARTIFACT_MAX = 4000;
+
+/**
+ * Async scan that refines research-tier confidence with the LLM gateway in-line (FR-011a).
+ * Runs the deterministic `runScan` first, then, when a gateway is enabled, sends each
+ * research finding's extracted artifact (a bounded slice of its file — never the whole repo)
+ * to the model and blends the returned confidence. Verified findings are untouched, so tier
+ * integrity and hosted/runner determinism of the verified set are preserved. When no gateway
+ * is enabled this is identical to `runScan`.
+ */
+export async function runScanAsync(
+  ctx: ScanContext,
+  opts: RunScanOptions,
+  gateway?: LlmGateway,
+): Promise<FindingsDocument> {
+  const doc = runScan(ctx, opts);
+  if (!gateway || !gateway.enabled || opts.semanticEnabled === false) return doc;
+
+  const contentByPath = new Map(ctx.files.map((f) => [f.relPath, f.content]));
+  const findings = await Promise.all(
+    doc.findings.map(async (f): Promise<Finding> => {
+      if (f.tier !== "research") return f;
+      const loc = f.locations[0]!;
+      const artifact = (contentByPath.get(loc.path) ?? "").slice(0, ARTIFACT_MAX);
+      const result = await analyzeSemantic(
+        { classId: f.classId, artifact, heuristicConfidence: f.confidence },
+        gateway,
+      );
+      // Re-validate through the schema so a refined finding cannot violate tier integrity.
+      return parseFinding({ ...f, confidence: result.confidence });
+    }),
+  );
+  findings.sort((a, b) => a.fingerprint.localeCompare(b.fingerprint));
+  return { ...doc, findings };
 }

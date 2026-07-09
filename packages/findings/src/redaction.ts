@@ -23,10 +23,7 @@ export function redactSecrets(text: string, secrets: readonly string[]): string 
   return out;
 }
 
-export function assertRedacted(
-  reproduction: Reproduction,
-  secrets: readonly string[],
-): void {
+export function assertRedacted(reproduction: Reproduction, secrets: readonly string[]): void {
   const haystack = [...reproduction.steps, reproduction.expected].join("\n");
   const leaked = secrets.filter((s) => s.length > 0 && haystack.includes(s));
   if (leaked.length > 0) throw new RedactionError(leaked);
