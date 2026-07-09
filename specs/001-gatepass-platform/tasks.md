@@ -183,3 +183,42 @@ hosted; fleet of 3 servers shows correct aggregate; config change triggers resca
 findings via dashboard and CLI. Ship that, validate with design partners, then US2 (PR
 remediation) as the retention driver, US3 (benchmark) as the marketing/trust driver, US4/US5
 as the monetization expanders. Stop at any checkpoint for an independently deliverable slice.
+
+## Phase 9: Convergence
+
+Appended by `/speckit-converge` (2026-07-09). Requirement-anchored remaining work assessed
+against the current code. No constitution violations were found. These subsume the relevant
+open implementation tasks above; each traces to a source-ref and gap-type.
+
+### HIGH
+
+- [ ] T071 Build research-tier analyzers for HBV, confused-deputy, and over-permissioned-loop classes (definition→corpus→analyzer→measurement, with fixtures) per FR-005 (partial)
+- [ ] T072 Wire webhook-triggered continuous + incremental scanning (push/PR, diff against last full-scan surface graph) per FR-006 (missing)
+- [ ] T073 Wire PR review posting via the GitHub App (Octokit) through the audited writer so suggested diffs reach PRs per FR-012 (partial)
+- [ ] T074 Wire the CI-gate Check Run posting (map evaluateGate → GitHub Check Run incl. fail-open neutral + annotation) per FR-016 (partial)
+- [ ] T075 Invoke the LLM gateway from the semantic analyzers so research-tier findings use model analysis (not just the heuristic pre-filter), honoring per-org disable per FR-011a (partial)
+- [ ] T076 Implement GitHub OAuth sign-in and per-role (admin/member/viewer) RBAC enforcement across API routes, mirroring GitHub repo visibility per FR-027 (partial)
+- [ ] T077 Wire Postgres persistence: execute migrations 0001/0002 and replace the apps/api in-memory store with DB-backed repositories per plan: storage decision (partial)
+
+### MEDIUM
+
+- [ ] T078 Build the IDE (VS Code) annotations integration consuming canonical findings per FR-013 (missing)
+- [ ] T079 Build the opt-in agent-loop guidance endpoint (403 unless repo agent_loop_enabled) per FR-014 (partial)
+- [ ] T080 Build benchmark incumbent-scanner adapters (pinned mcp-scanner / YARA tools) and public benchmark publishing (results JSON + page) per FR-018, SC-007 (partial)
+- [ ] T081 Wire the release precision gate to compare candidate measurement against the last published benchmark run and block on regression per FR-019 (partial)
+- [ ] T082 Build the responsible-disclosure workflow and public server-scan report publishing (post-disclosure only) per FR-020 (missing)
+- [ ] T083 Wire Vanta/Drata evidence push via their public APIs with external-id storage per FR-021 (partial)
+- [ ] T084 Build questionnaire ingestion for CSV/XLSX/SIG-lite formats feeding the drafting logic per FR-022 (partial)
+- [ ] T085 Build the MCP fleet registry, config-hash change-detection rescans, and aggregated posture view per FR-024, SC-009 (missing)
+- [ ] T086 Provision encryption-at-rest/TLS IaC, artifact TTL/retention jobs, and per-scan container isolation per FR-026 (missing)
+- [ ] T087 Implement dispute-driven suppression of recurring findings on unchanged fingerprints per FR-011 (partial)
+- [ ] T088 Build the connect-repo→first-findings onboarding flow and assert the 15-minute target per SC-004 (missing)
+- [ ] T089 Build the scan orchestrator (queue, per-org concurrency, retries, timeouts, stage timings) per plan: workers decision (missing)
+- [ ] T090 Add the no-write guarantee integration test (GitHub client cannot perform any contents-write; every outbound write appears in the audit log) per SC-005 (partial)
+
+### LOW
+
+- [ ] T091 Add load validation against the launch envelope (50K scans/day, 2M-LOC repo, 500-server fleet) asserting p95 latencies per SC-010 (missing)
+- [ ] T092 Add SLO instrumentation (stage-timing dashboards, p95 + 99.9% availability alerts, status page) per SC-011 (missing)
+- [ ] T093 Build the Next.js dashboard views (findings, fleet, benchmark, compliance) per US1–US5 UI (missing)
+- [ ] T094 Package the self-hosted runner as a single binary/container and add the runner results endpoint on the API per FR-006a (partial)
