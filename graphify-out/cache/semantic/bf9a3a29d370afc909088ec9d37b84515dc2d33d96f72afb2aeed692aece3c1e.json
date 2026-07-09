@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_research_phase0_research",
+      "label": "Phase 0 Research",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_research_one_engine_three_dist",
+      "label": "One Engine Three Distributions",
+      "file_type": "rationale",
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_research_llm_semantic_layer",
+      "label": "LLM Semantic Layer",
+      "file_type": "rationale",
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_research_phase0_research",
+      "target": "specs_001_gatepass_platform_research_one_engine_three_dist",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_research_phase0_research",
+      "target": "specs_001_gatepass_platform_research_llm_semantic_layer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_research_one_engine_three_dist",
+      "target": "handoff_verified_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_research_one_engine_three_dist",
+      "target": "handoff_research_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_research_llm_semantic_layer",
+      "target": "handoff_research_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/research.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

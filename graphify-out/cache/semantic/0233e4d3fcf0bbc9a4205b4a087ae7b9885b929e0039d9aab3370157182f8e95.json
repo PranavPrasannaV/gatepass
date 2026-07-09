@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_quickstart_quickstart_guide",
+      "label": "Quickstart Guide",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_quickstart_quickstart_guide",
+      "target": "corpus_eval_repos_vulnerable_nextjs_mcp_readme_eval_repo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_quickstart_quickstart_guide",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_quickstart_quickstart_guide",
+      "target": "specs_001_gatepass_platform_data_model_data_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

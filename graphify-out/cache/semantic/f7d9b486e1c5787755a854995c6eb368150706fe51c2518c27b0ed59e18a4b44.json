@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "gatepass_onepager_v4",
+      "label": "Gatepass One-Pager V4",
+      "file_type": "document",
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "gatepass_onepager_v4_agentic_taxonomy",
+      "label": "Agentic Vulnerability Taxonomy",
+      "file_type": "concept",
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "gatepass_onepager_v4_precision_benchmark",
+      "label": "Public Precision Benchmark",
+      "file_type": "concept",
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "_specify_memory_constitution_principle_i",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "_specify_memory_constitution_principle_ii",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "_specify_memory_constitution_principle_iii",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "_specify_memory_constitution_principle_iv",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "_specify_memory_constitution_principle_v",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "_specify_memory_constitution_principle_vi",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "gatepass_onepager_v4_agentic_taxonomy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "gatepass_onepager_v4",
+      "target": "gatepass_onepager_v4_precision_benchmark",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GATEPASS_ONEPAGER_V4.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

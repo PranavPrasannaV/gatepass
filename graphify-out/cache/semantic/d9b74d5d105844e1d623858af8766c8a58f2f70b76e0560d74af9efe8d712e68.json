@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {
+      "id": "corpus_eval_repos_vulnerable_nextjs_mcp_readme_eval_repo",
+      "label": "Eval Repo: vulnerable-nextjs-mcp",
+      "file_type": "code",
+      "source_file": "corpus/eval-repos/vulnerable-nextjs-mcp/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {
+      "id": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_setup_plan_ps1",
+      "label": "setup-plan.ps1",
+      "file_type": "code",
+      "source_file": ".specify/scripts/powershell/setup-plan.ps1",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [],
+  "raw_calls": []
+}

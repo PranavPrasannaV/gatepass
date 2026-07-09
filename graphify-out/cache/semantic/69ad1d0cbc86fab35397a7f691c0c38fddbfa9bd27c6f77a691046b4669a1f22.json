@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_speckit-converge_skill",
+      "label": "Speckit Converge Skill",
+      "file_type": "document",
+      "source_file": ".claude/skills/speckit-converge/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_speckit-converge_skill",
+      "target": "_claude_skills_speckit-implement_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/speckit-converge/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_speckit-converge_skill",
+      "target": "_claude_skills_speckit-tasks_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/speckit-converge/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_speckit-converge_skill",
+      "target": "_specify_memory_constitution",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/speckit-converge/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

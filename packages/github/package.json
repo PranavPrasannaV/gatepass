@@ -8,6 +8,10 @@
   },
   "dependencies": {
     "@gatepass/findings": "workspace:*",
-    "@gatepass/shared": "workspace:*"
+    "@gatepass/shared": "workspace:*",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10"
   }
 }

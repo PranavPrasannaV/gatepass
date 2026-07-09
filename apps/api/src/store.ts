@@ -31,7 +31,27 @@ export interface FleetServer {
   posture: "unscanned" | "passing" | "findings_open" | "critical";
 }
 
-export class MemoryStore {
+/**
+ * Store interface: all data-access methods are async so they work equally well
+ * with the in-memory MemoryStore and the Postgres-backed PgStore.
+ */
+export interface Store {
+  upsertOrg(org: OrgRecord): Promise<OrgRecord>;
+  getOrg(orgId: string): Promise<OrgRecord | undefined>;
+  putScan(scan: StoredScan): Promise<void>;
+  getScan(scanId: string): Promise<StoredScan | undefined>;
+  findingsOf(scanId: string, includeSuppressed?: boolean): Promise<Finding[]>;
+  suppress(orgId: string, fingerprint: string): Promise<void>;
+  isSuppressed(orgId: string, fingerprint: string): Promise<boolean>;
+  upsertFleetServer?(server: FleetServer): Promise<FleetServer>;
+  getFleetServer?(serverId: string): Promise<FleetServer | undefined>;
+  fleetView?(orgId: string): Promise<{ servers: FleetServer[]; rollup: Record<string, number> }>;
+  getBenchmark?(corpusVersion?: string): Promise<unknown>;
+  publishBenchmark?(corpusVersion: string, tool: string, results: string): Promise<void>;
+  getLatestScan?(): Promise<{ id: string; orgId: string } | undefined>;
+}
+
+export class MemoryStore implements Store {
   readonly orgs = new Map<string, OrgRecord>();
   readonly scans = new Map<string, StoredScan>();
   readonly fleetServers = new Map<string, FleetServer>();
@@ -40,16 +60,24 @@ export class MemoryStore {
   /** Org-level fingerprints suppressed by an accepted dispute (FR-011). */
   private readonly suppressed = new Map<string, Set<string>>();
 
-  upsertOrg(org: OrgRecord): OrgRecord {
+  async upsertOrg(org: OrgRecord): Promise<OrgRecord> {
     this.orgs.set(org.id, org);
     return org;
   }
 
-  putScan(scan: StoredScan): void {
+  async getOrg(orgId: string): Promise<OrgRecord | undefined> {
+    return this.orgs.get(orgId);
+  }
+
+  async putScan(scan: StoredScan): Promise<void> {
     this.scans.set(scan.id, scan);
   }
 
-  suppress(orgId: string, fingerprint: string): void {
+  async getScan(scanId: string): Promise<StoredScan | undefined> {
+    return this.scans.get(scanId);
+  }
+
+  async suppress(orgId: string, fingerprint: string): Promise<void> {
     let set = this.suppressed.get(orgId);
     if (!set) {
       set = new Set();
@@ -58,14 +86,60 @@ export class MemoryStore {
     set.add(fingerprint);
   }
 
-  isSuppressed(orgId: string, fingerprint: string): boolean {
+  async isSuppressed(orgId: string, fingerprint: string): Promise<boolean> {
     return this.suppressed.get(orgId)?.has(fingerprint) ?? false;
   }
 
-  findingsOf(scanId: string, includeSuppressed = false): Finding[] {
+  async findingsOf(scanId: string, includeSuppressed = false): Promise<Finding[]> {
     const scan = this.scans.get(scanId);
     if (!scan) return [];
     if (includeSuppressed) return scan.doc.findings;
-    return scan.doc.findings.filter((f) => !this.isSuppressed(scan.orgId, f.fingerprint));
+    const suppressed = this.suppressed.get(scan.orgId);
+    if (!suppressed) return scan.doc.findings;
+    return scan.doc.findings.filter((f) => !suppressed.has(f.fingerprint));
+  }
+
+  async upsertFleetServer(server: FleetServer): Promise<FleetServer> {
+    this.fleetServers.set(server.id, server);
+    return server;
+  }
+
+  async getFleetServer(serverId: string): Promise<FleetServer | undefined> {
+    return this.fleetServers.get(serverId);
+  }
+
+  async fleetView(orgId: string): Promise<{ servers: FleetServer[]; rollup: Record<string, number> }> {
+    const servers = [...this.fleetServers.values()].filter((s) => s.orgId === orgId);
+    const rollup: Record<string, number> = {
+      total: servers.length,
+      unscanned: 0,
+      passing: 0,
+      findings_open: 0,
+      critical: 0,
+    };
+    for (const s of servers) rollup[s.posture]!++;
+    return { servers, rollup };
+  }
+
+  async getBenchmark(corpusVersion?: string): Promise<unknown> {
+    if (corpusVersion) {
+      const rec = this.benchmarks.get(corpusVersion);
+      return rec ?? null;
+    }
+    return [...this.benchmarks.values()];
+  }
+
+  async publishBenchmark(corpusVersion: string, _tool: string, results: string): Promise<void> {
+    const parsed = JSON.parse(results);
+    const existing = this.benchmarks.get(corpusVersion) as { runs: unknown[] } | undefined;
+    if (existing) {
+      existing.runs.push(parsed);
+    } else {
+      this.benchmarks.set(corpusVersion, {
+        corpusVersion,
+        publishedAt: new Date().toISOString(),
+        runs: [parsed],
+      });
+    }
   }
 }

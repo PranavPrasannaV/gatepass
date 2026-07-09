@@ -1,0 +1,168 @@
+{
+  "nodes": [
+    {
+      "id": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_ps1",
+      "label": "common.ps1",
+      "file_type": "code",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_reporoot",
+      "label": "Get-RepoRoot()",
+      "file_type": "code",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "label": "Get-FeatureDir()",
+      "file_type": "code",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_availabledocs",
+      "label": "Get-AvailableDocs()",
+      "file_type": "code",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L29"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_ps1",
+      "target": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_reporoot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_ps1",
+      "target": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_ps1",
+      "target": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_availabledocs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/scripts/powershell/common.ps1",
+      "source_location": "L29",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_reporoot",
+      "callee": "Get-Item",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L8"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Join-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L13"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Test-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L14"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Get-Content",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L15"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "ConvertFrom-Json",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L15"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Join-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Join-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L21"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Test-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L22"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Get-ChildItem",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L23"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Sort-Object",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L23"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_featuredir",
+      "callee": "Select-Object",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L23"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_availabledocs",
+      "callee": "Test-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L33"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_availabledocs",
+      "callee": "Join-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L33"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_availabledocs",
+      "callee": "Test-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L35"
+    },
+    {
+      "caller_nid": "users_aadisaraf_documents_yc_ai_security_gatepass_specify_scripts_powershell_common_get_availabledocs",
+      "callee": "Join-Path",
+      "is_member_call": false,
+      "source_file": "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1",
+      "source_location": "L35"
+    }
+  ]
+}

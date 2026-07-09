@@ -1,0 +1,28 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_contracts_runner_protocol_self_hosted_runner",
+      "label": "Self-Hosted Runner Protocol",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/contracts/runner-protocol.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_contracts_runner_protocol_self_hosted_runner",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/runner-protocol.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

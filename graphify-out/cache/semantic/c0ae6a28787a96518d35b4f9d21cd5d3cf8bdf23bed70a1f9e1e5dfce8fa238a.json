@@ -1,0 +1,107 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_tasks_task_ledger",
+      "label": "Task Ledger",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_tasks_scan_pipeline",
+      "label": "Scan Pipeline",
+      "file_type": "code",
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_tasks_task_ledger",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_tasks_task_ledger",
+      "target": "specs_001_gatepass_platform_tasks_scan_pipeline",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_tasks_scan_pipeline",
+      "target": "handoff_verified_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_tasks_scan_pipeline",
+      "target": "handoff_research_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_tasks_scan_pipeline",
+      "target": "handoff_cross_surface_analysis",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_tasks_scan_pipeline",
+      "target": "specs_001_gatepass_platform_research_llm_semantic_layer",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "scan_pipeline_engine",
+      "label": "Scan Pipeline Engine",
+      "nodes": [
+        "specs_001_gatepass_platform_tasks_scan_pipeline",
+        "specs_001_gatepass_platform_spec_five_attack_surfaces",
+        "handoff_cross_surface_analysis",
+        "handoff_verified_detectors",
+        "handoff_research_detectors",
+        "specs_001_gatepass_platform_research_llm_semantic_layer",
+        "specs_001_gatepass_platform_research_one_engine_three_dist"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/tasks.md"
+    }
+  ]
+}

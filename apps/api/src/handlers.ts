@@ -8,7 +8,7 @@ import { evaluatePosture, draftAnswers, ingest, type Scan as PostureScan, type S
 import { requireFeature, type PlanTier } from "@gatepass/shared";
 import { validateRunnerUpload } from "@gatepass/runner";
 import { scoreTool, type CorpusCaseLabel, type Detection } from "@gatepass/benchmark";
-import { MemoryStore, type StoredScan, type FleetServer } from "./store.js";
+import type { Store, StoredScan, FleetServer } from "./store.js";
 
 /**
  * API handlers wiring the analysis, gate, evidence, and runner libraries over the store.
@@ -23,36 +23,38 @@ export class NotFoundError extends Error {}
 export class ForbiddenError extends Error {}
 
 import type { LlmTransport } from "@gatepass/semantic";
+import type { GitHubClient } from "@gatepass/github";
 
 export interface HandlerOptions {
   /** LLM transport for research-tier refinement. Production wires the Anthropic transport;
    *  absent means static-only (research findings keep heuristic confidence). */
   llmTransport?: LlmTransport;
   llmModel?: string;
+  /** GitHub App client for PR review and check-run delivery (T096). */
+  githubClient?: GitHubClient;
 }
 
-export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
-  const requireScan = (scanId: string): StoredScan => {
-    const s = store.scans.get(scanId);
+export function makeHandlers(store: Store, options: HandlerOptions = {}) {
+  const requireScan = async (scanId: string): Promise<StoredScan> => {
+    const s = await store.getScan(scanId);
     if (!s) throw new NotFoundError(`scan ${scanId}`);
     return s;
   };
-  const requireOrg = (orgId: string) => {
-    const o = store.orgs.get(orgId);
+  const requireOrg = async (orgId: string): Promise<OrgRecord> => {
+    const o = await store.getOrg(orgId);
     if (!o) throw new NotFoundError(`org ${orgId}`);
     return o;
   };
-  const asPostureScan = (s: StoredScan): PostureScan => ({
+  const asPostureScan = async (s: StoredScan): Promise<PostureScan> => ({
     id: s.doc.scan.id,
     rulesetVersion: s.doc.scan.rulesetVersion,
-    findings: store.findingsOf(s.id),
+    findings: await store.findingsOf(s.id),
   });
 
   return {
     async createScan(orgId: string, repoPath: string) {
-      const org = requireOrg(orgId);
+      const org = await requireOrg(orgId);
       const ctx = await buildScanContext(repoPath);
-      // Build a per-org gateway; refines research-tier confidence in-line when enabled+wired.
       const gateway = new LlmGateway({
         enabled: org.llmEnabled,
         apiKey: options.llmTransport ? "configured" : undefined,
@@ -69,8 +71,8 @@ export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
         },
         gateway,
       );
-      store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
-      const visible = store.findingsOf(doc.scan.id);
+      await store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
+      const visible = await store.findingsOf(doc.scan.id);
       return {
         scanId: doc.scan.id,
         frameworks: detectFrameworks(ctx),
@@ -79,30 +81,32 @@ export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
       };
     },
 
-    getFindings(scanId: string, includeSuppressed = false): Finding[] {
-      requireScan(scanId);
+    async getFindings(scanId: string, includeSuppressed = false): Promise<Finding[]> {
+      await requireScan(scanId);
       return store.findingsOf(scanId, includeSuppressed);
     },
 
-    getSarif(scanId: string) {
-      return toSarif(requireScan(scanId).doc);
+    async getSarif(scanId: string) {
+      const scan = await requireScan(scanId);
+      return toSarif(scan.doc);
     },
 
-    // Dispute → suppress this fingerprint org-wide so it does not recur on unchanged code (FR-011, T087).
-    disputeFinding(scanId: string, fingerprint: string, reason: string) {
-      const scan = requireScan(scanId);
+    // Dispute -> suppress this fingerprint org-wide so it does not recur on unchanged code (FR-011, T087).
+    // Route: POST /v1/findings/:fingerprint/dispute { scanId, reason }
+    async disputeFinding(fingerprint: string, scanId: string, reason: string) {
+      const scan = await requireScan(scanId);
       if (!scan.doc.findings.some((f) => f.fingerprint === fingerprint))
         throw new NotFoundError(`finding ${fingerprint}`);
       scan.disputes.set(fingerprint, reason);
-      store.suppress(scan.orgId, fingerprint);
+      await store.suppress(scan.orgId, fingerprint);
       return { ok: true, suppressed: fingerprint };
     },
 
     // Opt-in agent-loop fix guidance (FR-014, T079): 403 unless the org enabled it.
-    agentGuidance(orgId: string, scanId: string, fingerprint: string) {
-      const org = requireOrg(orgId);
+    async agentGuidance(orgId: string, scanId: string, fingerprint: string) {
+      const org = await requireOrg(orgId);
       if (!org.agentLoopEnabled) throw new ForbiddenError("agent-loop integration is not enabled for this org");
-      const scan = requireScan(scanId);
+      const scan = await requireScan(scanId);
       const finding = scan.doc.findings.find((f) => f.fingerprint === fingerprint);
       if (!finding) throw new NotFoundError(`finding ${fingerprint}`);
       const fix = generateSuggestedFix(finding);
@@ -112,35 +116,44 @@ export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
       };
     },
 
-    evaluateGate(scanId: string, config: GateConfig) {
-      const scan = requireScan(scanId);
-      return evaluateGate(config, { findings: store.findingsOf(scan.id), scanCompleted: true });
+    async evaluateGate(scanId: string, config: GateConfig) {
+      const scan = await requireScan(scanId);
+      return evaluateGate(config, { findings: await store.findingsOf(scan.id), scanCompleted: true });
     },
 
-    getEvidence(orgId: string, scanId: string) {
-      const org = requireOrg(orgId);
+    async getEvidence(orgId: string, scanId: string) {
+      const org = await requireOrg(orgId);
       requireFeature(org.planTier as PlanTier, "evidence_export");
-      return evaluatePosture(asPostureScan(requireScan(scanId)));
+      const scan = await requireScan(scanId);
+      return evaluatePosture(await asPostureScan(scan));
     },
 
-    draftQuestionnaire(orgId: string, scanId: string, format: SourceFormat, content: string) {
-      const org = requireOrg(orgId);
+    async draftQuestionnaire(orgId: string, scanId: string, format: SourceFormat, content: string) {
+      const org = await requireOrg(orgId);
       requireFeature(org.planTier as PlanTier, "questionnaire_autofill");
+      const scan = await requireScan(scanId);
       const questions = ingest(format, content);
-      return draftAnswers(questions, asPostureScan(requireScan(scanId)));
+      return draftAnswers(questions, await asPostureScan(scan));
     },
 
     // Fleet (FR-024, T085) — Scale tier.
-    registerFleetServer(orgId: string, name: string, endpointOrRepo: string, configHash: string): FleetServer {
-      const org = requireOrg(orgId);
+    async registerFleetServer(
+      orgId: string,
+      name: string,
+      endpointOrRepo: string,
+      configHash: string,
+    ): Promise<FleetServer> {
+      const org = await requireOrg(orgId);
       requireFeature(org.planTier as PlanTier, "mcp_fleet");
       const server: FleetServer = { id: randomUUID(), orgId, name, endpointOrRepo, configHash, posture: "unscanned" };
-      store.fleetServers.set(server.id, server);
+      if (store.upsertFleetServer) {
+        await store.upsertFleetServer(server);
+      }
       return server;
     },
 
     async scanFleetServer(serverId: string, repoPath: string) {
-      const server = store.fleetServers.get(serverId);
+      const server = await (store.getFleetServer ? store.getFleetServer(serverId) : Promise.resolve(undefined));
       if (!server) throw new NotFoundError(`fleet server ${serverId}`);
       const ctx = await buildScanContext(repoPath);
       const doc = runScan(ctx, {
@@ -149,15 +162,15 @@ export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
         executionMode: "hosted",
         semanticEnabled: true,
       });
-      store.putScan({ id: doc.scan.id, orgId: server.orgId, doc, disputes: new Map() });
+      await store.putScan({ id: doc.scan.id, orgId: server.orgId, doc, disputes: new Map() });
       server.lastScanId = doc.scan.id;
       server.posture = posture(doc.findings);
       return server;
     },
 
-    // Config change → rescan trigger (FR-024): only rescan if the config hash actually changed.
-    fleetConfigChanged(serverId: string, newHash: string): boolean {
-      const server = store.fleetServers.get(serverId);
+    // Config change -> rescan trigger (FR-024): only rescan if the config hash actually changed.
+    async fleetConfigChanged(serverId: string, newHash: string): Promise<boolean> {
+      const server = await (store.getFleetServer ? store.getFleetServer(serverId) : Promise.resolve(undefined));
       if (!server) throw new NotFoundError(`fleet server ${serverId}`);
       if (server.configHash === newHash) return false;
       server.configHash = newHash;
@@ -165,50 +178,36 @@ export function makeHandlers(store: MemoryStore, options: HandlerOptions = {}) {
       return true;
     },
 
-    fleetView(orgId: string) {
-      requireOrg(orgId);
-      const servers = [...store.fleetServers.values()].filter((s) => s.orgId === orgId);
-      const rollup = { total: servers.length, unscanned: 0, passing: 0, findings_open: 0, critical: 0 } as Record<
-        string,
-        number
-      >;
-      for (const s of servers) rollup[s.posture]!++;
-      return { servers, rollup };
+    async fleetView(orgId: string) {
+      await requireOrg(orgId);
+      if (store.fleetView) {
+        return store.fleetView(orgId);
+      }
+      return { servers: [], rollup: {} };
     },
 
     // Self-hosted runner results upload (FR-006a, T094): validate findings-only, then store.
-    ingestRunnerResults(orgId: string, payload: unknown) {
-      requireOrg(orgId);
-      validateRunnerUpload(payload); // rejects any source-bearing or malformed payload
+    async ingestRunnerResults(orgId: string, payload: unknown) {
+      await requireOrg(orgId);
+      validateRunnerUpload(payload);
       const doc = parseFindingsDocument(payload);
-      store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
+      await store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
       return { scanId: doc.scan.id, findings: doc.findings.length };
     },
 
-    // Publish a benchmark run for a corpus version (FR-018, T046). Immutable once set.
-    publishBenchmark(tool: string, corpusVersion: string, labels: CorpusCaseLabel[], detections: Detection[]) {
-      if (store.benchmarks.has(corpusVersion)) {
-        const existing = store.benchmarks.get(corpusVersion) as { runs: unknown[] };
-        existing.runs.push(scoreTool(tool, corpusVersion, labels, detections));
-        return existing;
-      }
-      const record = {
-        corpusVersion,
-        publishedAt: new Date().toISOString(),
-        runs: [scoreTool(tool, corpusVersion, labels, detections)],
-      };
-      store.benchmarks.set(corpusVersion, record);
-      return record;
+    async publishBenchmark(tool: string, corpusVersion: string, labels: CorpusCaseLabel[], detections: Detection[]) {
+      const scored = scoreTool(tool, corpusVersion, labels, detections);
+      await store.publishBenchmark(corpusVersion, tool, JSON.stringify(scored));
+      return store.getBenchmark(corpusVersion);
     },
 
-    // Public benchmark (no auth): latest across versions, or a specific version.
-    getPublicBenchmark(corpusVersion?: string) {
-      if (corpusVersion) {
-        const rec = store.benchmarks.get(corpusVersion);
-        if (!rec) throw new NotFoundError(`benchmark ${corpusVersion}`);
-        return rec;
+    async getPublicBenchmark(corpusVersion?: string) {
+      const rec = await store.getBenchmark(corpusVersion);
+      if (!rec) {
+        if (corpusVersion) throw new NotFoundError(`benchmark ${corpusVersion}`);
+        return [];
       }
-      return [...store.benchmarks.values()];
+      return rec;
     },
   };
 }

@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_contracts_evidence_export_evidence_export",
+      "label": "Evidence Export Contract",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/contracts/evidence-export.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_contracts_evidence_export_control_map",
+      "label": "Control Map (SOC 2 / ISO 27001)",
+      "file_type": "concept",
+      "source_file": "specs/001-gatepass-platform/contracts/evidence-export.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_contracts_evidence_export_evidence_export",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/evidence-export.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_contracts_evidence_export_evidence_export",
+      "target": "specs_001_gatepass_platform_contracts_evidence_export_control_map",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/evidence-export.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

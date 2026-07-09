@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_data_model_data_model",
+      "label": "Data Model Document",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_data_model_plan_tier_gating",
+      "label": "Plan-Tier Gating (Free/Team/Scale)",
+      "file_type": "concept",
+      "source_file": "specs/001-gatepass-platform/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_data_model_data_model",
+      "target": "specs_001_gatepass_platform_data_model_plan_tier_gating",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

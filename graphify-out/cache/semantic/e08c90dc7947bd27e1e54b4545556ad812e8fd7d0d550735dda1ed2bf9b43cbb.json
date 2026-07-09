@@ -1,0 +1,89 @@
+{
+  "nodes": [
+    {
+      "id": "_specify_templates_spec-template",
+      "label": "Spec Template",
+      "file_type": "document",
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_templates_spec-template_constitution_alignment",
+      "label": "Spec Constitution Alignment",
+      "file_type": "concept",
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_specify_templates_spec-template",
+      "target": "_specify_templates_spec-template_constitution_alignment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_templates_spec-template_constitution_alignment",
+      "target": "_specify_memory_constitution_principle_ii",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_templates_spec-template_constitution_alignment",
+      "target": "_specify_memory_constitution_principle_iii",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_templates_spec-template_constitution_alignment",
+      "target": "_specify_memory_constitution_principle_iv",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_templates_spec-template_constitution_alignment",
+      "target": "_specify_memory_constitution_principle_i",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_templates_spec-template_constitution_alignment",
+      "target": "_specify_memory_constitution_principle_v",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/templates/spec-template.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

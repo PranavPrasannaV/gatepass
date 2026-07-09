@@ -1,0 +1,244 @@
+{
+  "nodes": [
+    {
+      "id": "_specify_memory_constitution",
+      "label": "Gatepass Constitution",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_principle_i",
+      "label": "Principle I: Precision Is the Product",
+      "file_type": "rationale",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_principle_ii",
+      "label": "Principle II: Two-Tier Finding Integrity",
+      "file_type": "rationale",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_principle_iii",
+      "label": "Principle III: Remediation in Workflow",
+      "file_type": "rationale",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_principle_iv",
+      "label": "Principle IV: Cross-Surface Context",
+      "file_type": "rationale",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_principle_v",
+      "label": "Principle V: Research-Fed Corpus",
+      "file_type": "rationale",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_principle_vi",
+      "label": "Principle VI: Pure Software",
+      "file_type": "rationale",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_security_trust",
+      "label": "Security & Trust Constraints",
+      "file_type": "concept",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_dev_workflow_gates",
+      "label": "Development Workflow & Quality Gates",
+      "file_type": "concept",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_specify_memory_constitution_governance",
+      "label": "Constitution Governance",
+      "file_type": "concept",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_specify_memory_constitution",
+      "target": "gatepass_onepager_v4",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_security_trust",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_dev_workflow_gates",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_governance",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_principle_i",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_principle_ii",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_principle_iii",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_principle_iv",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_principle_v",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_principle_vi",
+      "target": "_specify_memory_constitution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_specify_memory_constitution_dev_workflow_gates",
+      "target": "_github_workflows_ci_yml",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "constitution_principles",
+      "label": "Gatepass Six Core Principles",
+      "nodes": [
+        "_specify_memory_constitution_principle_i",
+        "_specify_memory_constitution_principle_ii",
+        "_specify_memory_constitution_principle_iii",
+        "_specify_memory_constitution_principle_iv",
+        "_specify_memory_constitution_principle_v",
+        "_specify_memory_constitution_principle_vi"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".specify/memory/constitution.md"
+    }
+  ]
+}

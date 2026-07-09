@@ -1,0 +1,28 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_validation_us1_us1_validation",
+      "label": "US1 Validation",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/validation/us1.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_validation_us1_us1_validation",
+      "target": "specs_001_gatepass_platform_tasks_task_ledger",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/validation/us1.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

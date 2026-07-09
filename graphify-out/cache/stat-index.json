@@ -1,0 +1,1211 @@
+{
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-analyze/SKILL.md": {
+    "size": 11746,
+    "mtime_ns": 1783624365742800388,
+    "word_count": 1579,
+    "hash": "5be221c5d378001db413af66cda745c70692a15fd815d59a0114a3569398da73"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-checklist/SKILL.md": {
+    "size": 21305,
+    "mtime_ns": 1783624365742952305,
+    "word_count": 2849,
+    "hash": "d6e55bb89561c2f8369574770eaf1ec016dba2a8b10d7f8f227fe7fbea830a22"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-clarify/SKILL.md": {
+    "size": 18194,
+    "mtime_ns": 1783624365743095430,
+    "word_count": 2528,
+    "hash": "19d5a745d286795fb24aceb6130392019992fa562a7d670aebdf5c575a0aaf78"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-constitution/SKILL.md": {
+    "size": 9471,
+    "mtime_ns": 1783624365743239972,
+    "word_count": 1271,
+    "hash": "94b5348fb6e45ca9c50a8a82bb76f9769bd74cf8a7b727d04fe5efa28f42ac8d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-converge/SKILL.md": {
+    "size": 12692,
+    "mtime_ns": 1783624365743381263,
+    "word_count": 1802,
+    "hash": "69ad1d0cbc86fab35397a7f691c0c38fddbfa9bd27c6f77a691046b4669a1f22"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-implement/SKILL.md": {
+    "size": 12270,
+    "mtime_ns": 1783624365743508430,
+    "word_count": 1630,
+    "hash": "6c26025a097b96f455599932cff208d9ef962c6e8a416c1b9b1f87725d51bfdb"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-plan/SKILL.md": {
+    "size": 8033,
+    "mtime_ns": 1783624365743652347,
+    "word_count": 1105,
+    "hash": "7a07e58571bf3749ffb067ff2d789d704a628b53de00c7f940f53bfd15254c6c"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-specify/SKILL.md": {
+    "size": 18478,
+    "mtime_ns": 1783624365743768514,
+    "word_count": 2464,
+    "hash": "dce17bfb2dc3dd8678707eb05e383b47e002d052d9b256f25aa37add1b130d91"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-tasks/SKILL.md": {
+    "size": 11066,
+    "mtime_ns": 1783624365743881305,
+    "word_count": 1591,
+    "hash": "0df6b640c8c3cf90b8ade4613eea3180b7844d16d03aa69238896e4974d37fe6"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.claude/skills/speckit-taskstoissues/SKILL.md": {
+    "size": 7309,
+    "mtime_ns": 1783624365744039306,
+    "word_count": 1081,
+    "hash": "e4b7fcd483eb8326fc66f4e8104786ef54de59cea510d86822d7daebd48fc002"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.github/workflows/benchmark-monthly.yml": {
+    "size": 1001,
+    "mtime_ns": 1783624365744414139,
+    "word_count": 132,
+    "hash": "2555ff552b68f9738e1e9a73df89e6fc6270084e903554dc9ed6647ef08cda33"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.github/workflows/ci.yml": {
+    "size": 1031,
+    "mtime_ns": 1783624365744485931,
+    "word_count": 115,
+    "hash": "f8e8aa8e84e5fd8b51f59667334e829a475a6cda1ce13106cd37050a096878d3"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.github/workflows/release.yml": {
+    "size": 769,
+    "mtime_ns": 1783624365744564514,
+    "word_count": 93,
+    "hash": "e746e310dad9a9bcc2c8c9d01062806be2a484b115e1941a568bc5957fbd4c07"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.github/workflows/self-scan.yml": {
+    "size": 930,
+    "mtime_ns": 1783624365744627473,
+    "word_count": 112,
+    "hash": "d42ef368cf62e020f662f0b3d946793fefb729cb0eabff6ce592d0819242238b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.prettierrc.json": {
+    "size": 90,
+    "mtime_ns": 1783624365744802306,
+    "word_count": 10,
+    "hash": "9e0aeb0e49fabd2ddfbb5648d00a5d7001d92316f245d03071a1fa64ea26af9b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/feature.json": {
+    "size": 57,
+    "mtime_ns": 1783624365744905181,
+    "word_count": 4,
+    "hash": "cfa554905244b629042505e6b1eca5504d3cd1ef18fdcfef5545bff13c0a4966"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/memory/constitution.md": {
+    "size": 9221,
+    "mtime_ns": 1783624365745036348,
+    "word_count": 1291,
+    "hash": "d949a5fd37cf87dec9a2db8e3519fe73612e88d19604dd19f5231b11d7b7ab36"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/bash/check-prerequisites.sh": {
+    "size": 797,
+    "mtime_ns": 1783624365745478682,
+    "word_count": 89,
+    "hash": "531cf3f8c744218ce11ed8f417e489696a85906e32fb93a446be306a3047dc6b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/bash/common.sh": {
+    "size": 858,
+    "mtime_ns": 1783624365745589265,
+    "word_count": 111,
+    "hash": "09d1f34ecedad9bbb9631da330ebe77b409e8f7301e5dcf94fab012c0b5d685d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/bash/setup-plan.sh": {
+    "size": 290,
+    "mtime_ns": 1783624365745661974,
+    "word_count": 20,
+    "hash": "02150d404f4cd4d9504a843e7dbdb6f51a748213c263c0c7928eb08559727b54"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/bash/setup-tasks.sh": {
+    "size": 306,
+    "mtime_ns": 1783624365745726807,
+    "word_count": 19,
+    "hash": "916dfc74cd61a2cad36489b14994b53be7713368128d79d8094b1032008da523"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/check-prerequisites.ps1": {
+    "size": 699,
+    "mtime_ns": 1783624365745836474,
+    "word_count": 76,
+    "hash": "0dfbdca71fb1f906521b91e20c5931bdd9f5fe72785e1be5d777626ca19804a4"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/common.ps1": {
+    "size": 1432,
+    "mtime_ns": 1783624365745906557,
+    "word_count": 170,
+    "hash": "adabb6718baf40c9df7b3545806e309844affd015d52019c903226cb751fe516"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/setup-plan.ps1": {
+    "size": 353,
+    "mtime_ns": 1783624365746109641,
+    "word_count": 37,
+    "hash": "13049d44b5d62c22b20d3a9a9f5f904d4c596d1efe6bd8606163e4b3eefccebb"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/scripts/powershell/setup-tasks.ps1": {
+    "size": 343,
+    "mtime_ns": 1783624365746206808,
+    "word_count": 32,
+    "hash": "acf6ba70e1da225835ef498b0d6cd790455a49234df4c74ad62ab29af348dcc9"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/templates/plan-template.md": {
+    "size": 3239,
+    "mtime_ns": 1783624365746408808,
+    "word_count": 433,
+    "hash": "01a7a0a2e0bb4acebebe0071920297652507113d75cd6c7d73bd26789c7ed4e9"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/templates/spec-template.md": {
+    "size": 2543,
+    "mtime_ns": 1783624365746507141,
+    "word_count": 349,
+    "hash": "e08c90dc7947bd27e1e54b4545556ad812e8fd7d0d550735dda1ed2bf9b43cbb"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.specify/templates/tasks-template.md": {
+    "size": 2318,
+    "mtime_ns": 1783624365746649308,
+    "word_count": 351,
+    "hash": "80f582d34159bd523eb20c3f82df75423a15adc435d677528507afc5cfdf5fa8"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/CLAUDE.md": {
+    "size": 2541,
+    "mtime_ns": 1783624365746777850,
+    "word_count": 335,
+    "hash": "a5c1bbda5340e31306e61ddbe38156eb7fa5f22cec93e558722f207d5a8f68f3"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/GATEPASS_ONEPAGER_V4.md": {
+    "size": 9823,
+    "mtime_ns": 1783624365746868433,
+    "word_count": 1406,
+    "hash": "f7d9b486e1c5787755a854995c6eb368150706fe51c2518c27b0ed59e18a4b44"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/HANDOFF.md": {
+    "size": 16740,
+    "mtime_ns": 1783624365746954100,
+    "word_count": 2175,
+    "hash": "67cab54249a2ecc1635a520069d6ff15684b7ea9ecebb4e2d75e47e92b306c87"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/README.md": {
+    "size": 2448,
+    "mtime_ns": 1783624365747028475,
+    "word_count": 307,
+    "hash": "ff2a14f30635171bee4d4e6b500e3dcab24d65aa23b752e6140a68d69085a40a"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/package.json": {
+    "size": 576,
+    "mtime_ns": 1783624365747159892,
+    "word_count": 42,
+    "hash": "e15ef32869a93837dd3c73d7e173d66ea4864026f90dff583b0c1eb95417005e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/src/handlers.ts": {
+    "size": 9385,
+    "mtime_ns": 1783624365747276850,
+    "word_count": 944
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/src/index.ts": {
+    "size": 874,
+    "mtime_ns": 1783624365747341059,
+    "word_count": 119
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/src/server.ts": {
+    "size": 5493,
+    "mtime_ns": 1783624365747420892,
+    "word_count": 663
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/src/store.ts": {
+    "size": 2120,
+    "mtime_ns": 1783624365747495892,
+    "word_count": 242
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/test/api.test.ts": {
+    "size": 7379,
+    "mtime_ns": 1783624365747608684,
+    "word_count": 724
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/api/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365747671267,
+    "word_count": 13,
+    "hash": "09dc81d8e35b1337184dc33f8f3d024ae7beee571af6e276385ac6f3a44c3ca0"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/workers/package.json": {
+    "size": 204,
+    "mtime_ns": 1783624365747769226,
+    "word_count": 20,
+    "hash": "c1878a5150dd23ce35d69d2e734e413af303cd09cda7593a13b7362469d8e10f"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/workers/src/index.ts": {
+    "size": 35,
+    "mtime_ns": 1783624365747863017,
+    "word_count": 4
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/workers/src/orchestrator.ts": {
+    "size": 4197,
+    "mtime_ns": 1783624365747935226,
+    "word_count": 459
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/workers/test/orchestrator.test.ts": {
+    "size": 2868,
+    "mtime_ns": 1783624365748043309,
+    "word_count": 320
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/apps/workers/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365748099184,
+    "word_count": 13,
+    "hash": "72b611d774292c709b256584c0766477bf712b6c6b19199b111453ac714fe2ba"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/package.json": {
+    "size": 143,
+    "mtime_ns": 1783624365748204893,
+    "word_count": 15,
+    "hash": "c4fb7bfcdb3e2d8b46a9e562ddfd2140250c699071d89ef6744a9d7718ed0a55"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/src/index.ts": {
+    "size": 63,
+    "mtime_ns": 1783624365748305143,
+    "word_count": 8
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/src/release-gate.ts": {
+    "size": 1791,
+    "mtime_ns": 1783624365748377643,
+    "word_count": 214
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/src/score.ts": {
+    "size": 3136,
+    "mtime_ns": 1783624365748451185,
+    "word_count": 398
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/test/release-gate.test.ts": {
+    "size": 1623,
+    "mtime_ns": 1783624365748566601,
+    "word_count": 175
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/test/score.test.ts": {
+    "size": 2664,
+    "mtime_ns": 1783624365748635268,
+    "word_count": 280
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/benchmark/tsconfig.json": {
+    "size": 134,
+    "mtime_ns": 1783624365748697018,
+    "word_count": 13,
+    "hash": "3c21d0040d451332260bf8f6b323d4e9563aaca8d11c23d5036ef5cd1232d405"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/cli/package.json": {
+    "size": 286,
+    "mtime_ns": 1783624365748793352,
+    "word_count": 24,
+    "hash": "3f61888a22d8d17b930a19ca1a2954dc6605d9406b4ac9f79a8b19c04e2a434d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/cli/src/index.ts": {
+    "size": 4321,
+    "mtime_ns": 1783624365748930602,
+    "word_count": 499
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/cli/tsconfig.json": {
+    "size": 154,
+    "mtime_ns": 1783624365748999893,
+    "word_count": 15,
+    "hash": "1452dc9341f5265c8ffd8672df7262d0beb32db9e68631bab8aee968422ecb45"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/README.md": {
+    "size": 1282,
+    "mtime_ns": 1783624365749104644,
+    "word_count": 168,
+    "hash": "a94fec41a8fec7c6b36f08883854fcc07fa589f016615b4319a50b9276f24edf"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/cross-surface/cross-surface-scope-mismatch/clean-scoped-client/case.json": {
+    "size": 218,
+    "mtime_ns": 1783624365749324311,
+    "word_count": 18,
+    "hash": "b2ba634f79eeb4d695869bc55c5da7446cc8a2d0949cf26bb3ded2c1ed81ad12"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/cross-surface/cross-surface-scope-mismatch/clean-scoped-client/tree/mcp/tools.json": {
+    "size": 193,
+    "mtime_ns": 1783624365749476352,
+    "word_count": 24,
+    "hash": "76a91d1c49812398ac0d90b3ff46bb48fe4e51ecb20e39e323484646a3b6d6ee"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/cross-surface/cross-surface-scope-mismatch/clean-scoped-client/tree/src/db.ts": {
+    "size": 538,
+    "mtime_ns": 1783624365749584811,
+    "word_count": 69
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/cross-surface/cross-surface-scope-mismatch/vuln-scoped-tool-unscoped-client/case.json": {
+    "size": 249,
+    "mtime_ns": 1783624365749691977,
+    "word_count": 20,
+    "hash": "6c018de76c105a9ddd87bf3d0a405d0def12b3e81f201c2ea90f1191b89d20e1"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/cross-surface/cross-surface-scope-mismatch/vuln-scoped-tool-unscoped-client/tree/mcp/tools.json": {
+    "size": 193,
+    "mtime_ns": 1783624365749837436,
+    "word_count": 24,
+    "hash": "10b36ffdade08814a6c05c061f3eb983b058cb4dbd1b7c0591b629f50a3ec0eb"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/cross-surface/cross-surface-scope-mismatch/vuln-scoped-tool-unscoped-client/tree/src/db.ts": {
+    "size": 225,
+    "mtime_ns": 1783624365749942894,
+    "word_count": 29
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/confused-deputy/clean-own-token-fixed-endpoint/case.json": {
+    "size": 233,
+    "mtime_ns": 1783624365750110645,
+    "word_count": 24,
+    "hash": "9b6e9bef83ed95770114f93d35bf952ba35442ec48fb7c8cdbbb8929f805a5a2"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/confused-deputy/clean-own-token-fixed-endpoint/tree/mcp/handler.ts": {
+    "size": 335,
+    "mtime_ns": 1783624365750244478,
+    "word_count": 41
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/confused-deputy/vuln-forwards-auth/case.json": {
+    "size": 223,
+    "mtime_ns": 1783624365750381895,
+    "word_count": 21,
+    "hash": "51a7db85a0b3ffc3601e6b17c65e01f145517a0e452b2876473d517b8f1a7b85"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/confused-deputy/vuln-forwards-auth/tree/mcp/handler.ts": {
+    "size": 285,
+    "mtime_ns": 1783624365750538520,
+    "word_count": 36
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/hbv/clean-specific/case.json": {
+    "size": 176,
+    "mtime_ns": 1783624365750782437,
+    "word_count": 20,
+    "hash": "2884848bdb9f27785f0fef097a787c2fe183b906b4bd0f536b8cd4b70ff64605"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/hbv/clean-specific/tree/mcp/tools.json": {
+    "size": 232,
+    "mtime_ns": 1783624365750947687,
+    "word_count": 32,
+    "hash": "97520342ddbd1a169db4808cb2b9063236a8ac9e3a4d5e87a65ae4117f9db6a4"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/hbv/vuln-vague-broad/case.json": {
+    "size": 185,
+    "mtime_ns": 1783624365751056687,
+    "word_count": 20,
+    "hash": "8539d379dbf167e82f9206e302e4db001fdccb97208c8221d7280415a7dcaec7"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/hbv/vuln-vague-broad/tree/mcp/tools.json": {
+    "size": 156,
+    "mtime_ns": 1783624365751191687,
+    "word_count": 20,
+    "hash": "58ed750d25b22bdad53303d298f0729ece53f3b5976155883e2fc0245537670b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/over-permissioned-loop/clean-bounded/case.json": {
+    "size": 202,
+    "mtime_ns": 1783624365751334979,
+    "word_count": 20,
+    "hash": "fcb242be737625885090cfa4dd3bd2c1c8ce566ffebb9f130c613e462adf38bc"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/over-permissioned-loop/clean-bounded/tree/agent/loop.ts": {
+    "size": 203,
+    "mtime_ns": 1783624365751490646,
+    "word_count": 32
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/over-permissioned-loop/vuln-unbounded/case.json": {
+    "size": 216,
+    "mtime_ns": 1783624365751600229,
+    "word_count": 21,
+    "hash": "d104a2d0874402e1637ce9273fe3e52459b0347d4636310aefb9c8cc024d3b5e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/over-permissioned-loop/vuln-unbounded/tree/agent/loop.ts": {
+    "size": 128,
+    "mtime_ns": 1783624365751754604,
+    "word_count": 18
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/tool-poisoning/clean-normal-desc/case.json": {
+    "size": 177,
+    "mtime_ns": 1783624365751891271,
+    "word_count": 15,
+    "hash": "822932a5b2466f293fc2cf731c26ca9dd735b52058853915db2f991ea877827f"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/tool-poisoning/clean-normal-desc/tree/mcp/tools.json": {
+    "size": 223,
+    "mtime_ns": 1783624365752035063,
+    "word_count": 30,
+    "hash": "c4be7473a505899bc6d30a684a0e52f232eede8f87f26ac2e0d9b7b019665209"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/tool-poisoning/vuln-injected-desc/case.json": {
+    "size": 206,
+    "mtime_ns": 1783624365752147063,
+    "word_count": 17,
+    "hash": "846797fd841ef4d6f051951a78ea1cbaf4b037d1bea28f9feaef44fae160eeb0"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/research/tool-poisoning/vuln-injected-desc/tree/mcp/tools.json": {
+    "size": 286,
+    "mtime_ns": 1783624365752301438,
+    "word_count": 45,
+    "hash": "a03e1e9fbaaef7bfd3c8c84e031b2a55f17fd1ba9fa82cc4a70b7f4f73ce057e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/cors-misconfig/clean-specific-origin/case.json": {
+    "size": 179,
+    "mtime_ns": 1783624365752498605,
+    "word_count": 17,
+    "hash": "92ff72ee2df1c19918fecfa9fc8f3692e91ab612d0b724f4f3af5a43ba091d5b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/cors-misconfig/clean-specific-origin/tree/src/api.ts": {
+    "size": 171,
+    "mtime_ns": 1783624365752674397,
+    "word_count": 21
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/cors-misconfig/vuln-wildcard-creds/case.json": {
+    "size": 191,
+    "mtime_ns": 1783624365752792647,
+    "word_count": 17,
+    "hash": "b3ac7250b51e6e53264945596696b004a2b6611154742384f07bf4093fbebb8d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/cors-misconfig/vuln-wildcard-creds/tree/src/api.ts": {
+    "size": 234,
+    "mtime_ns": 1783624365752969397,
+    "word_count": 22
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/exposed-secret/clean-env-usage/case.json": {
+    "size": 191,
+    "mtime_ns": 1783624365753136856,
+    "word_count": 19,
+    "hash": "482c28df0c71abfc3abc373c2e95b5bf6bc5cc4325be41b33eec28618796f85d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/exposed-secret/clean-env-usage/tree/src/config.ts": {
+    "size": 313,
+    "mtime_ns": 1783624365753312356,
+    "word_count": 32
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/exposed-secret/vuln-aws-in-bundle/case.json": {
+    "size": 189,
+    "mtime_ns": 1783624365753428689,
+    "word_count": 20,
+    "hash": "e34920ba3b9fa9034d8ee3d082b617df67bbc3edfb41d0609803940d288d04e4"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/missing-schema-validation/clean-typed/case.json": {
+    "size": 189,
+    "mtime_ns": 1783624365753811231,
+    "word_count": 17,
+    "hash": "2b6c903a526a309f1f2ef661e6974fd65e9ebc09fe213d4ce9e554d66bde548e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/missing-schema-validation/clean-typed/tree/mcp/tools.json": {
+    "size": 187,
+    "mtime_ns": 1783624365753982231,
+    "word_count": 23,
+    "hash": "e5a4beed12e89f2e48948abcbaa4051238fd98a062eeed7eb2827ebdbd77b53a"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/missing-schema-validation/vuln-untyped/case.json": {
+    "size": 197,
+    "mtime_ns": 1783624365754100607,
+    "word_count": 17,
+    "hash": "0f42b7e1b79a393a90aae7b85d9308f24d9229a7c81d89b88913520d93d2c26d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/missing-schema-validation/vuln-untyped/tree/mcp/tools.json": {
+    "size": 182,
+    "mtime_ns": 1783624365754387023,
+    "word_count": 23,
+    "hash": "5087fdc42fef47161cc794a56431081b1c936bb6d7e5bccde205b67bf7f0972e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/rls-gap/clean-with-rls/case.json": {
+    "size": 168,
+    "mtime_ns": 1783624365754706482,
+    "word_count": 19,
+    "hash": "6e949bbd1f96a185f53dea9417270573dd79db61ffdcc3c62b4b499a6022c2ce"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/rls-gap/clean-with-rls/tree/db/schema.sql": {
+    "size": 261,
+    "mtime_ns": 1783624365754886607,
+    "word_count": 36,
+    "hash": "ba683477a6e0281baa09bae693d313932c36d2bfb9d30a8f61675f8bc7e892b8"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/rls-gap/vuln-no-rls/case.json": {
+    "size": 170,
+    "mtime_ns": 1783624365755009399,
+    "word_count": 18,
+    "hash": "6d660319d12c3257c162860867c14ff138a2c5d15791450f9b2a32ec0685450b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/rls-gap/vuln-no-rls/tree/db/schema.sql": {
+    "size": 207,
+    "mtime_ns": 1783624365755295274,
+    "word_count": 32,
+    "hash": "24c4bef81b73f0477b1965f0a43d67318f1463f3d37825fdff594296dbb406a9"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unauth-mcp-transport/clean-authed/case.json": {
+    "size": 193,
+    "mtime_ns": 1783624365755654900,
+    "word_count": 17,
+    "hash": "53e7a76a610b4206cd46388713c27d106851bb07db2caa889c40584d2b52b616"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unauth-mcp-transport/clean-authed/tree/mcp/server.ts": {
+    "size": 465,
+    "mtime_ns": 1783624365755941066,
+    "word_count": 53
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unauth-mcp-transport/vuln-open-sse/case.json": {
+    "size": 199,
+    "mtime_ns": 1783624365756181775,
+    "word_count": 20,
+    "hash": "24e7e98a39559c8263bce136e21dcd26174ec42ed42b6fb83a492141c76f54e2"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unauth-mcp-transport/vuln-open-sse/tree/mcp/server.ts": {
+    "size": 356,
+    "mtime_ns": 1783624365756375900,
+    "word_count": 46
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unbounded-tool-param/clean-bounded/case.json": {
+    "size": 184,
+    "mtime_ns": 1783624365756568025,
+    "word_count": 16,
+    "hash": "e93ba1c89bba2748d95dbf4a5097bcf722d33e842b307de3a6c9073d30be0045"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unbounded-tool-param/clean-bounded/tree/mcp/tools.json": {
+    "size": 192,
+    "mtime_ns": 1783624365756878234,
+    "word_count": 25,
+    "hash": "4bdd18006067340ea9110694134faa244ead6f22ba4032c73a7ef84ef5ce6405"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unbounded-tool-param/vuln-unbounded-string/case.json": {
+    "size": 207,
+    "mtime_ns": 1783624365757070692,
+    "word_count": 17,
+    "hash": "a64ec43b3d7909bb2c2edae25d60e1751a95f1c48a65155e06bfc4e84f2eca0e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unbounded-tool-param/vuln-unbounded-string/tree/mcp/tools.json": {
+    "size": 169,
+    "mtime_ns": 1783624365757299901,
+    "word_count": 22,
+    "hash": "abdaf0a5b9c28f91434eaaa4ad5acff30c7a1be7056613fd027379727c677bbe"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unpinned-dependency/clean-pinned/case.json": {
+    "size": 181,
+    "mtime_ns": 1783624365758930111,
+    "word_count": 16,
+    "hash": "88265f1ee9b46e637b25c55bf58eabe3533226a83ef7822ee6574254c4c52cba"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unpinned-dependency/clean-pinned/tree/package.json": {
+    "size": 126,
+    "mtime_ns": 1783624365759063569,
+    "word_count": 13,
+    "hash": "6e94dcf2537506dee9f88a4b7cdd3caf7285e9a823c711934675553cf8dffb8b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unpinned-dependency/vuln-star-range/case.json": {
+    "size": 183,
+    "mtime_ns": 1783624365760630779,
+    "word_count": 17,
+    "hash": "986a326b1b887ba54354d796dce22b42ec903dd7f1333963ea7156d14f4b3169"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/cases/verified/unpinned-dependency/vuln-star-range/tree/package.json": {
+    "size": 123,
+    "mtime_ns": 1783624365760984238,
+    "word_count": 13,
+    "hash": "fdf09a1726d94e3197023354d0ebf1f767133a5607470b2560d56f5b4055f3ee"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/eval-repos/vulnerable-nextjs-mcp/README.md": {
+    "size": 850,
+    "mtime_ns": 1783624365762106489,
+    "word_count": 133,
+    "hash": "d9b74d5d105844e1d623858af8766c8a58f2f70b76e0560d74af9efe8d712e68"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/eval-repos/vulnerable-nextjs-mcp/mcp/server.ts": {
+    "size": 522,
+    "mtime_ns": 1783624365762849364,
+    "word_count": 75
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/eval-repos/vulnerable-nextjs-mcp/mcp/tools.json": {
+    "size": 319,
+    "mtime_ns": 1783624365762928864,
+    "word_count": 48,
+    "hash": "e24c218fdca4315e60217571f893024732178fc9d69f5a8b34592fda2c636ace"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/eval-repos/vulnerable-nextjs-mcp/src/db.ts": {
+    "size": 216,
+    "mtime_ns": 1783624365763036823,
+    "word_count": 28
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/eval-repos/vulnerable-nextjs-mcp/supabase/policies.sql": {
+    "size": 346,
+    "mtime_ns": 1783624365763147823,
+    "word_count": 53,
+    "hash": "e2747981550c7d71a51962aa52fe46926d19f13d660da05b0505c369881b613f"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/harness/cli.ts": {
+    "size": 2180,
+    "mtime_ns": 1783624365763250656,
+    "word_count": 221
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/harness/measure.ts": {
+    "size": 4440,
+    "mtime_ns": 1783624365763339448,
+    "word_count": 520
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/harness/package.json": {
+    "size": 292,
+    "mtime_ns": 1783624365763404115,
+    "word_count": 24,
+    "hash": "673591689ba33b3b9322df080cba4d1f5b25a8a199de8a7cf46ec579f7d37a60"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/corpus/schema/case.schema.json": {
+    "size": 443,
+    "mtime_ns": 1783624365763517240,
+    "word_count": 50,
+    "hash": "31970ce614e95fd374ab43301da07787a34c9dba63b87a1760bcab318c3e731a"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/docker-compose.yml": {
+    "size": 332,
+    "mtime_ns": 1783624365763584782,
+    "word_count": 25,
+    "hash": "024070b9162e89555c84b1e9377ccfbf69817784b41507ae2c5ba7162071998d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/eslint.config.js": {
+    "size": 907,
+    "mtime_ns": 1783624365763656282,
+    "word_count": 86
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/package.json": {
+    "size": 893,
+    "mtime_ns": 1783624365763720324,
+    "word_count": 86,
+    "hash": "ab3f89de8e8feb72cd63274fec23fcbd740e5712496d234451250d9a426b6773"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/package.json": {
+    "size": 288,
+    "mtime_ns": 1783624365763865032,
+    "word_count": 24,
+    "hash": "76d67e18574e6877481d00a8dfaf6949ac2ff3d0a536b1bad3a876d9fd054e41"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/confused-deputy.ts": {
+    "size": 3408,
+    "mtime_ns": 1783624365763971865,
+    "word_count": 313
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/cors.ts": {
+    "size": 3026,
+    "mtime_ns": 1783624365764035949,
+    "word_count": 302
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/cross-surface.ts": {
+    "size": 4961,
+    "mtime_ns": 1783624365764109740,
+    "word_count": 538
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/dependencies.ts": {
+    "size": 2383,
+    "mtime_ns": 1783624365764175074,
+    "word_count": 264
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/exposed-secret.ts": {
+    "size": 3067,
+    "mtime_ns": 1783624365764246157,
+    "word_count": 348
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/fixes.ts": {
+    "size": 1959,
+    "mtime_ns": 1783624365764317532,
+    "word_count": 231
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/hbv.ts": {
+    "size": 2936,
+    "mtime_ns": 1783624365764392449,
+    "word_count": 313
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/index.ts": {
+    "size": 447,
+    "mtime_ns": 1783624365764467741,
+    "word_count": 52
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/over-permissioned-loop.ts": {
+    "size": 2321,
+    "mtime_ns": 1783624365764548158,
+    "word_count": 219
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/pipeline.ts": {
+    "size": 4918,
+    "mtime_ns": 1783624365764632616,
+    "word_count": 536
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/rls-gap.ts": {
+    "size": 2301,
+    "mtime_ns": 1783624365764702241,
+    "word_count": 238
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/tool-params.ts": {
+    "size": 4820,
+    "mtime_ns": 1783624365764782741,
+    "word_count": 500
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/tool-poisoning.ts": {
+    "size": 2669,
+    "mtime_ns": 1783624365764853616,
+    "word_count": 316
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/src/unauth-mcp-transport.ts": {
+    "size": 2748,
+    "mtime_ns": 1783624365764922991,
+    "word_count": 271
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/test/detectors.test.ts": {
+    "size": 10530,
+    "mtime_ns": 1783624365765061033,
+    "word_count": 1212
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/detectors/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365765127616,
+    "word_count": 13,
+    "hash": "834bff1f30244c11a7a63e58c926d95bcfda759721b2d8bef4bb9816887ac724"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/package.json": {
+    "size": 205,
+    "mtime_ns": 1783624365765229116,
+    "word_count": 20,
+    "hash": "db35ae3db58f63a48d823038f52085e1e5979d522222f4fd46b87c804cea16cd"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/src/detector.ts": {
+    "size": 1243,
+    "mtime_ns": 1783624365765335533,
+    "word_count": 176
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/src/frameworks.ts": {
+    "size": 1522,
+    "mtime_ns": 1783624365765395450,
+    "word_count": 135
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/src/index.ts": {
+    "size": 130,
+    "mtime_ns": 1783624365765451492,
+    "word_count": 16
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/src/scan-context.ts": {
+    "size": 2691,
+    "mtime_ns": 1783624365765522075,
+    "word_count": 317
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/src/surfaces.ts": {
+    "size": 1841,
+    "mtime_ns": 1783624365765583992,
+    "word_count": 209
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/test/frameworks.test.ts": {
+    "size": 1966,
+    "mtime_ns": 1783624365765698825,
+    "word_count": 204
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/engine/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365765752742,
+    "word_count": 13,
+    "hash": "0975a173c0bad2c9dd9907f84f12fc7902a6f45350e54838c40ad871d6975c34"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/package.json": {
+    "size": 207,
+    "mtime_ns": 1783624365765854159,
+    "word_count": 20,
+    "hash": "961a7e7bd7343f317dc3ef6a958cef18e649cc140a573c49a1f9521f490bba42"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/src/controls.ts": {
+    "size": 2997,
+    "mtime_ns": 1783624365765958909,
+    "word_count": 309
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/src/index.ts": {
+    "size": 123,
+    "mtime_ns": 1783624365766024742,
+    "word_count": 16
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/src/ingest.ts": {
+    "size": 3789,
+    "mtime_ns": 1783624365766096534,
+    "word_count": 495
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/src/questionnaire.ts": {
+    "size": 2610,
+    "mtime_ns": 1783624365766270492,
+    "word_count": 283
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/src/xlsx.ts": {
+    "size": 8886,
+    "mtime_ns": 1783624365766365617,
+    "word_count": 953
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/test/evidence.test.ts": {
+    "size": 2608,
+    "mtime_ns": 1783624365766479326,
+    "word_count": 284
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/test/ingest.test.ts": {
+    "size": 2382,
+    "mtime_ns": 1783624365766542993,
+    "word_count": 247
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/evidence/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365766605451,
+    "word_count": 13,
+    "hash": "d51f66a80981e6a2be4438545729be26bb470d70adb200c16841d824b6695333"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/package.json": {
+    "size": 188,
+    "mtime_ns": 1783624365766705326,
+    "word_count": 20,
+    "hash": "0206498639f5213db6c757dd6c0fdf0c50e9423963159f019d37bc200a068e9b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/src/index.ts": {
+    "size": 723,
+    "mtime_ns": 1783624365766810160,
+    "word_count": 83
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/src/redaction.ts": {
+    "size": 1105,
+    "mtime_ns": 1783624365766889618,
+    "word_count": 133
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/src/sarif.ts": {
+    "size": 1776,
+    "mtime_ns": 1783624365766953701,
+    "word_count": 198
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/src/schema.ts": {
+    "size": 3359,
+    "mtime_ns": 1783624365767023743,
+    "word_count": 338
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/test/tier-integrity.test.ts": {
+    "size": 3506,
+    "mtime_ns": 1783624365767125452,
+    "word_count": 386
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/findings/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365767182952,
+    "word_count": 13,
+    "hash": "d7e18008cbcd326e8cd43b232d925d942bcabe5e4bf323644538c8d9a6419f9f"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/package.json": {
+    "size": 244,
+    "mtime_ns": 1783624365767291618,
+    "word_count": 22,
+    "hash": "7de6b9c643f7f41823362c40b9980347f7bbba46a7f3047173b3881ccb92ab4d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/src/checkrun.ts": {
+    "size": 2684,
+    "mtime_ns": 1783624365767404660,
+    "word_count": 342
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/src/index.ts": {
+    "size": 123,
+    "mtime_ns": 1783624365767462410,
+    "word_count": 16
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/src/poster.ts": {
+    "size": 2318,
+    "mtime_ns": 1783624365767526785,
+    "word_count": 282
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/src/rest-client.ts": {
+    "size": 2944,
+    "mtime_ns": 1783624365767598994,
+    "word_count": 330
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/src/review.ts": {
+    "size": 2156,
+    "mtime_ns": 1783624365767683535,
+    "word_count": 234
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/test/gate-review.test.ts": {
+    "size": 3199,
+    "mtime_ns": 1783624365767790119,
+    "word_count": 339
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/test/poster.test.ts": {
+    "size": 3021,
+    "mtime_ns": 1783624365767858869,
+    "word_count": 310
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/test/rest-client.test.ts": {
+    "size": 2480,
+    "mtime_ns": 1783624365767926494,
+    "word_count": 266
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/github/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365767992536,
+    "word_count": 13,
+    "hash": "78d0a08b0028fff58d3b7cca76cbcb9f9499242a12e9f7c1c4760bf345259516"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/rules-registry/package.json": {
+    "size": 213,
+    "mtime_ns": 1783624365768107786,
+    "word_count": 20,
+    "hash": "6377108f0933ec91a57e258b8dad0faf9921258ffe9903f77468513fe066f076"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/rules-registry/src/index.ts": {
+    "size": 3260,
+    "mtime_ns": 1783624365768227994,
+    "word_count": 375
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/rules-registry/test/lifecycle.test.ts": {
+    "size": 2363,
+    "mtime_ns": 1783624365768342328,
+    "word_count": 217
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/rules-registry/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365768410453,
+    "word_count": 13,
+    "hash": "ea6bb9046a05f66a36acf1a734a1d3cea85734b496f7dbe090f027496b1765da"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/package.json": {
+    "size": 142,
+    "mtime_ns": 1783624365768502953,
+    "word_count": 15,
+    "hash": "b780bcf20ec40e726399dc73fb956411412a7840ee8c5d96f768fd44db51c31e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/src/analyze.ts": {
+    "size": 2370,
+    "mtime_ns": 1783624365768611620,
+    "word_count": 292
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/src/gateway.ts": {
+    "size": 2358,
+    "mtime_ns": 1783624365768683370,
+    "word_count": 293
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/src/index.ts": {
+    "size": 60,
+    "mtime_ns": 1783624365768744703,
+    "word_count": 8
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/test/analyze.test.ts": {
+    "size": 1287,
+    "mtime_ns": 1783624365768859911,
+    "word_count": 139
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/test/gateway.test.ts": {
+    "size": 1699,
+    "mtime_ns": 1783624365768967328,
+    "word_count": 181
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/semantic/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365769058662,
+    "word_count": 13,
+    "hash": "e03c31d88cd9916acdff301d6c13eb762a71e19788546c7656ed3deac1e76449"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/db/migrations/0001_core.sql": {
+    "size": 3325,
+    "mtime_ns": 1783624365769278412,
+    "word_count": 414,
+    "hash": "30d987d5359124d448c57f485c96f63c75c936bda6ea22c8051c899f1dba390b"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/db/migrations/0002_findings.sql": {
+    "size": 4682,
+    "mtime_ns": 1783624365769377912,
+    "word_count": 578,
+    "hash": "bc6ae9b7fcdae76e5babeb977aec525b5dff5ee117840a313aacc50f5698b21e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/package.json": {
+    "size": 140,
+    "mtime_ns": 1783624365769447412,
+    "word_count": 15,
+    "hash": "bb355614ee144daaf6312cbafae34fbaa616496571b31f410068a54e08a7c1cc"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/audit.ts": {
+    "size": 1731,
+    "mtime_ns": 1783624365769560787,
+    "word_count": 228
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/config.ts": {
+    "size": 956,
+    "mtime_ns": 1783624365769628912,
+    "word_count": 104
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/crypto.ts": {
+    "size": 1676,
+    "mtime_ns": 1783624365769693495,
+    "word_count": 177
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/disclosure.ts": {
+    "size": 1863,
+    "mtime_ns": 1783624365769754079,
+    "word_count": 238
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/index.ts": {
+    "size": 215,
+    "mtime_ns": 1783624365769815579,
+    "word_count": 28
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/plan-tier.ts": {
+    "size": 1628,
+    "mtime_ns": 1783624365769878246,
+    "word_count": 195
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/retention.ts": {
+    "size": 1080,
+    "mtime_ns": 1783624365769935996,
+    "word_count": 139
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/src/telemetry.ts": {
+    "size": 2184,
+    "mtime_ns": 1783624365770000538,
+    "word_count": 293
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/test/disclosure.test.ts": {
+    "size": 1494,
+    "mtime_ns": 1783624365770112371,
+    "word_count": 148
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/test/infra.test.ts": {
+    "size": 3296,
+    "mtime_ns": 1783624365770181163,
+    "word_count": 326
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/test/shared.test.ts": {
+    "size": 2445,
+    "mtime_ns": 1783624365770257913,
+    "word_count": 242
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/packages/shared/tsconfig.json": {
+    "size": 137,
+    "mtime_ns": 1783624365770322330,
+    "word_count": 13,
+    "hash": "fc3e96376f26926ccc10616b69aec4630a981235679f4c32f8793111f565d607"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/pnpm-workspace.yaml": {
+    "size": 100,
+    "mtime_ns": 1783624365770747538,
+    "word_count": 13,
+    "hash": "a34860dc9ffb5b078316a9c5c2c8ddc6b4bfe80ee7360053fffdf38f16bb8de9"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/runner/package.json": {
+    "size": 286,
+    "mtime_ns": 1783624365770855497,
+    "word_count": 24,
+    "hash": "0bd5bdd7a3933cd1c8ee72fcfb84c2f1a28ef711c60dde197f4f640a6c36c75a"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/runner/src/index.ts": {
+    "size": 31,
+    "mtime_ns": 1783624365770969788,
+    "word_count": 4
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/runner/src/protocol.ts": {
+    "size": 2509,
+    "mtime_ns": 1783624365771038497,
+    "word_count": 334
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/runner/test/protocol.test.ts": {
+    "size": 3032,
+    "mtime_ns": 1783624365771690747,
+    "word_count": 332
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/runner/tsconfig.json": {
+    "size": 134,
+    "mtime_ns": 1783624365771775331,
+    "word_count": 13,
+    "hash": "04d04a6b487597496c26695f15e9b1f048903c9fbcad6d03fa7fadbdc3516af1"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/checklists/requirements.md": {
+    "size": 1783,
+    "mtime_ns": 1783624365772006623,
+    "word_count": 244,
+    "hash": "600cf3004e65218a1e413d3e4e14bacf67f5a00b0d6fba55e7e6581a241bff34"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/contracts/api.md": {
+    "size": 2426,
+    "mtime_ns": 1783624365772133331,
+    "word_count": 352,
+    "hash": "8b3eea2b7c60792586e37c8b8e13f81791ca745aee12aacc71f5150aa8bfebf2"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/contracts/cli.md": {
+    "size": 1288,
+    "mtime_ns": 1783624365772207164,
+    "word_count": 190,
+    "hash": "9d2e7a76afb8662ff3334412bb67a3bf9b75dedfc1bca31fadc153c813043e87"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/contracts/evidence-export.md": {
+    "size": 1647,
+    "mtime_ns": 1783624365772332123,
+    "word_count": 243,
+    "hash": "f43cc878f3955645c32c2cead686bea7454c60837e8bcd89134c978ca3049160"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/contracts/findings-schema.md": {
+    "size": 2071,
+    "mtime_ns": 1783624365772540415,
+    "word_count": 230,
+    "hash": "49ac027263dc75983ced8059e5ba7751ada34dd92023cd285c2ebbc17fe4e238"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/contracts/github-integration.md": {
+    "size": 1639,
+    "mtime_ns": 1783624365772685290,
+    "word_count": 254,
+    "hash": "93f8b749a570d97292d35d21b28f8aa3ccbe2fe505fc4defeaa86f1cb7593e32"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/contracts/runner-protocol.md": {
+    "size": 1660,
+    "mtime_ns": 1783624365772836290,
+    "word_count": 233,
+    "hash": "d3eaf7614f528974dd6dfec9ae4f48ccf7b18cb4da9a4af2ee5389fb8706e375"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/data-model.md": {
+    "size": 6984,
+    "mtime_ns": 1783624365773019082,
+    "word_count": 1177,
+    "hash": "f1c2411b8611ee9fbbb0599d2b4d694ff71fc6d47bb2fc21c64bfa0d82ada75d"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/plan.md": {
+    "size": 6879,
+    "mtime_ns": 1783624365773202165,
+    "word_count": 875,
+    "hash": "47331ffb31cf4a5f22cf7fa415e683891928e9089dad6424b2ec1c8879fd2949"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/quickstart.md": {
+    "size": 3689,
+    "mtime_ns": 1783624365773301707,
+    "word_count": 485,
+    "hash": "0233e4d3fcf0bbc9a4205b4a087ae7b9885b929e0039d9aab3370157182f8e95"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/research.md": {
+    "size": 8172,
+    "mtime_ns": 1783624365773411166,
+    "word_count": 1062,
+    "hash": "bf9a3a29d370afc909088ec9d37b84515dc2d33d96f72afb2aeed692aece3c1e"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/spec.md": {
+    "size": 25840,
+    "mtime_ns": 1783624365773531916,
+    "word_count": 3617,
+    "hash": "a9e36670c2ebaf983b2395b1c99645165d4e4495721b2d16653eddf72f9196f3"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/tasks.md": {
+    "size": 27248,
+    "mtime_ns": 1783624365774128833,
+    "word_count": 3480,
+    "hash": "c0ae6a28787a96518d35b4f9d21cd5d3cf8bdf23bed70a1f9e1e5dfce8fa238a"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/validation/build-status.md": {
+    "size": 6132,
+    "mtime_ns": 1783624365774307500,
+    "word_count": 878,
+    "hash": "2b32792ae23f51fb9ffd9c6a6065d9378cc14dd2340b01b878ebb7d4298f7a56"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/specs/001-gatepass-platform/validation/us1.md": {
+    "size": 3021,
+    "mtime_ns": 1783624365774398708,
+    "word_count": 378,
+    "hash": "13bc9465d69fe105c2f693eb5266cfbb0c0b6b21c2d6c2949ea09f822b0b42e6"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/tsconfig.base.json": {
+    "size": 471,
+    "mtime_ns": 1783624365774485416,
+    "word_count": 35,
+    "hash": "294a930fb73c3a67ac05b39b6bf848a054116fe5d28c3bb8a11125a418eec1b8"
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/vitest.config.ts": {
+    "size": 331,
+    "mtime_ns": 1783624365774573333,
+    "word_count": 23
+  },
+  "/Users/aadisaraf/Documents/YC/AI_Security/gatepass/.omo/run-continuation/ses_0b7afd285ffehBPYNqVTr0IVix.json": {
+    "size": 214,
+    "mtime_ns": 1783624660653756069,
+    "word_count": 16,
+    "hash": "0a3490e20bac3789d96b6bbf5a2e7cc77c2e6a7ab07a7263ee2a63c188a8b68c"
+  }
+}

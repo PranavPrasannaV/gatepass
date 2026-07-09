@@ -1,0 +1,64 @@
+{
+  "nodes": [
+    {
+      "id": "_github_workflows_ci_yml",
+      "label": "CI Workflow",
+      "file_type": "document",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_workflows_ci_yml",
+      "target": "_specify_memory_constitution_principle_i",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_yml",
+      "target": "_specify_memory_constitution_principle_ii",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_yml",
+      "target": "_specify_memory_constitution_principle_v",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "ci_quality_gates",
+      "label": "CI Quality Gate System",
+      "nodes": [
+        "_github_workflows_ci_yml",
+        "_github_workflows_benchmark-monthly_yml",
+        "_github_workflows_release_yml",
+        "_github_workflows_self-scan_yml",
+        "_specify_memory_constitution_dev_workflow_gates"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".github/workflows/ci.yml"
+    }
+  ]
+}

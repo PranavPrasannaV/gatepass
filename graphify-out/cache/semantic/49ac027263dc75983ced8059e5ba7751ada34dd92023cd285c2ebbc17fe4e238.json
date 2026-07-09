@@ -1,0 +1,28 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_contracts_findings_schema_findings_schema",
+      "label": "Findings Schema Contract",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/contracts/findings-schema.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_contracts_findings_schema_findings_schema",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/findings-schema.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

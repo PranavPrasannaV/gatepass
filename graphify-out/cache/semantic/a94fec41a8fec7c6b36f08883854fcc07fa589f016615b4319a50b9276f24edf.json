@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "corpus_readme_corpus_documentation",
+      "label": "Corpus Documentation",
+      "file_type": "document",
+      "source_file": "corpus/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "corpus_readme_reproduction_verification",
+      "label": "Reproduction Verification (SC-002)",
+      "file_type": "concept",
+      "source_file": "corpus/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "corpus_readme_corpus_documentation",
+      "target": "corpus_readme_reproduction_verification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "corpus/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "corpus_readme_corpus_documentation",
+      "target": "corpus_eval_repos_vulnerable_nextjs_mcp_readme_eval_repo",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "corpus/README.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

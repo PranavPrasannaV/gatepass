@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_gatepass_platform_contracts_github_integration_github_integration",
+      "label": "GitHub Integration Contract",
+      "file_type": "document",
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_contracts_github_integration_ci_gate",
+      "label": "CI Gate",
+      "file_type": "concept",
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_gatepass_platform_contracts_github_integration_pr_remediation",
+      "label": "PR Remediation",
+      "file_type": "concept",
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_gatepass_platform_contracts_github_integration_github_integration",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_contracts_github_integration_github_integration",
+      "target": "specs_001_gatepass_platform_contracts_github_integration_ci_gate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_contracts_github_integration_github_integration",
+      "target": "specs_001_gatepass_platform_contracts_github_integration_pr_remediation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_gatepass_platform_contracts_github_integration_ci_gate",
+      "target": "specs_001_gatepass_platform_contracts_github_integration_pr_remediation",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "github_integration_workflow",
+      "label": "GitHub Integration Workflow",
+      "nodes": [
+        "specs_001_gatepass_platform_contracts_github_integration_github_integration",
+        "specs_001_gatepass_platform_contracts_github_integration_ci_gate",
+        "specs_001_gatepass_platform_contracts_github_integration_pr_remediation"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "specs/001-gatepass-platform/contracts/github-integration.md"
+    }
+  ]
+}

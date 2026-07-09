@@ -1,0 +1,342 @@
+{
+  "nodes": [
+    {
+      "id": "handoff_engineering_handoff",
+      "label": "Engineering Handoff",
+      "file_type": "document",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_constitution",
+      "label": "Constitution",
+      "file_type": "rationale",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_two_tier_findings",
+      "label": "Two-Tier Findings System",
+      "file_type": "rationale",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_cross_surface_analysis",
+      "label": "Cross-Surface Analysis",
+      "file_type": "concept",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_spec_kit_workflow",
+      "label": "Spec-Kit Workflow",
+      "file_type": "concept",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_verified_detectors",
+      "label": "Verified Detectors (7 classes)",
+      "file_type": "code",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_research_detectors",
+      "label": "Research Detectors (5 classes)",
+      "file_type": "code",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_self_scan",
+      "label": "Self-Scan CI",
+      "file_type": "concept",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "handoff_precision_benchmark",
+      "label": "Precision Benchmark",
+      "file_type": "concept",
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "readme_project_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "specs_001_gatepass_platform_spec_feature_specification",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "specs_001_gatepass_platform_plan_implementation_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "specs_001_gatepass_platform_tasks_task_ledger",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "specs_001_gatepass_platform_validation_build_status_build_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_constitution",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_two_tier_findings",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_cross_surface_analysis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_spec_kit_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_verified_detectors",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_research_detectors",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_self_scan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_engineering_handoff",
+      "target": "handoff_precision_benchmark",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_constitution",
+      "target": "handoff_two_tier_findings",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_constitution",
+      "target": "handoff_self_scan",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_constitution",
+      "target": "handoff_precision_benchmark",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_constitution",
+      "target": "corpus_readme_reproduction_verification",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_two_tier_findings",
+      "target": "handoff_verified_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_two_tier_findings",
+      "target": "handoff_research_detectors",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_two_tier_findings",
+      "target": "corpus_readme_reproduction_verification",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_cross_surface_analysis",
+      "target": "specs_001_gatepass_platform_spec_five_attack_surfaces",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handoff_precision_benchmark",
+      "target": "corpus_readme_corpus_documentation",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "HANDOFF.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "two_tier_findings_system",
+      "label": "Two-Tier Findings System",
+      "nodes": [
+        "handoff_two_tier_findings",
+        "handoff_verified_detectors",
+        "handoff_research_detectors",
+        "corpus_readme_reproduction_verification",
+        "handoff_constitution"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "HANDOFF.md"
+    }
+  ]
+}

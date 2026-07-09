@@ -1,17 +1,12 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import type { AddressInfo } from "node:net";
 import { createServer } from "../src/server.js";
-import { MemoryStore } from "../src/store.js";
 
 let base: string;
 let close: () => void;
 
 beforeAll(async () => {
-  const store = new MemoryStore();
-  store.upsertOrg({ id: "demo", planTier: "scale", llmEnabled: true, agentLoopEnabled: true });
-  store.upsertOrg({ id: "free-org", planTier: "free", llmEnabled: true, agentLoopEnabled: false });
-  store.upsertOrg({ id: "no-agent", planTier: "scale", llmEnabled: true, agentLoopEnabled: false });
-  const { server } = createServer(store);
+  const { server } = await createServer();
   await new Promise<void>((r) => server.listen(0, r));
   const { port } = server.address() as AddressInfo;
   base = `http://127.0.0.1:${port}`;

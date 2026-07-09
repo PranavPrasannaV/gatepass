@@ -1,18 +1,36 @@
 import http from "node:http";
 import { URL } from "node:url";
-import { MemoryStore } from "./store.js";
+import { MemoryStore, type Store } from "./store.js";
 import { makeHandlers, NotFoundError, ForbiddenError } from "./handlers.js";
+import type { GitHubClient } from "@gatepass/github";
 import { PlanTierError } from "@gatepass/shared";
 import { RunnerUploadError } from "@gatepass/runner";
 
 /**
  * Thin HTTP binding over the handlers. Minimal Node http server standing in for the
- * production Fastify app (plan §Primary Dependencies) — it exists so the platform wiring is
- * genuinely runnable end-to-end. Routes mirror contracts/api.md.
+ * production Fastify app — it exists so the platform wiring is genuinely runnable end-to-end.
+ * Routes mirror contracts/api.md.
  */
 
-export function createServer(store = new MemoryStore()): { server: http.Server; store: MemoryStore } {
-  const h = makeHandlers(store);
+export interface ServerOptions {
+  store?: Store;
+  githubClient?: GitHubClient;
+  llmTransport?: import("@gatepass/semantic").LlmTransport;
+  llmModel?: string;
+}
+
+export async function createServer(opts: ServerOptions = {}): Promise<{ server: http.Server; store: Store }> {
+  const store = opts.store ?? new MemoryStore();
+  const h = makeHandlers(store, {
+    githubClient: opts.githubClient,
+    llmTransport: opts.llmTransport,
+    llmModel: opts.llmModel,
+  });
+
+  // Seed demo orgs for integration tests and dev use
+  await store.upsertOrg({ id: "demo", planTier: "scale", llmEnabled: true, agentLoopEnabled: true });
+  await store.upsertOrg({ id: "free-org", planTier: "free", llmEnabled: true, agentLoopEnabled: false });
+  await store.upsertOrg({ id: "no-agent", planTier: "scale", llmEnabled: true, agentLoopEnabled: false });
 
   const server = http.createServer((req, res) => {
     void handle(req, res).catch((err) => sendError(res, err));
@@ -31,33 +49,33 @@ export function createServer(store = new MemoryStore()): { server: http.Server; 
     }
     // GET /v1/scans/:id/findings[?includeSuppressed=1]
     if (M === "GET" && p[1] === "scans" && p[3] === "findings") {
-      return sendJson(res, 200, h.getFindings(p[2]!, q.get("includeSuppressed") === "1"));
+      return sendJson(res, 200, await h.getFindings(p[2]!, q.get("includeSuppressed") === "1"));
     }
     if (M === "GET" && p[1] === "scans" && p[3] === "findings.sarif") {
-      return sendJson(res, 200, h.getSarif(p[2]!));
+      return sendJson(res, 200, await h.getSarif(p[2]!));
     }
     // POST /v1/scans/:id/gate
     if (M === "POST" && p[1] === "scans" && p[3] === "gate") {
-      return sendJson(res, 200, h.evaluateGate(p[2]!, body as never));
+      return sendJson(res, 200, await h.evaluateGate(p[2]!, body as never));
     }
     // GET /v1/orgs/:org/scans/:id/agent-guidance?fingerprint=
     if (M === "GET" && p[1] === "orgs" && p[3] === "scans" && p[5] === "agent-guidance") {
-      return sendJson(res, 200, h.agentGuidance(p[2]!, p[4]!, q.get("fingerprint") ?? ""));
+      return sendJson(res, 200, await h.agentGuidance(p[2]!, p[4]!, q.get("fingerprint") ?? ""));
     }
     // POST /v1/findings/:fingerprint/dispute { scanId, reason }
     if (M === "POST" && p[1] === "findings" && p[3] === "dispute") {
-      return sendJson(res, 200, h.disputeFinding(String(body.scanId), p[2]!, String(body.reason)));
+      return sendJson(res, 200, await h.disputeFinding(p[2]!, String(body.scanId), String(body.reason)));
     }
     // GET /v1/orgs/:org/evidence?scanId=
     if (M === "GET" && p[1] === "orgs" && p[3] === "evidence") {
-      return sendJson(res, 200, h.getEvidence(p[2]!, q.get("scanId") ?? ""));
+      return sendJson(res, 200, await h.getEvidence(p[2]!, q.get("scanId") ?? ""));
     }
     // POST /v1/orgs/:org/questionnaires { scanId, format, content }
     if (M === "POST" && p[1] === "orgs" && p[3] === "questionnaires") {
       return sendJson(
         res,
         200,
-        h.draftQuestionnaire(p[2]!, String(body.scanId), (body.format as never) ?? "csv", String(body.content)),
+        await h.draftQuestionnaire(p[2]!, String(body.scanId), (body.format as never) ?? "csv", String(body.content)),
       );
     }
     // POST /v1/orgs/:org/fleet/servers { name, endpointOrRepo, configHash }
@@ -65,27 +83,36 @@ export function createServer(store = new MemoryStore()): { server: http.Server; 
       return sendJson(
         res,
         201,
-        h.registerFleetServer(p[2]!, String(body.name), String(body.endpointOrRepo), String(body.configHash ?? "")),
+        await h.registerFleetServer(
+          p[2]!,
+          String(body.name),
+          String(body.endpointOrRepo),
+          String(body.configHash ?? ""),
+        ),
       );
     }
     // GET /v1/orgs/:org/fleet
     if (M === "GET" && p[1] === "orgs" && p[3] === "fleet" && p.length === 4) {
-      return sendJson(res, 200, h.fleetView(p[2]!));
+      return sendJson(res, 200, await h.fleetView(p[2]!));
     }
     // POST /v1/fleet/servers/:id/rescan { path }
     if (M === "POST" && p[1] === "fleet" && p[2] === "servers" && p[4] === "rescan") {
       return sendJson(res, 200, await h.scanFleetServer(p[3]!, String(body.path)));
     }
-    // POST /v1/runner/results  (canonical findings document; validated as findings-only)
+    // POST /v1/runner/results
     if (M === "POST" && p[1] === "runner" && p[2] === "results") {
-      return sendJson(res, 201, h.ingestRunnerResults(String(body.orgId ?? q.get("orgId")), body.document ?? body));
+      return sendJson(
+        res,
+        201,
+        await h.ingestRunnerResults(String(body.orgId ?? q.get("orgId")), body.document ?? body),
+      );
     }
     // POST /v1/benchmark/publish { tool, corpusVersion, labels, detections }
     if (M === "POST" && p[1] === "benchmark" && p[2] === "publish") {
       return sendJson(
         res,
         201,
-        h.publishBenchmark(
+        await h.publishBenchmark(
           String(body.tool),
           String(body.corpusVersion),
           body.labels as never,
@@ -93,9 +120,9 @@ export function createServer(store = new MemoryStore()): { server: http.Server; 
         ),
       );
     }
-    // GET /v1/public/benchmark[/:corpusVersion]  (no auth)
+    // GET /v1/public/benchmark[/:corpusVersion]
     if (M === "GET" && p[1] === "public" && p[2] === "benchmark") {
-      return sendJson(res, 200, h.getPublicBenchmark(p[3]));
+      return sendJson(res, 200, await h.getPublicBenchmark(p[3]));
     }
     sendJson(res, 404, { error: "not found" });
   }
