@@ -20,8 +20,13 @@ export function classifySurfaces(relPath: string): Surface[] {
   if (/(permissions?|scopes?|policy|rbac)\.(json|ya?ml|toml)$/.test(p)) {
     surfaces.add("permission_scopes");
   }
-  // MCP server implementation
-  if (/(^|\/)(mcp|server|agent)[^/]*\.(ts|js|py|go)$/.test(p) || p.includes("/mcp/") || p.includes("/agents/")) {
+  // MCP server implementation — keyed off an mcp/agent directory or an mcp-prefixed
+  // filename, NOT any file merely named "server" (a generic HTTP server is not an MCP
+  // server; that over-broad match caused false positives).
+  const segments = p.split("/");
+  const inAgentDir = segments.some((s) => s === "mcp" || s === "agent" || s === "agents");
+  const mcpNamed = /(^|\/)mcp[^/]*\.(ts|js|py|go)$/.test(p);
+  if (inAgentDir || mcpNamed) {
     surfaces.add("mcp_server");
     surfaces.add("agent_code");
   }

@@ -1,0 +1,7 @@
+{
+  "id": "verified/unbounded-tool-param/vuln-unbounded-string",
+  "classId": "unbounded-tool-param",
+  "label": "vulnerable",
+  "public": true,
+  "note": "String tool parameter with no maxLength/pattern"
+}

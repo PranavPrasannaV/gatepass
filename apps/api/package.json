@@ -1,0 +1,20 @@
+{
+  "name": "@gatepass/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@gatepass/detectors": "workspace:*",
+    "@gatepass/engine": "workspace:*",
+    "@gatepass/evidence": "workspace:*",
+    "@gatepass/findings": "workspace:*",
+    "@gatepass/github": "workspace:*",
+    "@gatepass/shared": "workspace:*"
+  }
+}

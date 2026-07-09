@@ -1,0 +1,28 @@
+name: Monthly benchmark
+
+# SC-007: the public benchmark is refreshed at least monthly. Runs Gatepass (and, at the
+# adapter boundary, pinned incumbent scanners) against the current corpus tag and publishes
+# per-class TP/FP results. Every published number is reproducible from its corpus version.
+
+on:
+  schedule:
+    - cron: "0 6 1 * *" # 06:00 UTC on the 1st of each month
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Measure Gatepass precision (corpus tag)
+        run: pnpm corpus:measure --corpus corpus-v1
+      # Publishing step (upload results JSON + static page) is wired to the artifacts store
+      # in the deployment environment; the measurement above is the reproducible core.

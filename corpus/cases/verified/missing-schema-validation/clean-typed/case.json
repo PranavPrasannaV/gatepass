@@ -1,0 +1,7 @@
+{
+  "id": "verified/missing-schema-validation/clean-typed",
+  "classId": "missing-schema-validation",
+  "label": "clean",
+  "public": true,
+  "note": "All tool parameters declare a type"
+}

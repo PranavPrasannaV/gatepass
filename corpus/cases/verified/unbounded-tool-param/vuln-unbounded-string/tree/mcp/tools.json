@@ -1,0 +1,11 @@
+{
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Runs a read query.",
+      "parameters": {
+        "sql": { "type": "string" }
+      }
+    }
+  ]
+}

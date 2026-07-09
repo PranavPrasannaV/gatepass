@@ -1,0 +1,7 @@
+{
+  "id": "verified/unbounded-tool-param/clean-bounded",
+  "classId": "unbounded-tool-param",
+  "label": "clean",
+  "public": true,
+  "note": "String parameter bounded by maxLength"
+}

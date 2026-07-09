@@ -1,0 +1,7 @@
+{
+  "id": "verified/rls-gap/clean-with-rls",
+  "classId": "rls-gap",
+  "label": "clean",
+  "public": true,
+  "note": "Table with RLS enabled and a per-tenant policy"
+}

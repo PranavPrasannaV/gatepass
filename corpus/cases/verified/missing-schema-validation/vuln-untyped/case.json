@@ -1,0 +1,7 @@
+{
+  "id": "verified/missing-schema-validation/vuln-untyped",
+  "classId": "missing-schema-validation",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Tool parameter lacks a declared type"
+}

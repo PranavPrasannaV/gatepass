@@ -1,0 +1,11 @@
+{
+  "tools": [
+    {
+      "name": "get_city",
+      "description": "Returns info for a city.",
+      "parameters": {
+        "city": { "type": "string", "maxLength": 64 }
+      }
+    }
+  ]
+}

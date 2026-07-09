@@ -1,0 +1,12 @@
+{
+  "name": "@gatepass/evidence",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@gatepass/findings": "workspace:*"
+  }
+}

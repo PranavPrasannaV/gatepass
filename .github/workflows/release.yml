@@ -1,0 +1,26 @@
+name: Release precision gate
+
+# FR-019: a release that regresses published precision is blocked until fixed or the
+# affected rules are demoted from the default ruleset. Runs the corpus measurement (which
+# fails on any FP-rate regression above the bar) as the release gate body.
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  precision-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Measure precision against tagged corpus
+        run: pnpm corpus:measure --corpus corpus-v1

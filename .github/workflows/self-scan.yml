@@ -1,0 +1,32 @@
+name: Self-scan
+
+# Constitution: the scanner MUST pass its own scan. Gatepass scans its own product source
+# with the production ruleset; any verified finding blocks the build. The corpus/ tree and
+# test fixtures are excluded — they contain intentional vulnerabilities by design.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  self-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Scan product source (excluding corpus + tests)
+        run: |
+          set -e
+          for dir in packages/*/src cli/src runner/src benchmark/src; do
+            echo "== scanning $dir =="
+            pnpm scan "$dir" --fail-on verified
+          done

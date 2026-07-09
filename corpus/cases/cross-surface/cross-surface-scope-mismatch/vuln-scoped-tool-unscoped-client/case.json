@@ -1,0 +1,7 @@
+{
+  "id": "cross-surface/cross-surface-scope-mismatch/vuln-scoped-tool-unscoped-client",
+  "classId": "cross-surface-scope-mismatch",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Scoped-looking tool backed by an unscoped admin DB client"
+}

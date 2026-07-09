@@ -1,0 +1,7 @@
+{
+  "id": "cross-surface/cross-surface-scope-mismatch/clean-scoped-client",
+  "classId": "cross-surface-scope-mismatch",
+  "label": "clean",
+  "public": true,
+  "note": "Scoped tool backed by a tenant-scoped client"
+}

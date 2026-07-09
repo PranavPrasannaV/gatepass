@@ -25,7 +25,14 @@ const IGNORED_DIRS = new Set([
 ]);
 
 const SCANNABLE = /\.(ts|tsx|js|jsx|mjs|cjs|py|go|sql|json|ya?ml|toml|env|map)$/i;
+// Manifest files without a scannable extension that still carry security-relevant signal.
+const MANIFESTS = new Set(["go.mod", "go.sum", "requirements.txt", "pipfile", "dockerfile"]);
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
+
+function isScannable(relPath: string): boolean {
+  const base = relPath.slice(relPath.lastIndexOf("/") + 1).toLowerCase();
+  return SCANNABLE.test(relPath) || MANIFESTS.has(base) || /(^|\/)\.env/.test(relPath);
+}
 
 async function* walk(dir: string): AsyncGenerator<string> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -53,7 +60,7 @@ export async function buildScanContext(root: string): Promise<ScanContext> {
 
   for await (const abs of walk(absRoot)) {
     const relPath = path.relative(absRoot, abs).replace(/\\/g, "/");
-    if (!SCANNABLE.test(relPath) && !/(^|\/)\.env/.test(relPath)) continue;
+    if (!isScannable(relPath)) continue;
     const stat = await fs.stat(abs);
     if (stat.size > MAX_FILE_BYTES) continue;
     const content = await fs.readFile(abs, "utf8");

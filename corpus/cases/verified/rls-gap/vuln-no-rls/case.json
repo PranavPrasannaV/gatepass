@@ -1,0 +1,7 @@
+{
+  "id": "verified/rls-gap/vuln-no-rls",
+  "classId": "rls-gap",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Table created without RLS or per-tenant policy"
+}

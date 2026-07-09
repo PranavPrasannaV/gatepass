@@ -1,0 +1,7 @@
+{
+  "id": "verified/cors-misconfig/clean-specific-origin",
+  "classId": "cors-misconfig",
+  "label": "clean",
+  "public": true,
+  "note": "CORS restricted to a specific origin"
+}

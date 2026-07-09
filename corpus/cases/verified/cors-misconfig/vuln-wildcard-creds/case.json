@@ -1,0 +1,7 @@
+{
+  "id": "verified/cors-misconfig/vuln-wildcard-creds",
+  "classId": "cors-misconfig",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Wildcard CORS origin with credentials enabled"
+}

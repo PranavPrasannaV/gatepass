@@ -9,12 +9,25 @@ import {
 import { exposedSecretDetector } from "./exposed-secret.js";
 import { unauthMcpTransportDetector } from "./unauth-mcp-transport.js";
 import { toolPoisoningDetector } from "./tool-poisoning.js";
+import { rlsGapDetector } from "./rls-gap.js";
+import { corsDetector } from "./cors.js";
+import { dependenciesDetector } from "./dependencies.js";
+import { unboundedToolParamDetector, missingSchemaValidationDetector } from "./tool-params.js";
+import { crossSurfaceScopeDetector } from "./cross-surface.js";
 
 /** The default (active) ruleset. */
 export const DEFAULT_DETECTORS: Detector[] = [
+  // verified tier
   exposedSecretDetector,
   unauthMcpTransportDetector,
+  rlsGapDetector,
+  corsDetector,
+  dependenciesDetector,
+  unboundedToolParamDetector,
+  missingSchemaValidationDetector,
+  // research tier
   toolPoisoningDetector,
+  crossSurfaceScopeDetector,
 ];
 
 function fingerprint(f: DetectorFinding): string {

@@ -1,5 +1,6 @@
 export * from "./schema.js";
 export * from "./redaction.js";
+export * from "./sarif.js";
 
 import { findingSchema, findingsDocumentSchema, type Finding, type FindingsDocument } from "./schema.js";
 

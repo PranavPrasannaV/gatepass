@@ -28,6 +28,29 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.1)
 
+  apps/api:
+    dependencies:
+      '@gatepass/detectors':
+        specifier: workspace:*
+        version: link:../../packages/detectors
+      '@gatepass/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      '@gatepass/evidence':
+        specifier: workspace:*
+        version: link:../../packages/evidence
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../../packages/findings
+      '@gatepass/github':
+        specifier: workspace:*
+        version: link:../../packages/github
+      '@gatepass/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  benchmark: {}
+
   cli:
     dependencies:
       '@gatepass/detectors':
@@ -67,17 +90,45 @@ importers:
         specifier: workspace:*
         version: link:../findings
 
+  packages/evidence:
+    dependencies:
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../findings
+
   packages/findings:
     dependencies:
       zod:
         specifier: ^3.24.1
         version: 3.25.76
 
+  packages/github:
+    dependencies:
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../findings
+
   packages/rules-registry:
     dependencies:
       '@gatepass/findings':
         specifier: workspace:*
         version: link:../findings
+
+  packages/semantic: {}
+
+  packages/shared: {}
+
+  runner:
+    dependencies:
+      '@gatepass/detectors':
+        specifier: workspace:*
+        version: link:../packages/detectors
+      '@gatepass/engine':
+        specifier: workspace:*
+        version: link:../packages/engine
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../packages/findings
 
 packages:
 

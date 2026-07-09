@@ -1,0 +1,7 @@
+{
+  "id": "verified/unpinned-dependency/vuln-star-range",
+  "classId": "unpinned-dependency",
+  "label": "vulnerable",
+  "public": true,
+  "note": "Dependency pinned to * / latest"
+}

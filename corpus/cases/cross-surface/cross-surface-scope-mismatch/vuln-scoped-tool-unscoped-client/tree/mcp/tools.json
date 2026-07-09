@@ -1,0 +1,9 @@
+{
+  "tools": [
+    {
+      "name": "get_user_invoices",
+      "description": "Returns the user's invoices.",
+      "parameters": { "userId": { "type": "string", "maxLength": 64 } }
+    }
+  ]
+}
