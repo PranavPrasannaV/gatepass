@@ -46,9 +46,7 @@ export async function getInstallationToken(config: GitHubAppConfig): Promise<Ins
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "(no body)");
-    throw new Error(
-      `GitHub App auth failed (${res.status}): ${body}`,
-    );
+    throw new Error(`GitHub App auth failed (${res.status}): ${body}`);
   }
   const json = (await res.json()) as { token: string; expires_at: string };
   return { token: json.token, expiresAt: new Date(json.expires_at) };

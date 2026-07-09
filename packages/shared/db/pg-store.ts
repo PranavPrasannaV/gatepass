@@ -110,16 +110,14 @@ export class PgStore {
             reproduction: f.reproduction ? JSON.stringify(f.reproduction) : null,
             confidence: f.confidence?.toString() ?? null,
             explanation: f.explanation,
-            status: "open",
+            status: "open" as const,
           })),
         )
         .onConflictDoNothing();
     }
   }
 
-  async getScan(
-    scanId: string,
-  ): Promise<
+  async getScan(scanId: string): Promise<
     | {
         id: string;
         orgId: string;
@@ -255,9 +253,7 @@ export class PgStore {
     return server;
   }
 
-  async getFleetServer(
-    serverId: string,
-  ): Promise<
+  async getFleetServer(serverId: string): Promise<
     | {
         id: string;
         orgId: string;
@@ -282,9 +278,7 @@ export class PgStore {
     };
   }
 
-  async fleetView(
-    orgId: string,
-  ): Promise<{
+  async fleetView(orgId: string): Promise<{
     servers: Array<{
       id: string;
       orgId: string;
