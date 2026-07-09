@@ -4,6 +4,10 @@ Precision AppSec platform for the AI-native stack: scans AI-generated app code a
 infrastructure (MCP servers, tool definitions, permission scopes) with two-tier findings,
 developer-workflow remediation, a public precision benchmark, and compliance evidence export.
 
+> **Taking over / need full context? Read [HANDOFF.md](HANDOFF.md).** It has the complete
+> picture: what's built vs. deferred (and why), how to run everything, the recurring bug
+> patterns, and how to continue with the vendored `/speckit-*` commands.
+
 ## Governance
 
 - **Constitution**: `.specify/memory/constitution.md` (v1.0.0) — six principles are
