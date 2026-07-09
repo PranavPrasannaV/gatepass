@@ -222,3 +222,25 @@ open implementation tasks above; each traces to a source-ref and gap-type.
 - [ ] T092 Add SLO instrumentation (stage-timing dashboards, p95 + 99.9% availability alerts, status page) per SC-011 (missing)
 - [ ] T093 Build the Next.js dashboard views (findings, fleet, benchmark, compliance) per US1–US5 UI (missing)
 - [X] T094 Package the self-hosted runner as a single binary/container and add the runner results endpoint on the API per FR-006a (partial)
+
+## Phase 10: Convergence
+
+Appended by `/speckit-converge` (2026-07-09, second pass). No constitution violations. The
+large remaining gaps are already tracked as open/partial tasks in Phase 9 and earlier; these
+six are the discrete partial-remainders that previously lived only inside task notes, now made
+actionable. Each traces to a source-ref and gap-type.
+
+### HIGH
+
+- [ ] T095 Make the scan pipeline async and invoke analyzeSemantic (LLM gateway) in-line so research-tier findings use model confidence when the org has LLM analysis enabled, falling back to the heuristic otherwise per FR-011a (partial)
+- [ ] T096 Implement the live Octokit-backed GitHubClient (postReview, createCheckRun) satisfying the Remediator interface so PR reviews and Check Runs actually post, through the audited writer, per FR-012, FR-016 (partial)
+
+### MEDIUM
+
+- [ ] T097 Add XLSX (spreadsheet) questionnaire ingestion feeding the existing posture-cited drafting logic per FR-022 (partial)
+- [ ] T098 Upgrade the brittle regex/line-based detectors to tree-sitter AST parsing for TS/JS, Python, and Go where structural analysis improves precision per plan: engine decision (partial)
+- [ ] T099 Add OpenTelemetry setup (traces/metrics/logs) and crypto helpers to the shared platform library per plan: observability, T008 (partial)
+
+### LOW
+
+- [ ] T100 Add ESLint + Prettier configs and wire a lint step into CI (.github/workflows/ci.yml) per plan: toolchain, T002 (partial)
