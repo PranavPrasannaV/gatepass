@@ -21,10 +21,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label
-            htmlFor={selectId}
-            className="text-sm font-medium text-gatepass-700 dark:text-gatepass-300"
-          >
+          <label htmlFor={selectId} className="text-sm font-medium text-gatepass-700 dark:text-gatepass-300">
             {label}
           </label>
         )}
@@ -36,9 +33,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               focus:outline-2 focus:outline-offset-2 focus:outline-accent-600
               disabled:cursor-not-allowed disabled:opacity-50
               dark:bg-gatepass-800 dark:text-gatepass-100
-              ${error
-                ? "border-severity-critical focus:outline-severity-critical"
-                : "border-gatepass-300 dark:border-gatepass-600"
+              ${
+                error
+                  ? "border-severity-critical focus:outline-severity-critical"
+                  : "border-gatepass-300 dark:border-gatepass-600"
               }
               ${className}`}
             aria-invalid={error ? "true" : undefined}

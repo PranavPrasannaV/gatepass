@@ -1,7 +1,14 @@
 import { API_BASE } from "./constants";
 import type {
-  OrgRecord, RepoRecord, ScanResult, FleetView, FleetServer,
-  AgentGuidance, EvidenceExport, QuestionnaireDraft, BenchmarkData,
+  OrgRecord,
+  RepoRecord,
+  ScanResult,
+  FleetView,
+  FleetServer,
+  AgentGuidance,
+  EvidenceExport,
+  QuestionnaireDraft,
+  BenchmarkData,
 } from "./types";
 import type { Finding } from "./types";
 import { ApiError } from "./types";
@@ -49,24 +56,33 @@ class ApiClient {
     return this.request(`/orgs/${orgId}/repos`);
   }
 
-  patchRepoSettings(orgId: string, repo: string, settings: Partial<{
-    gate_mode: string; gate_failure_mode: string; agent_loop_enabled: boolean;
-  }>): Promise<void> {
+  patchRepoSettings(
+    orgId: string,
+    repo: string,
+    settings: Partial<{
+      gate_mode: string;
+      gate_failure_mode: string;
+      agent_loop_enabled: boolean;
+    }>,
+  ): Promise<void> {
     return this.request(`/orgs/${orgId}/repos/${repo}`, {
-      method: "PATCH", body: JSON.stringify(settings),
+      method: "PATCH",
+      body: JSON.stringify(settings),
     });
   }
 
   patchOrgSettings(orgId: string, settings: Partial<{ llm_analysis_enabled: boolean }>): Promise<void> {
     return this.request(`/orgs/${orgId}/settings`, {
-      method: "PATCH", body: JSON.stringify(settings),
+      method: "PATCH",
+      body: JSON.stringify(settings),
     });
   }
 
   // === SCANS ===
   triggerScan(orgId: string, repoPath: string): Promise<ScanResult> {
     return this.request(`/orgs/${orgId}/scans`, {
-      method: "POST", body: JSON.stringify({ path: repoPath }),
+      method: "POST",
+      body: JSON.stringify({ path: repoPath }),
     });
   }
 
@@ -88,7 +104,8 @@ class ApiClient {
   // === FINDINGS ===
   disputeFinding(fingerprint: string, scanId: string, reason: string): Promise<{ ok: boolean; suppressed: string }> {
     return this.request(`/findings/${fingerprint}/dispute`, {
-      method: "POST", body: JSON.stringify({ scanId, reason }),
+      method: "POST",
+      body: JSON.stringify({ scanId, reason }),
     });
   }
 
@@ -101,15 +118,20 @@ class ApiClient {
     return this.request(`/orgs/${orgId}/fleet`);
   }
 
-  registerFleetServer(orgId: string, data: { name: string; endpointOrRepo: string; configHash: string }): Promise<FleetServer> {
+  registerFleetServer(
+    orgId: string,
+    data: { name: string; endpointOrRepo: string; configHash: string },
+  ): Promise<FleetServer> {
     return this.request(`/orgs/${orgId}/fleet/servers`, {
-      method: "POST", body: JSON.stringify(data),
+      method: "POST",
+      body: JSON.stringify(data),
     });
   }
 
   rescanFleetServer(serverId: string, repoPath: string): Promise<FleetServer> {
     return this.request(`/fleet/servers/${serverId}/rescan`, {
-      method: "POST", body: JSON.stringify({ path: repoPath }),
+      method: "POST",
+      body: JSON.stringify({ path: repoPath }),
     });
   }
 
@@ -128,15 +150,20 @@ class ApiClient {
     return this.request(`/orgs/${orgId}/questionnaires/${questionnaireId}`);
   }
 
-  draftQuestionnaire(orgId: string, data: { scanId: string; format: string; content: string }): Promise<QuestionnaireDraft> {
+  draftQuestionnaire(
+    orgId: string,
+    data: { scanId: string; format: string; content: string },
+  ): Promise<QuestionnaireDraft> {
     return this.request(`/orgs/${orgId}/questionnaires`, {
-      method: "POST", body: JSON.stringify(data),
+      method: "POST",
+      body: JSON.stringify(data),
     });
   }
 
   connectIntegration(orgId: string, platform: "vanta" | "drata"): Promise<{ ok: boolean }> {
     return this.request(`/orgs/${orgId}/integrations/${platform}`, {
-      method: "POST", body: JSON.stringify({}),
+      method: "POST",
+      body: JSON.stringify({}),
     });
   }
 }

@@ -34,7 +34,9 @@ export default function FleetPage() {
     }
   }
 
-  useEffect(() => { loadFleet(); }, []);
+  useEffect(() => {
+    loadFleet();
+  }, []);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -114,22 +116,43 @@ export default function FleetPage() {
             <h3 className="font-medium text-gatepass-900 dark:text-white">Register MCP Server</h3>
             <div>
               <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">Name</label>
-              <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="mt-1 block w-full rounded-lg border border-gatepass-300 bg-white px-4 py-2 text-sm dark:border-gatepass-600 dark:bg-gatepass-900 dark:text-white"
-                required />
+                required
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">Endpoint or repo path</label>
-              <input type="text" value={formData.endpointOrRepo} onChange={(e) => setFormData({ ...formData, endpointOrRepo: e.target.value })}
+              <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">
+                Endpoint or repo path
+              </label>
+              <input
+                type="text"
+                value={formData.endpointOrRepo}
+                onChange={(e) => setFormData({ ...formData, endpointOrRepo: e.target.value })}
                 className="mt-1 block w-full rounded-lg border border-gatepass-300 bg-white px-4 py-2 text-sm dark:border-gatepass-600 dark:bg-gatepass-900 dark:text-white"
-                required />
+                required
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">Config hash (optional)</label>
-              <input type="text" value={formData.configHash} onChange={(e) => setFormData({ ...formData, configHash: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-gatepass-300 bg-white px-4 py-2 text-sm dark:border-gatepass-600 dark:bg-gatepass-900 dark:text-white" />
+              <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">
+                Config hash (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.configHash}
+                onChange={(e) => setFormData({ ...formData, configHash: e.target.value })}
+                className="mt-1 block w-full rounded-lg border border-gatepass-300 bg-white px-4 py-2 text-sm dark:border-gatepass-600 dark:bg-gatepass-900 dark:text-white"
+              />
             </div>
-            <button type="submit" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">Register</button>
+            <button
+              type="submit"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+            >
+              Register
+            </button>
           </form>
         </Card>
       )}
@@ -144,7 +167,9 @@ export default function FleetPage() {
                   <h3 className="font-medium text-gatepass-900 dark:text-white">{server.name}</h3>
                   <p className="mt-1 text-xs text-gatepass-500 font-mono">{server.endpointOrRepo}</p>
                 </div>
-                <span className={`rounded px-2 py-1 text-xs font-medium ${POSTURE_COLORS[server.posture] ?? POSTURE_COLORS.unscanned}`}>
+                <span
+                  className={`rounded px-2 py-1 text-xs font-medium ${POSTURE_COLORS[server.posture] ?? POSTURE_COLORS.unscanned}`}
+                >
                   {server.posture}
                 </span>
               </div>
@@ -156,7 +181,11 @@ export default function FleetPage() {
           ))}
         </div>
       ) : (
-        <EmptyState icon={<Server size={48} />} title="No servers registered" description="Register an MCP server to start monitoring its security posture" />
+        <EmptyState
+          icon={<Server size={48} />}
+          title="No servers registered"
+          description="Register an MCP server to start monitoring its security posture"
+        />
       )}
     </div>
   );

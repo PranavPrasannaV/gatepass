@@ -35,16 +35,11 @@ export function Table<T extends Record<string, unknown>>({
     direction: "asc" | "desc";
   }>({ column: sortColumn ?? "", direction: sortDirection });
 
-  const currentSort = sortColumn
-    ? { column: sortColumn, direction: sortDirection }
-    : internalSort;
+  const currentSort = sortColumn ? { column: sortColumn, direction: sortDirection } : internalSort;
 
   const handleSort = useCallback(
     (column: string) => {
-      const newDirection =
-        currentSort.column === column && currentSort.direction === "asc"
-          ? "desc"
-          : "asc";
+      const newDirection = currentSort.column === column && currentSort.direction === "asc" ? "desc" : "asc";
 
       if (onSort) {
         onSort(column, newDirection);
@@ -98,10 +93,7 @@ export function Table<T extends Record<string, unknown>>({
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-8 text-center text-gatepass-500 dark:text-gatepass-400"
-              >
+              <td colSpan={columns.length} className="px-4 py-8 text-center text-gatepass-500 dark:text-gatepass-400">
                 {emptyMessage}
               </td>
             </tr>
@@ -115,9 +107,7 @@ export function Table<T extends Record<string, unknown>>({
               >
                 {columns.map((col) => (
                   <td key={col.key} className={`px-4 py-3 ${col.className ?? ""}`}>
-                    {col.render
-                      ? col.render(row[col.key] as T[keyof T], row)
-                      : String(row[col.key] ?? "")}
+                    {col.render ? col.render(row[col.key] as T[keyof T], row) : String(row[col.key] ?? "")}
                   </td>
                 ))}
               </tr>

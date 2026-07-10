@@ -43,7 +43,11 @@ export default function CompliancePage() {
       <Card>
         <h2 className="mb-4 font-medium text-gatepass-900 dark:text-white">Evidence Export History</h2>
         {evidenceExports.length === 0 ? (
-          <EmptyState icon={<FileCheck size={32} />} title="No exports yet" description="Run a scan and export evidence to see it here" />
+          <EmptyState
+            icon={<FileCheck size={32} />}
+            title="No exports yet"
+            description="Run a scan and export evidence to see it here"
+          />
         ) : (
           <table className="w-full text-sm">
             <thead>

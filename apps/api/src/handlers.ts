@@ -72,6 +72,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
         gateway,
       );
       await store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
+      if (store.putRepo) await store.putRepo(orgId, repoPath, doc.scan.id);
       const visible = await store.findingsOf(doc.scan.id);
       return {
         scanId: doc.scan.id,
@@ -208,6 +209,30 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
         return [];
       }
       return rec;
+    },
+
+    // GET /v1/orgs/:org
+    async getOrg(orgId: string) {
+      const org = await requireOrg(orgId);
+      return org;
+    },
+
+    // GET /v1/orgs/:org/repos
+    async listRepos(orgId: string) {
+      await requireOrg(orgId);
+      if (store.getRepos) {
+        const tracked = await store.getRepos(orgId);
+        return tracked.map((r) => ({
+          name: r.name,
+          visibility: "private",
+          scanStatus: r.lastScanId ? "complete" : "never_scanned",
+          gateMode: "off",
+          gateFailureMode: "fail_open",
+          frameworks: [] as string[],
+          lastScanId: r.lastScanId,
+        }));
+      }
+      return [];
     },
   };
 }

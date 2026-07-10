@@ -12,11 +12,7 @@ const variantStyles: Record<SkeletonVariant, string> = {
   avatar: "h-10 w-10 rounded-full",
 };
 
-export function Skeleton({
-  variant = "text",
-  className = "",
-  ...props
-}: SkeletonProps) {
+export function Skeleton({ variant = "text", className = "", ...props }: SkeletonProps) {
   return (
     <div
       className={`animate-skeleton bg-gatepass-200 dark:bg-gatepass-700

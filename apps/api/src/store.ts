@@ -46,6 +46,10 @@ export interface Store {
   upsertFleetServer?(server: FleetServer): Promise<FleetServer>;
   getFleetServer?(serverId: string): Promise<FleetServer | undefined>;
   fleetView?(orgId: string): Promise<{ servers: FleetServer[]; rollup: Record<string, number> }>;
+  /** Track a repo that has been scanned for an org. */
+  putRepo?(orgId: string, repoPath: string, scanId: string): Promise<void>;
+  /** List tracked repos for an org. */
+  getRepos?(orgId: string): Promise<Array<{ name: string; lastScanId: string }>>;
   getBenchmark?(corpusVersion?: string): Promise<unknown>;
   publishBenchmark?(corpusVersion: string, tool: string, results: string): Promise<void>;
   getLatestScan?(): Promise<{ id: string; orgId: string } | undefined>;
@@ -57,6 +61,8 @@ export class MemoryStore implements Store {
   readonly fleetServers = new Map<string, FleetServer>();
   /** Published benchmark runs keyed by corpus version (public, immutable once set). */
   readonly benchmarks = new Map<string, unknown>();
+  /** Scanned repos keyed by orgId → map of repo-name → lastScanId. */
+  readonly repos = new Map<string, Map<string, string>>();
   /** Org-level fingerprints suppressed by an accepted dispute (FR-011). */
   private readonly suppressed = new Map<string, Set<string>>();
 
@@ -119,6 +125,21 @@ export class MemoryStore implements Store {
     };
     for (const s of servers) rollup[s.posture]!++;
     return { servers, rollup };
+  }
+
+  async putRepo(orgId: string, repoPath: string, scanId: string): Promise<void> {
+    let orgRepos = this.repos.get(orgId);
+    if (!orgRepos) {
+      orgRepos = new Map();
+      this.repos.set(orgId, orgRepos);
+    }
+    orgRepos.set(repoPath, scanId);
+  }
+
+  async getRepos(orgId: string): Promise<Array<{ name: string; lastScanId: string }>> {
+    const orgRepos = this.repos.get(orgId);
+    if (!orgRepos) return [];
+    return [...orgRepos.entries()].map(([name, lastScanId]) => ({ name, lastScanId }));
   }
 
   async getBenchmark(corpusVersion?: string): Promise<unknown> {

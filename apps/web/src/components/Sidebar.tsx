@@ -2,7 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Search, Server, BarChart3, FileCheck, Settings, ChevronLeft, ChevronRight, Menu, Lightbulb } from "lucide-react";
+import {
+  Shield,
+  Search,
+  Server,
+  BarChart3,
+  FileCheck,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  Lightbulb,
+} from "lucide-react";
 import { useOrg } from "@/providers/OrgProvider";
 import { ThemeToggle } from "./ThemeToggle";
 import { useState } from "react";
@@ -40,9 +51,7 @@ export function Sidebar() {
       </button>
 
       {/* Overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setMobileOpen(false)} />
-      )}
+      {mobileOpen && <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setMobileOpen(false)} />}
 
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-40 flex flex-col border-r border-gatepass-200 bg-white dark:border-gatepass-700 dark:bg-gatepass-900 transition-all duration-200 ${
@@ -58,7 +67,9 @@ export function Sidebar() {
             <div className="flex items-center gap-2">
               <span className="font-semibold text-gatepass-900 dark:text-white">Gatepass</span>
               {org && (
-                <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase ${planColors[org.planTier] ?? planColors.free}`}>
+                <span
+                  className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase ${planColors[org.planTier] ?? planColors.free}`}
+                >
                   {org.planTier}
                 </span>
               )}

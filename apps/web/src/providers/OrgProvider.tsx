@@ -13,7 +13,10 @@ interface OrgContextValue {
 }
 
 const OrgContext = createContext<OrgContextValue>({
-  org: null, loading: true, error: null, refetch: () => {},
+  org: null,
+  loading: true,
+  error: null,
+  refetch: () => {},
 });
 
 export function OrgProvider({ children }: { children: ReactNode }) {
@@ -34,13 +37,11 @@ export function OrgProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  useEffect(() => { fetchOrg(); }, []);
+  useEffect(() => {
+    fetchOrg();
+  }, []);
 
-  return (
-    <OrgContext.Provider value={{ org, loading, error, refetch: fetchOrg }}>
-      {children}
-    </OrgContext.Provider>
-  );
+  return <OrgContext.Provider value={{ org, loading, error, refetch: fetchOrg }}>{children}</OrgContext.Provider>;
 }
 
 export const useOrg = () => useContext(OrgContext);

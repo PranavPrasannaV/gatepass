@@ -38,9 +38,7 @@ export default function AgentGuidancePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">Agent-Loop Guidance</h1>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Retrieve structured fix guidance for a specific finding
-        </p>
+        <p className="mt-1 text-sm text-gatepass-500">Retrieve structured fix guidance for a specific finding</p>
       </div>
 
       <Card>
@@ -58,7 +56,9 @@ export default function AgentGuidancePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">Finding Fingerprint</label>
+              <label className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">
+                Finding Fingerprint
+              </label>
               <input
                 type="text"
                 value={fingerprint}
@@ -125,7 +125,11 @@ export default function AgentGuidancePage() {
       )}
 
       {!guidance && !error && !loading && (
-        <EmptyState icon={<Lightbulb size={48} />} title="Enter finding details" description="Provide a scan ID and finding fingerprint to retrieve guidance" />
+        <EmptyState
+          icon={<Lightbulb size={48} />}
+          title="Enter finding details"
+          description="Provide a scan ID and finding fingerprint to retrieve guidance"
+        />
       )}
     </div>
   );

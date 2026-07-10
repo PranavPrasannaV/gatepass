@@ -8,7 +8,7 @@ import { getInstallationToken, RestGitHubClient } from "@gatepass/github";
 
 export { createServer } from "./server.js";
 export { makeHandlers } from "./handlers.js";
-export { MemoryStore, PgStore } from "./store.js";
+export { MemoryStore } from "./store.js";
 
 const isEntry = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isEntry) {

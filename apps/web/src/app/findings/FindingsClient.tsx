@@ -37,7 +37,7 @@ export default function FindingsClient({ findings, error }: Props) {
       const { api } = await import("@/lib/api-client");
       // For dispute we need scanId — use the latest one
       const repos = await api.getRepos(ORG_ID);
-      const lastScanId = repos.find(r => r.lastScanId)?.lastScanId;
+      const lastScanId = repos.find((r) => r.lastScanId)?.lastScanId;
       if (lastScanId) {
         await api.disputeFinding(fingerprint, lastScanId, disputeReason || "Disputed");
         // Remove from local state
@@ -77,7 +77,8 @@ export default function FindingsClient({ findings, error }: Props) {
       <div>
         <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">Findings</h1>
         <p className="mt-1 text-sm text-gatepass-500">
-          {findings.length} total &middot; {findings.filter(f => f.tier === "verified").length} verified &middot; {findings.filter(f => f.tier === "research").length} research
+          {findings.length} total &middot; {findings.filter((f) => f.tier === "verified").length} verified &middot;{" "}
+          {findings.filter((f) => f.tier === "research").length} research
         </p>
       </div>
 
@@ -130,23 +131,25 @@ export default function FindingsClient({ findings, error }: Props) {
                       <FlaskConical size={14} className="text-blue-600 dark:text-blue-400" />
                     </span>
                   )}
-                  
+
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-gatepass-900 dark:text-white">{finding.classId}</span>
                       {/* Severity badge */}
-                      <span className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${severityColor(finding.severity)}`}>
+                      <span
+                        className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${severityColor(finding.severity)}`}
+                      >
                         {finding.severity}
                       </span>
                       {/* Tier label */}
                       <span className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${tierColor(finding.tier)}`}>
                         {finding.tier}
-                        {finding.tier === "research" && finding.confidence !== undefined && (
-                          ` · ${confidencePercent(finding.confidence)}`
-                        )}
+                        {finding.tier === "research" &&
+                          finding.confidence !== undefined &&
+                          ` · ${confidencePercent(finding.confidence)}`}
                       </span>
                     </div>
-                    
+
                     {/* Confidence bar for research */}
                     {finding.tier === "research" && finding.confidence !== undefined && (
                       <div className="mt-2 flex items-center gap-2">
@@ -170,10 +173,16 @@ export default function FindingsClient({ findings, error }: Props) {
                     Dispute
                   </button>
                   <button
-                    onClick={() => setExpandedFingerprint(expandedFingerprint === finding.fingerprint ? null : finding.fingerprint)}
+                    onClick={() =>
+                      setExpandedFingerprint(expandedFingerprint === finding.fingerprint ? null : finding.fingerprint)
+                    }
                     className="rounded p-1.5 text-gatepass-400 hover:bg-gatepass-100 dark:hover:bg-gatepass-800 transition-colors"
                   >
-                    {expandedFingerprint === finding.fingerprint ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    {expandedFingerprint === finding.fingerprint ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -189,9 +198,16 @@ export default function FindingsClient({ findings, error }: Props) {
                       <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">Locations</h4>
                       <div className="space-y-1">
                         {finding.locations.map((loc, i) => (
-                          <div key={i} className="flex items-center gap-2 text-xs text-gatepass-600 dark:text-gatepass-400">
-                            <span className="font-mono">{loc.path}:{loc.startLine}-{loc.endLine}</span>
-                            <span className="rounded bg-gatepass-100 px-1.5 py-0.5 text-[10px] dark:bg-gatepass-800">{loc.surface}</span>
+                          <div
+                            key={i}
+                            className="flex items-center gap-2 text-xs text-gatepass-600 dark:text-gatepass-400"
+                          >
+                            <span className="font-mono">
+                              {loc.path}:{loc.startLine}-{loc.endLine}
+                            </span>
+                            <span className="rounded bg-gatepass-100 px-1.5 py-0.5 text-[10px] dark:bg-gatepass-800">
+                              {loc.surface}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -203,7 +219,12 @@ export default function FindingsClient({ findings, error }: Props) {
                     <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">Surfaces Affected</h4>
                     <div className="flex flex-wrap gap-1.5">
                       {finding.surfaces.map((s) => (
-                        <span key={s} className="rounded bg-gatepass-100 px-2 py-0.5 text-xs text-gatepass-600 dark:bg-gatepass-800 dark:text-gatepass-400">{s}</span>
+                        <span
+                          key={s}
+                          className="rounded bg-gatepass-100 px-2 py-0.5 text-xs text-gatepass-600 dark:bg-gatepass-800 dark:text-gatepass-400"
+                        >
+                          {s}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -213,9 +234,13 @@ export default function FindingsClient({ findings, error }: Props) {
                     <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-950">
                       <div className="flex items-center gap-2 mb-3">
                         <ShieldCheck size={14} className="text-emerald-600 dark:text-emerald-400" />
-                        <h4 className="text-sm font-medium text-emerald-800 dark:text-emerald-300">Reproduction Steps</h4>
+                        <h4 className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                          Reproduction Steps
+                        </h4>
                       </div>
-                      <p className="mb-2 text-xs text-emerald-700 dark:text-emerald-400">Kind: {finding.reproduction.kind}</p>
+                      <p className="mb-2 text-xs text-emerald-700 dark:text-emerald-400">
+                        Kind: {finding.reproduction.kind}
+                      </p>
                       <ol className="list-inside list-decimal space-y-1 text-sm text-emerald-700 dark:text-emerald-400">
                         {finding.reproduction.steps.map((step, i) => (
                           <li key={i}>{step}</li>
@@ -263,7 +288,10 @@ export default function FindingsClient({ findings, error }: Props) {
                     {disputing === finding.fingerprint ? "Submitting..." : "Submit dispute"}
                   </button>
                   <button
-                    onClick={() => { setDisputeModal(null); setDisputeReason(""); }}
+                    onClick={() => {
+                      setDisputeModal(null);
+                      setDisputeReason("");
+                    }}
                     className="rounded-lg px-4 py-2 text-sm font-medium text-gatepass-500 hover:bg-gatepass-100 dark:hover:bg-gatepass-800 transition-colors"
                   >
                     Cancel

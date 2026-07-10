@@ -37,7 +37,11 @@ export default function BenchmarkClient({ data, error }: Props) {
 
   if (data.length === 0) {
     return (
-      <EmptyState icon={<BarChart3 size={48} />} title="No benchmark data" description="Benchmark results will appear here once published" />
+      <EmptyState
+        icon={<BarChart3 size={48} />}
+        title="No benchmark data"
+        description="Benchmark results will appear here once published"
+      />
     );
   }
 
@@ -55,7 +59,9 @@ export default function BenchmarkClient({ data, error }: Props) {
             className="rounded-lg border border-gatepass-300 bg-white px-4 py-2 text-sm text-gatepass-700 dark:border-gatepass-600 dark:bg-gatepass-800 dark:text-gatepass-300"
           >
             {data.map((d) => (
-              <option key={d.corpusVersion} value={d.corpusVersion}>{d.corpusVersion}</option>
+              <option key={d.corpusVersion} value={d.corpusVersion}>
+                {d.corpusVersion}
+              </option>
             ))}
           </select>
           <button

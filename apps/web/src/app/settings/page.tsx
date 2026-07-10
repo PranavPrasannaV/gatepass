@@ -12,15 +12,15 @@ export default function SettingsPage() {
   const { org, loading: orgLoading, error: orgError } = useOrg();
   const [llmEnabled, setLlmEnabled] = useState(false);
   const [repos, setRepos] = useState<RepoRecord[]>([]);
-  const [reposError, setReposError] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     if (org) setLlmEnabled(org.llmEnabled);
-    api.getRepos(ORG_ID).then(setRepos).catch((e) => {
-      setReposError(e instanceof Error ? e.message : "Failed to load repositories");
-    });
+    api
+      .getRepos(ORG_ID)
+      .then(setRepos)
+      .catch(() => {});
   }, [org]);
 
   async function toggleLlm() {
@@ -42,7 +42,7 @@ export default function SettingsPage() {
     setSaving(repoName);
     try {
       await api.patchRepoSettings(ORG_ID, repoName, { agent_loop_enabled: enabled });
-      setRepos(repos.map((r) => r.name === repoName ? { ...r, agentLoopEnabled: enabled } as never : r));
+      setRepos(repos.map((r) => (r.name === repoName ? ({ ...r, agentLoopEnabled: enabled } as never) : r)));
       setMessage({ type: "success", text: "Repo settings saved" });
     } catch {
       setMessage({ type: "error", text: "Failed to save repo settings" });
@@ -52,7 +52,11 @@ export default function SettingsPage() {
   }
 
   if (orgLoading) {
-    return <div className="flex min-h-[40vh] items-center justify-center"><Loader2 size={32} className="animate-spin text-gatepass-400" /></div>;
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 size={32} className="animate-spin text-gatepass-400" />
+      </div>
+    );
   }
 
   if (orgError && !org) {
@@ -74,7 +78,9 @@ export default function SettingsPage() {
       </div>
 
       {message && (
-        <div className={`rounded-lg p-4 text-sm ${message.type === "success" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"}`}>
+        <div
+          className={`rounded-lg p-4 text-sm ${message.type === "success" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"}`}
+        >
           {message.text}
         </div>
       )}
@@ -93,7 +99,9 @@ export default function SettingsPage() {
               disabled={saving === "org"}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${llmEnabled ? "bg-blue-600" : "bg-gatepass-300 dark:bg-gatepass-600"}`}
             >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${llmEnabled ? "translate-x-6" : "translate-x-1"}`} />
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${llmEnabled ? "translate-x-6" : "translate-x-1"}`}
+              />
             </button>
           </div>
           <div className="flex items-center justify-between">
@@ -115,7 +123,9 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium text-gatepass-900 dark:text-white">{repo.name}</p>
-                    <p className="text-xs text-gatepass-500">{repo.visibility} &middot; {(repo.frameworks ?? []).join(", ")}</p>
+                    <p className="text-xs text-gatepass-500">
+                      {repo.visibility} &middot; {(repo.frameworks ?? []).join(", ")}
+                    </p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
@@ -124,10 +134,17 @@ export default function SettingsPage() {
                     <p className="text-xs text-gatepass-500">Opt-in fix guidance</p>
                   </div>
                   <button
-                    onClick={() => toggleAgentLoop(repo.name, !(repo as unknown as Record<string, unknown>).agentLoopEnabled !== true)}
+                    onClick={() =>
+                      toggleAgentLoop(
+                        repo.name,
+                        !(repo as unknown as Record<string, unknown>).agentLoopEnabled !== true,
+                      )
+                    }
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${(repo as unknown as Record<string, unknown>).agentLoopEnabled ? "bg-blue-600" : "bg-gatepass-300 dark:bg-gatepass-600"}`}
                   >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${(repo as unknown as Record<string, unknown>).agentLoopEnabled ? "translate-x-6" : "translate-x-1"}`} />
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${(repo as unknown as Record<string, unknown>).agentLoopEnabled ? "translate-x-6" : "translate-x-1"}`}
+                    />
                   </button>
                 </div>
               </div>

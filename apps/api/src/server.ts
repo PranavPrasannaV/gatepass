@@ -43,6 +43,17 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     const body = await readBody(req);
     const M = req.method;
 
+    // CORS preflight
+    if (M === "OPTIONS") {
+      res.writeHead(204, {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET,POST,PATCH,OPTIONS",
+        "access-control-allow-headers": "content-type",
+        "access-control-max-age": "86400",
+      });
+      return res.end();
+    }
+
     // POST /v1/orgs/:org/scans
     if (M === "POST" && p[0] === "v1" && p[1] === "orgs" && p[3] === "scans") {
       return sendJson(res, 201, await h.createScan(p[2]!, String(body.path)));
@@ -124,6 +135,14 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     if (M === "GET" && p[1] === "public" && p[2] === "benchmark") {
       return sendJson(res, 200, await h.getPublicBenchmark(p[3]));
     }
+    // GET /v1/orgs/:org
+    if (M === "GET" && p[1] === "orgs" && p.length === 3) {
+      return sendJson(res, 200, await h.getOrg(p[2]!));
+    }
+    // GET /v1/orgs/:org/repos
+    if (M === "GET" && p[1] === "orgs" && p.length === 4 && p[3] === "repos") {
+      return sendJson(res, 200, await h.listRepos(p[2]!));
+    }
     sendJson(res, 404, { error: "not found" });
   }
 
@@ -131,7 +150,10 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
 }
 
 function sendJson(res: http.ServerResponse, status: number, data: unknown): void {
-  res.writeHead(status, { "content-type": "application/json" });
+  res.writeHead(status, {
+    "content-type": "application/json",
+    "access-control-allow-origin": "*",
+  });
   res.end(JSON.stringify(data));
 }
 

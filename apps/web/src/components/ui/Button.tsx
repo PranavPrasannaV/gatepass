@@ -17,8 +17,7 @@ const variantStyles: Record<ButtonVariant, string> = {
     "bg-gatepass-100 text-gatepass-700 hover:bg-gatepass-200 active:bg-gatepass-200/80 dark:bg-gatepass-800 dark:text-gatepass-200 dark:hover:bg-gatepass-700",
   ghost:
     "bg-transparent text-gatepass-600 hover:bg-gatepass-100 active:bg-gatepass-100/80 dark:text-gatepass-400 dark:hover:bg-gatepass-800",
-  danger:
-    "bg-severity-critical text-white hover:bg-severity-critical-dark active:bg-severity-critical-dark/90",
+  danger: "bg-severity-critical text-white hover:bg-severity-critical-dark active:bg-severity-critical-dark/90",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -28,18 +27,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = "primary",
-      size = "md",
-      isLoading = false,
-      disabled,
-      className = "",
-      children,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ variant = "primary", size = "md", isLoading = false, disabled, className = "", children, ...props }, ref) => {
     const isDisabled = disabled || isLoading;
 
     return (
