@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Gatepass Slate Scale (primary neutral) ── */
+  --color-gatepass-50: #f8fafc;
+  --color-gatepass-100: #f1f5f9;
+  --color-gatepass-200: #e2e8f0;
+  --color-gatepass-300: #cbd5e1;
+  --color-gatepass-400: #94a3b8;
+  --color-gatepass-500: #64748b;
+  --color-gatepass-600: #475569;
+  --color-gatepass-700: #334155;
+  --color-gatepass-800: #1e293b;
+  --color-gatepass-900: #0f172a;
+  --color-gatepass-950: #020617;
+
+  /* ── Blue Accent (interactive / links) ── */
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeafe;
+  --color-accent-200: #bfdbfe;
+  --color-accent-300: #93c5fd;
+  --color-accent-400: #60a5fa;
+  --color-accent-500: #3b82f6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d4ed8;
+
+  /* ── Severity: Critical (red) ── */
+  --color-severity-critical: #dc2626;
+  --color-severity-critical-light: #fef2f2;
+  --color-severity-critical-dark: #991b1b;
+
+  /* ── Severity: High (orange) ── */
+  --color-severity-high: #ea580c;
+  --color-severity-high-light: #fff7ed;
+  --color-severity-high-dark: #9a3412;
+
+  /* ── Severity: Medium (amber) ── */
+  --color-severity-medium: #d97706;
+  --color-severity-medium-light: #fffbeb;
+  --color-severity-medium-dark: #92400e;
+
+  /* ── Severity: Low (slate) ── */
+  --color-severity-low: #64748b;
+  --color-severity-low-light: #f8fafc;
+  --color-severity-low-dark: #334155;
+
+  /* ── Tier: Verified (emerald green) ── */
+  --color-tier-verified: #059669;
+  --color-tier-verified-light: #d1fae5;
+  --color-tier-verified-dark: #065f46;
+
+  /* ── Tier: Research (blue) ── */
+  --color-tier-research: #3b82f6;
+  --color-tier-research-light: #dbeafe;
+  --color-tier-research-dark: #1e40af;
+
+  /* ── Posture Colors ── */
+  --color-posture-passing: #059669;
+  --color-posture-passing-light: #d1fae5;
+  --color-posture-warning: #d97706;
+  --color-posture-warning-light: #fef3c7;
+  --color-posture-failing: #dc2626;
+  --color-posture-failing-light: #fee2e2;
+  --color-posture-unknown: #64748b;
+  --color-posture-unknown-light: #f1f5f9;
+
+  /* ── Border Radius ── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* ── Box Shadows ── */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* ── Typography ── */
+  --font-sans: "Inter", "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* ── Line Heights ── */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* ── Transition Timing ── */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply border-gatepass-200 dark:border-gatepass-700;
+  }
+
+  body {
+    @apply bg-gatepass-50 text-gatepass-900 dark:bg-gatepass-950 dark:text-gatepass-100 antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-600;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2.5 h-2.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gatepass-300 dark:bg-gatepass-600 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gatepass-400 dark:bg-gatepass-500;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-skeleton {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes toast-enter {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-toast-enter {
+  animation: toast-enter 300ms var(--duration-normal) forwards;
+}
+
+.animate-toast-exit {
+  animation: toast-exit 200ms var(--duration-fast) forwards;
+}
