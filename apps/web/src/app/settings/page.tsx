@@ -5,19 +5,22 @@ import { useOrg } from "@/providers/OrgProvider";
 import { api } from "@/lib/api-client";
 import { ORG_ID } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import type { RepoRecord } from "@/lib/types";
 
 export default function SettingsPage() {
-  const { org, loading: orgLoading } = useOrg();
+  const { org, loading: orgLoading, error: orgError } = useOrg();
   const [llmEnabled, setLlmEnabled] = useState(false);
   const [repos, setRepos] = useState<RepoRecord[]>([]);
+  const [reposError, setReposError] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     if (org) setLlmEnabled(org.llmEnabled);
-    api.getRepos(ORG_ID).then(setRepos).catch(() => {});
+    api.getRepos(ORG_ID).then(setRepos).catch((e) => {
+      setReposError(e instanceof Error ? e.message : "Failed to load repositories");
+    });
   }, [org]);
 
   async function toggleLlm() {
@@ -50,6 +53,17 @@ export default function SettingsPage() {
 
   if (orgLoading) {
     return <div className="flex min-h-[40vh] items-center justify-center"><Loader2 size={32} className="animate-spin text-gatepass-400" /></div>;
+  }
+
+  if (orgError && !org) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950">
+        <div className="flex items-center gap-3">
+          <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+          <p className="text-sm text-red-700 dark:text-red-300">Could not load settings: {orgError}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -85,7 +99,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gatepass-900 dark:text-white">Plan</p>
-              <p className="text-xs text-gatepass-500">{org?.planTier ?? "loading..."}</p>
+              <p className="text-xs text-gatepass-500">{org?.planTier ?? "N/A"}</p>
             </div>
           </div>
         </div>

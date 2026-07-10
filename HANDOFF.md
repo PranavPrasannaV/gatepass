@@ -82,6 +82,7 @@ packages/
 └── shared/         plan-tier gating, audited writer, config, disclosure FSM, crypto, telemetry, retention
 apps/
 ├── api/            Runnable HTTP API wiring everything (in-memory store; swap for Postgres)
+├── web/            Next.js 15 App Router dashboard — 8 pages (findings, fleet, benchmark, compliance, settings, agent-guidance, onboarding, root) consuming the API; Tailwind v4, 9 UI primitives, typed API client
 └── workers/        In-process scan orchestrator (queue/concurrency/retries/timeouts/timings)
 cli/                `gatepass scan <path>` — the OSS scanner (free tier)
 runner/             Self-hosted runner protocol (findings-only uploads, version-floor handshake, parity)
@@ -109,7 +110,7 @@ Full accounting: [`validation/build-status.md`](specs/001-gatepass-platform/vali
 - **API integration** — a real HTTP server is driven through scan → findings → SARIF → gate →
   dispute → suppression → agent-guidance → fleet → benchmark → runner-upload → evidence → 403
 
-**Task ledger: 43 done · 18 partial · 41 open** (see [`tasks.md`](specs/001-gatepass-platform/tasks.md);
+**Task ledger: 47 done · 19 partial · 39 open** (see [`tasks.md`](specs/001-gatepass-platform/tasks.md);
 markers: `[X]` complete+verified, `[~]` partial with an inline note on what's deferred, `[ ]` not started).
 
 ### What is genuinely complete
@@ -117,6 +118,11 @@ The entire **analysis core and platform logic** — the actual product and its m
 cross-surface correlation, two-tier integrity, remediation decision logic, CI-gate logic,
 evidence/questionnaire logic, runner protocol, orchestrator, benchmark scoring, the LLM-gateway
 wiring, and the full API surface are built, tested, and lint-clean.
+
+The **Next.js dashboard** (`apps/web/`) is also built — 8 pages consuming the API (findings,
+fleet, benchmark, compliance, settings, agent-guidance, onboarding, root), 9 custom UI
+primitives (Tailwind v4), typed API client with 10s timeout for all requests, error/loading
+boundary on every route, sidebar navigation, org context, theme toggle. Build passes, lint clean.
 
 ### What is deferred and WHY (this is the important part)
 Everything remaining needs **live infrastructure or credentials that did not exist in the build
@@ -130,7 +136,6 @@ would violate honesty and the Constitution's "measured" ethos). Precise blockers
 | An **Anthropic API key** | The live LLM transport behind T095's gateway | Implement an `LlmTransport` calling the Anthropic API with zero-retention headers; inject it via `makeHandlers(store, { llmTransport })` |
 | **Vanta/Drata** sandbox + API key | T083 (evidence push) | Implement exporters posting `evaluatePosture()` items to their evidence APIs |
 | A **cloud deploy target** (ECS/RDS/S3/Redis) | T015/T015a/T086 (isolation/encryption IaC), T063/T092 (SLO/status), T091 (load) | Write IaC (Terraform); wire OTel exporter into the `telemetry.ts` `setTracer()` seam |
-| A **browser/UI** runtime | T017/T088/T093 (Next.js dashboard, onboarding) | Build the dashboard consuming the API |
 | (optional) build tooling | T098 (tree-sitter AST) | Precision refinement of already-passing detectors — low priority |
 
 ## 6. Recurring gotchas (learn from the bugs already fixed)

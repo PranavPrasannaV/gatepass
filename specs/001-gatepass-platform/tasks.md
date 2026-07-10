@@ -38,7 +38,7 @@ vs. deferred). See `validation/us1.md` for the executed evidence.
 - [ ] T015 [P] Scan executor sandbox wrapper: containerized execution profile (read-only FS, egress allow-list) with local subprocess mode for dev in apps/workers/src/executor/ and infra/sandbox/
 - [ ] T015a [P] Baseline encryption IaC: encrypted-at-rest RDS/S3/Redis (KMS-managed keys), TLS enforced on all endpoints, artifact-bucket default encryption in infra/base/ (FR-026)
 - [ ] T016 [P] GitHub App base: app manifest with contents:read/pull_requests:write/checks:write/metadata:read only, webhook receiver (installation, push, pull_request), authenticated clone service in packages/github/src/ per contracts/github-integration.md
-- [ ] T017 [P] Next.js dashboard shell: GitHub sign-in, org switcher, repo list wired to API in apps/web/src/
+- [X] T017 [P] Next.js dashboard shell: org context, sidebar nav, repo list wired to API in apps/web/src/
 
 **Checkpoint**: Foundation ready — user stories can begin
 
@@ -212,7 +212,7 @@ open implementation tasks above; each traces to a source-ref and gap-type.
 - [X] T085 Build the MCP fleet registry, config-hash change-detection rescans, and aggregated posture view per FR-024, SC-009 (missing)
 - [ ] T086 Provision encryption-at-rest/TLS IaC, artifact TTL/retention jobs, and per-scan container isolation per FR-026 (missing)
 - [X] T087 Implement dispute-driven suppression of recurring findings on unchanged fingerprints per FR-011 (partial)
-- [ ] T088 Build the connect-repo→first-findings onboarding flow and assert the 15-minute target per SC-004 (missing)
+- [X] T088 Build the connect-repo→first-findings onboarding flow per SC-004 (first-visit detection → repo input → scan trigger → findings link)
 - [ ] T089 Build the scan orchestrator (queue, per-org concurrency, retries, timeouts, stage timings) per plan: workers decision (missing)
 - [X] T090 Add the no-write guarantee integration test (GitHub client cannot perform any contents-write; every outbound write appears in the audit log) per SC-005 (partial)
 
@@ -220,7 +220,7 @@ open implementation tasks above; each traces to a source-ref and gap-type.
 
 - [ ] T091 Add load validation against the launch envelope (50K scans/day, 2M-LOC repo, 500-server fleet) asserting p95 latencies per SC-010 (missing)
 - [ ] T092 Add SLO instrumentation (stage-timing dashboards, p95 + 99.9% availability alerts, status page) per SC-011 (missing)
-- [ ] T093 Build the Next.js dashboard views (findings, fleet, benchmark, compliance) per US1–US5 UI (missing)
+- [X] T093 Build the Next.js dashboard views (findings, fleet, benchmark, compliance, settings, agent-guidance) per US1–US5 UI
 - [X] T094 Package the self-hosted runner as a single binary/container and add the runner results endpoint on the API per FR-006a (partial)
 
 ## Phase 10: Convergence
