@@ -13,5 +13,9 @@ export default async function BenchmarkPage() {
     error = e instanceof Error ? e.message : "Failed to load benchmark data";
   }
 
-  return <BenchmarkClient data={data} error={error} />;
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <BenchmarkClient data={data} error={error} />
+    </div>
+  );
 }

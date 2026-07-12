@@ -12,9 +12,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent-600 text-white hover:bg-accent-700 active:bg-accent-700/90 dark:bg-accent-500 dark:hover:bg-accent-600",
+    "bg-teal-600 text-white hover:bg-teal-700 active:bg-teal-700/90 dark:bg-teal-500 dark:hover:bg-teal-600",
   secondary:
-    "bg-gatepass-100 text-gatepass-700 hover:bg-gatepass-200 active:bg-gatepass-200/80 dark:bg-gatepass-800 dark:text-gatepass-200 dark:hover:bg-gatepass-700",
+    "border border-gatepass-300 bg-white text-gatepass-700 hover:bg-gatepass-50 active:bg-gatepass-100 dark:border-gatepass-600 dark:bg-transparent dark:text-gatepass-200 dark:hover:bg-gatepass-800",
   ghost:
     "bg-transparent text-gatepass-600 hover:bg-gatepass-100 active:bg-gatepass-100/80 dark:text-gatepass-400 dark:hover:bg-gatepass-800",
   danger: "bg-severity-critical text-white hover:bg-severity-critical-dark active:bg-severity-critical-dark/90",
@@ -35,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isDisabled}
         className={`inline-flex items-center justify-center font-medium transition-colors duration-150
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600
           disabled:opacity-50 disabled:cursor-not-allowed
           ${variantStyles[variant]}
           ${sizeStyles[size]}
