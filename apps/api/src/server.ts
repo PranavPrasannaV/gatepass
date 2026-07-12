@@ -73,9 +73,9 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
   if (store.publishBenchmark) {
     await store.publishBenchmark(
       "corpus-v1",
-      "Semgrep Pro",
+      "gatepass",
       JSON.stringify({
-        tool: "Semgrep Pro",
+        tool: "gatepass",
         corpusVersion: "corpus-v1",
         perClass: [
           { classId: "sql-injection", tp: 142, fp: 3, fn: 1, precision: 0.979, recall: 0.993 },
