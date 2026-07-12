@@ -8,7 +8,7 @@ import { evaluatePosture, draftAnswers, ingest, type Scan as PostureScan, type S
 import { requireFeature, type PlanTier } from "@gatepass/shared";
 import { validateRunnerUpload } from "@gatepass/runner";
 import { scoreTool, type CorpusCaseLabel, type Detection } from "@gatepass/benchmark";
-import type { Store, StoredScan, FleetServer } from "./store.js";
+import type { Store, StoredScan, FleetServer, OrgRecord } from "./store.js";
 
 /**
  * API handlers wiring the analysis, gate, evidence, and runner libraries over the store.
@@ -198,11 +198,13 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
 
     async publishBenchmark(tool: string, corpusVersion: string, labels: CorpusCaseLabel[], detections: Detection[]) {
       const scored = scoreTool(tool, corpusVersion, labels, detections);
+      if (!store.publishBenchmark) throw new Error("Store does not support benchmark publishing");
       await store.publishBenchmark(corpusVersion, tool, JSON.stringify(scored));
-      return store.getBenchmark(corpusVersion);
+      return store.getBenchmark!(corpusVersion);
     },
 
     async getPublicBenchmark(corpusVersion?: string) {
+      if (!store.getBenchmark) throw new Error("Store does not support benchmark retrieval");
       const rec = await store.getBenchmark(corpusVersion);
       if (!rec) {
         if (corpusVersion) throw new NotFoundError(`benchmark ${corpusVersion}`);

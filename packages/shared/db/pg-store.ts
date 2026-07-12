@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { and, eq } from "drizzle-orm";
 import * as schema from "./schema.js";
+import type { PlanTier } from "../src/plan-tier.js";
 
 /**
  * Postgres-backed store implementing the Store interface.
@@ -24,10 +25,10 @@ export class PgStore {
 
   async upsertOrg(org: {
     id: string;
-    planTier: string;
+    planTier: PlanTier;
     llmEnabled: boolean;
     agentLoopEnabled: boolean;
-  }): Promise<{ id: string; planTier: string; llmEnabled: boolean; agentLoopEnabled: boolean }> {
+  }): Promise<{ id: string; planTier: PlanTier; llmEnabled: boolean; agentLoopEnabled: boolean }> {
     await this.db
       .insert(schema.organizations)
       .values({
@@ -49,12 +50,12 @@ export class PgStore {
 
   async getOrg(
     orgId: string,
-  ): Promise<{ id: string; planTier: string; llmEnabled: boolean; agentLoopEnabled: boolean } | undefined> {
+  ): Promise<{ id: string; planTier: PlanTier; llmEnabled: boolean; agentLoopEnabled: boolean } | undefined> {
     const row = await this.db.select().from(schema.organizations).where(eq(schema.organizations.id, orgId)).limit(1);
     if (!row[0]) return undefined;
     return {
       id: row[0].id,
-      planTier: row[0].planTier,
+      planTier: row[0].planTier as PlanTier,
       llmEnabled: row[0].llmAnalysisEnabled,
       agentLoopEnabled: row[0].llmAnalysisEnabled,
     };

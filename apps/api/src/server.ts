@@ -117,12 +117,14 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
         "access-control-allow-headers": "content-type",
         "access-control-max-age": "86400",
       });
-      return res.end();
+      res.end();
+      return;
     }
 
     // POST /v1/orgs/:org/scans
     if (M === "POST" && p[0] === "v1" && p[1] === "orgs" && p[3] === "scans") {
-      return sendJson(res, 201, await h.createScan(p[2]!, String(body.path)));
+      sendJson(res, 201, await h.createScan(p[2]!, String(body.path)));
+      return;
     }
     // GET /v1/scans/:id/findings[?includeSuppressed=1]
     if (M === "GET" && p[1] === "scans" && p[3] === "findings") {
