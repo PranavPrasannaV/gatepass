@@ -32,6 +32,70 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
   await store.upsertOrg({ id: "free-org", planTier: "free", llmEnabled: true, agentLoopEnabled: false });
   await store.upsertOrg({ id: "no-agent", planTier: "scale", llmEnabled: true, agentLoopEnabled: false });
 
+  if (store.upsertFleetServer) {
+    await store.upsertFleetServer({
+      id: "srv-1",
+      orgId: "demo",
+      name: "prd-db-cluster-01",
+      endpointOrRepo: "10.0.4.15:5432",
+      configHash: "a7f9c2e3b1d4",
+      posture: "critical",
+      lastScanId: "scan-001",
+    });
+    await store.upsertFleetServer({
+      id: "srv-2",
+      orgId: "demo",
+      name: "prd-web-gw-04",
+      endpointOrRepo: "10.0.2.112:443",
+      configHash: "b3d1f8a7c9e2",
+      posture: "passing",
+      lastScanId: "scan-002",
+    });
+    await store.upsertFleetServer({
+      id: "srv-3",
+      orgId: "demo",
+      name: "stg-cache-red-01",
+      endpointOrRepo: "10.1.5.22:6379",
+      configHash: "e4f2a8c1d3b6",
+      posture: "unscanned",
+    });
+    await store.upsertFleetServer({
+      id: "srv-4",
+      orgId: "free-org",
+      name: "dev-api-gw-01",
+      endpointOrRepo: "10.0.1.50:8080",
+      configHash: "c5d8e3f1a2b7",
+      posture: "findings_open",
+      lastScanId: "scan-003",
+    });
+  }
+
+  if (store.publishBenchmark) {
+    await store.publishBenchmark(
+      "corpus-v1",
+      "Semgrep Pro",
+      JSON.stringify({
+        tool: "Semgrep Pro",
+        corpusVersion: "corpus-v1",
+        perClass: [
+          { classId: "sql-injection", tp: 142, fp: 3, fn: 1, precision: 0.979, recall: 0.993 },
+          { classId: "cors-misconfig", tp: 87, fp: 12, fn: 4, precision: 0.878, recall: 0.956 },
+          { classId: "xss-reflected", tp: 205, fp: 8, fn: 12, precision: 0.962, recall: 0.944 },
+          { classId: "path-traversal", tp: 54, fp: 2, fn: 0, precision: 0.964, recall: 1.0 },
+          { classId: "insecure-crypto", tp: 31, fp: 18, fn: 2, precision: 0.632, recall: 0.939 },
+          { classId: "xxe-injection", tp: 22, fp: 1, fn: 0, precision: 0.956, recall: 1.0 },
+          { classId: "ssrf", tp: 67, fp: 5, fn: 3, precision: 0.93, recall: 0.957 },
+          { classId: "open-redirect", tp: 43, fp: 7, fn: 2, precision: 0.86, recall: 0.955 },
+          { classId: "ldap-injection", tp: 18, fp: 1, fn: 0, precision: 0.947, recall: 1.0 },
+          { classId: "cmd-injection", tp: 96, fp: 4, fn: 2, precision: 0.96, recall: 0.979 },
+          { classId: "hardcoded-secret", tp: 311, fp: 22, fn: 8, precision: 0.934, recall: 0.975 },
+          { classId: "insecure-deserial", tp: 39, fp: 3, fn: 1, precision: 0.928, recall: 0.975 },
+        ],
+        publishedAt: new Date().toISOString(),
+      }),
+    );
+  }
+
   const server = http.createServer((req, res) => {
     void handle(req, res).catch((err) => sendError(res, err));
   });
