@@ -14,9 +14,7 @@ export default function CompliancePage() {
     <div className="space-y-8">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">
-          Compliance
-        </h1>
+        <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">Compliance</h1>
         <p className="mt-1 text-sm text-gatepass-500">
           Evidence exports and questionnaire management for security audits.
         </p>
@@ -24,9 +22,7 @@ export default function CompliancePage() {
 
       {/* Card 1 — Integrations */}
       <div className="rounded-lg border border-gatepass-200 bg-white dark:bg-gatepass-800/50 dark:border-gatepass-700 p-6">
-        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">
-          Integrations
-        </h2>
+        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">Integrations</h2>
         <div className="mt-4 flex flex-wrap gap-4">
           <button
             onClick={() => alert("Vanta integration coming soon")}
@@ -47,12 +43,8 @@ export default function CompliancePage() {
 
       {/* Card 2 — Evidence Export History */}
       <div className="rounded-lg border border-gatepass-200 bg-white dark:bg-gatepass-800/50 dark:border-gatepass-700 p-6">
-        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">
-          Evidence Export History
-        </h2>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Download compliance evidence packages from completed scans.
-        </p>
+        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">Evidence Export History</h2>
+        <p className="mt-1 text-sm text-gatepass-500">Download compliance evidence packages from completed scans.</p>
         <div className="mt-6">
           {evidenceExports.length === 0 ? (
             <EmptyState
@@ -78,12 +70,8 @@ export default function CompliancePage() {
 
       {/* Card 3 — Questionnaire Upload */}
       <div className="rounded-lg border border-gatepass-200 bg-white dark:bg-gatepass-800/50 dark:border-gatepass-700 p-6">
-        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">
-          Questionnaire Upload
-        </h2>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Upload a security questionnaire for automated completion.
-        </p>
+        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">Questionnaire Upload</h2>
+        <p className="mt-1 text-sm text-gatepass-500">Upload a security questionnaire for automated completion.</p>
         <div className="mt-4 flex items-center gap-4">
           <input
             type="file"

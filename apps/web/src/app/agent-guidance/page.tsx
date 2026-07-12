@@ -39,23 +39,16 @@ export default function AgentGuidancePage() {
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">Agent Guidance</h1>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Generate automated remediation steps for security findings.
-        </p>
+        <p className="mt-1 text-sm text-gatepass-500">Generate automated remediation steps for security findings.</p>
       </div>
 
       {/* Card 1 — Request Remediation */}
       <div className="rounded-lg border border-gatepass-200 bg-white p-6 dark:bg-gatepass-800/50 dark:border-gatepass-700">
-        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">
-          Request Remediation
-        </h2>
+        <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">Request Remediation</h2>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label
-                htmlFor="scan-id"
-                className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300"
-              >
+              <label htmlFor="scan-id" className="block text-sm font-medium text-gatepass-700 dark:text-gatepass-300">
                 Scan ID
               </label>
               <input
@@ -132,13 +125,9 @@ export default function AgentGuidancePage() {
         <div className="rounded-lg border border-gatepass-200 bg-white p-6 dark:bg-gatepass-800/50 dark:border-gatepass-700">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-            <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">
-              Generated Guidance
-            </h2>
+            <h2 className="text-lg font-semibold text-gatepass-900 dark:text-white">Generated Guidance</h2>
           </div>
-          <p className="mt-1 text-sm text-gatepass-500">
-            Automated remediation steps for the selected finding.
-          </p>
+          <p className="mt-1 text-sm text-gatepass-500">Automated remediation steps for the selected finding.</p>
 
           {/* Code block */}
           <div className="mt-4 rounded-lg bg-gatepass-800 dark:bg-gatepass-950 overflow-hidden">

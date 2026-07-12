@@ -4,15 +4,7 @@ import { useState } from "react";
 import type { Finding } from "@/lib/types";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
-import {
-  Search,
-  AlertTriangle,
-  ChevronDown,
-  ChevronRight,
-  ShieldCheck,
-  FlaskConical,
-  Circle,
-} from "lucide-react";
+import { Search, AlertTriangle, ChevronDown, ChevronRight, ShieldCheck, FlaskConical, Circle } from "lucide-react";
 import { confidencePercent } from "@/lib/utils";
 
 interface Props {
@@ -109,9 +101,7 @@ export default function FindingsClient({ findings, error }: Props) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gatepass-900">
-            Findings Intelligence
-          </h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gatepass-900">Findings Intelligence</h1>
           <p className="mt-0.5 text-sm text-gatepass-500">
             Real-time analysis of security anomalies across your repositories.
           </p>
@@ -204,9 +194,7 @@ export default function FindingsClient({ findings, error }: Props) {
                 <div className="flex items-start justify-between gap-2 sm:gap-4">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     {/* Severity-colored circle icon */}
-                    <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${sev.ring}`}
-                    >
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${sev.ring}`}>
                       <Circle size={16} className={sev.fill} />
                     </span>
 
@@ -237,9 +225,7 @@ export default function FindingsClient({ findings, error }: Props) {
                               style={{ width: `${finding.confidence * 100}%` }}
                             />
                           </div>
-                          <span className="text-xs text-gatepass-500">
-                            {confidencePercent(finding.confidence)}
-                          </span>
+                          <span className="text-xs text-gatepass-500">{confidencePercent(finding.confidence)}</span>
                         </div>
                       )}
                     </div>
@@ -254,11 +240,7 @@ export default function FindingsClient({ findings, error }: Props) {
                     </button>
                     <button
                       onClick={() =>
-                        setExpandedFingerprint(
-                          expandedFingerprint === finding.fingerprint
-                            ? null
-                            : finding.fingerprint
-                        )
+                        setExpandedFingerprint(expandedFingerprint === finding.fingerprint ? null : finding.fingerprint)
                       }
                       className="rounded p-1.5 text-gatepass-400 hover:bg-gatepass-100 transition-colors"
                     >
@@ -279,21 +261,14 @@ export default function FindingsClient({ findings, error }: Props) {
                     {/* Locations */}
                     {finding.locations.length > 0 && (
                       <div className="mt-3">
-                        <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">
-                          Locations
-                        </h4>
+                        <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">Locations</h4>
                         <div className="space-y-1">
                           {finding.locations.map((loc, i) => (
-                            <div
-                              key={i}
-                              className="flex items-center gap-2 text-xs text-gatepass-600"
-                            >
+                            <div key={i} className="flex items-center gap-2 text-xs text-gatepass-600">
                               <span className="font-mono">
                                 {loc.path}:{loc.startLine}-{loc.endLine}
                               </span>
-                              <span className="rounded bg-gatepass-100 px-1.5 py-0.5 text-[10px]">
-                                {loc.surface}
-                              </span>
+                              <span className="rounded bg-gatepass-100 px-1.5 py-0.5 text-[10px]">{loc.surface}</span>
                             </div>
                           ))}
                         </div>
@@ -302,15 +277,10 @@ export default function FindingsClient({ findings, error }: Props) {
 
                     {/* Surfaces */}
                     <div className="mt-3">
-                      <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">
-                        Surfaces Affected
-                      </h4>
+                      <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">Surfaces Affected</h4>
                       <div className="flex flex-wrap gap-1.5">
                         {finding.surfaces.map((s) => (
-                          <span
-                            key={s}
-                            className="rounded bg-gatepass-100 px-2 py-0.5 text-xs text-gatepass-600"
-                          >
+                          <span key={s} className="rounded bg-gatepass-100 px-2 py-0.5 text-xs text-gatepass-600">
                             {s}
                           </span>
                         ))}
@@ -322,13 +292,9 @@ export default function FindingsClient({ findings, error }: Props) {
                       <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
                         <div className="flex items-center gap-2 mb-3">
                           <ShieldCheck size={14} className="text-emerald-600" />
-                          <h4 className="text-sm font-medium text-emerald-800">
-                            Reproduction Steps
-                          </h4>
+                          <h4 className="text-sm font-medium text-emerald-800">Reproduction Steps</h4>
                         </div>
-                        <p className="mb-2 text-xs text-emerald-700">
-                          Kind: {finding.reproduction.kind}
-                        </p>
+                        <p className="mb-2 text-xs text-emerald-700">Kind: {finding.reproduction.kind}</p>
                         <ol className="list-inside list-decimal space-y-1 text-sm text-emerald-700">
                           {finding.reproduction.steps.map((step, i) => (
                             <li key={i}>{step}</li>
@@ -336,9 +302,7 @@ export default function FindingsClient({ findings, error }: Props) {
                         </ol>
                         <div className="mt-3 rounded bg-emerald-100 p-3 text-sm">
                           <span className="font-medium text-emerald-800">Expected: </span>
-                          <span className="text-emerald-700">
-                            {finding.reproduction.expected}
-                          </span>
+                          <span className="text-emerald-700">{finding.reproduction.expected}</span>
                         </div>
                       </div>
                     )}
@@ -346,9 +310,7 @@ export default function FindingsClient({ findings, error }: Props) {
                     {/* Suggested fix */}
                     {finding.suggestedFix && (
                       <div className="mt-3">
-                        <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">
-                          Suggested Fix
-                        </h4>
+                        <h4 className="text-xs font-medium uppercase text-gatepass-500 mb-2">Suggested Fix</h4>
                         <pre className="rounded-lg bg-gatepass-100 p-3 text-xs text-gatepass-700 overflow-x-auto">
                           {finding.suggestedFix.content}
                         </pre>
@@ -361,9 +323,7 @@ export default function FindingsClient({ findings, error }: Props) {
               {/* Dispute modal */}
               {disputeModal === finding.fingerprint && (
                 <div className="border-t border-gatepass-200 p-4">
-                  <label className="block text-sm font-medium text-gatepass-700">
-                    Reason for dispute
-                  </label>
+                  <label className="block text-sm font-medium text-gatepass-700">Reason for dispute</label>
                   <textarea
                     value={disputeReason}
                     onChange={(e) => setDisputeReason(e.target.value)}
@@ -377,9 +337,7 @@ export default function FindingsClient({ findings, error }: Props) {
                       disabled={disputing === finding.fingerprint || !disputeReason}
                       className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                     >
-                      {disputing === finding.fingerprint
-                        ? "Submitting..."
-                        : "Submit dispute"}
+                      {disputing === finding.fingerprint ? "Submitting..." : "Submit dispute"}
                     </button>
                     <button
                       onClick={() => {

@@ -5,15 +5,7 @@ import { useOrg } from "@/providers/OrgProvider";
 import { api } from "@/lib/api-client";
 import { ORG_ID } from "@/lib/constants";
 
-import {
-  AlertTriangle,
-  Building2,
-  CheckCircle2,
-  FolderGit2,
-  Loader2,
-  Pencil,
-  X,
-} from "lucide-react";
+import { AlertTriangle, Building2, CheckCircle2, FolderGit2, Loader2, Pencil, X } from "lucide-react";
 import type { RepoRecord } from "@/lib/types";
 
 export default function SettingsPage() {
@@ -89,14 +81,10 @@ export default function SettingsPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            className="rounded-md border border-gatepass-300 px-4 py-2 text-sm text-gatepass-700 hover:bg-gatepass-50 transition-colors"
-          >
+          <button className="rounded-md border border-gatepass-300 px-4 py-2 text-sm text-gatepass-700 hover:bg-gatepass-50 transition-colors">
             Cancel
           </button>
-          <button
-            className="rounded-md bg-[#0891b2] px-4 py-2 text-sm font-medium text-white hover:bg-[#0e7490] transition-colors"
-          >
+          <button className="rounded-md bg-[#0891b2] px-4 py-2 text-sm font-medium text-white hover:bg-[#0e7490] transition-colors">
             Save Changes
           </button>
         </div>
@@ -121,9 +109,7 @@ export default function SettingsPage() {
 
       {/* Error banner */}
       {message && message.type === "error" && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {message.text}
-        </div>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{message.text}</div>
       )}
 
       {/* Organization card */}
@@ -142,9 +128,7 @@ export default function SettingsPage() {
               <label className="mb-1 block text-sm font-medium text-gatepass-700">Plan Tier</label>
               <p className="text-sm text-gatepass-500">{org?.planTier ?? "N/A"}</p>
             </div>
-            <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700">
-              Active
-            </span>
+            <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700">Active</span>
           </div>
 
           {/* LLM toggle */}
@@ -178,10 +162,7 @@ export default function SettingsPage() {
 
           <div className="space-y-4">
             {repos.map((repo) => (
-              <div
-                key={repo.name}
-                className="rounded-lg border border-gatepass-200 bg-gatepass-50 p-4"
-              >
+              <div key={repo.name} className="rounded-lg border border-gatepass-200 bg-gatepass-50 p-4">
                 {/* Repo header */}
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -199,9 +180,7 @@ export default function SettingsPage() {
                 {/* Frameworks */}
                 {(repo.frameworks ?? []).length > 0 && (
                   <div className="mb-3">
-                    <p className="mb-1.5 text-xs font-medium text-gatepass-500">
-                      Detected Frameworks
-                    </p>
+                    <p className="mb-1.5 text-xs font-medium text-gatepass-500">Detected Frameworks</p>
                     <div className="flex flex-wrap gap-1.5">
                       {(repo.frameworks ?? []).map((fw) => (
                         <span

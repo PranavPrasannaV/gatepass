@@ -29,9 +29,7 @@ export default function BenchmarkClient({ data, error }: Props) {
       ? current.runs.reduce(
           (sum, run) =>
             sum +
-            (run.perClass.length > 0
-              ? run.perClass.reduce((s, pc) => s + pc.precision, 0) / run.perClass.length
-              : 0),
+            (run.perClass.length > 0 ? run.perClass.reduce((s, pc) => s + pc.precision, 0) / run.perClass.length : 0),
           0,
         ) / current.runs.length
       : 0;
@@ -41,9 +39,7 @@ export default function BenchmarkClient({ data, error }: Props) {
       ? current.runs.reduce(
           (sum, run) =>
             sum +
-            (run.perClass.length > 0
-              ? run.perClass.reduce((s, pc) => s + pc.recall, 0) / run.perClass.length
-              : 0),
+            (run.perClass.length > 0 ? run.perClass.reduce((s, pc) => s + pc.recall, 0) / run.perClass.length : 0),
           0,
         ) / current.runs.length
       : 0;
@@ -83,9 +79,7 @@ export default function BenchmarkClient({ data, error }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gatepass-900">Precision Benchmark</h1>
-          <p className="mt-1 text-sm text-gatepass-500">
-            Measured accuracy across vulnerability classes.
-          </p>
+          <p className="mt-1 text-sm text-gatepass-500">Measured accuracy across vulnerability classes.</p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -147,9 +141,7 @@ export default function BenchmarkClient({ data, error }: Props) {
                 <Crosshair size={20} className="text-[#0891b2]" />
               </div>
               <div>
-                <p className={`text-2xl font-bold ${precisionColor(avgRecall)}`}>
-                  {(avgRecall * 100).toFixed(1)}%
-                </p>
+                <p className={`text-2xl font-bold ${precisionColor(avgRecall)}`}>{(avgRecall * 100).toFixed(1)}%</p>
                 <p className="text-xs text-gatepass-500">Average Recall</p>
               </div>
             </div>
@@ -161,15 +153,11 @@ export default function BenchmarkClient({ data, error }: Props) {
       {current && (
         <div className="space-y-4">
           <p className="text-sm text-gatepass-500">
-            Published: {new Date(current.publishedAt).toLocaleDateString()} &middot;{" "}
-            {current.runs.length} tool run(s)
+            Published: {new Date(current.publishedAt).toLocaleDateString()} &middot; {current.runs.length} tool run(s)
           </p>
 
           {current.runs.map((run, ri) => (
-            <div
-              key={ri}
-              className="rounded-lg border border-gatepass-200 bg-white"
-            >
+            <div key={ri} className="rounded-lg border border-gatepass-200 bg-white">
               <div className="border-b border-gatepass-200 px-4 py-3">
                 <h3 className="text-sm font-semibold text-gatepass-900">{run.tool}</h3>
               </div>
@@ -203,19 +191,13 @@ export default function BenchmarkClient({ data, error }: Props) {
                         key={pc.classId}
                         className="border-b border-gatepass-100 last:border-b-0 transition-colors hover:bg-gatepass-50/50"
                       >
-                        <td className="px-4 py-2.5 font-mono text-sm text-gatepass-900">
-                          {pc.classId}
-                        </td>
-                        <td className="px-4 py-2.5 text-right font-mono text-sm text-emerald-600">
-                          {pc.tp}
-                        </td>
-                        <td className="px-4 py-2.5 text-right font-mono text-sm text-red-600">
-                          {pc.fp}
-                        </td>
-                        <td className="px-4 py-2.5 text-right font-mono text-sm text-gatepass-500">
-                          {pc.fn}
-                        </td>
-                        <td className={`px-4 py-2.5 text-right font-mono text-sm font-medium ${precisionColor(pc.precision)}`}>
+                        <td className="px-4 py-2.5 font-mono text-sm text-gatepass-900">{pc.classId}</td>
+                        <td className="px-4 py-2.5 text-right font-mono text-sm text-emerald-600">{pc.tp}</td>
+                        <td className="px-4 py-2.5 text-right font-mono text-sm text-red-600">{pc.fp}</td>
+                        <td className="px-4 py-2.5 text-right font-mono text-sm text-gatepass-500">{pc.fn}</td>
+                        <td
+                          className={`px-4 py-2.5 text-right font-mono text-sm font-medium ${precisionColor(pc.precision)}`}
+                        >
                           {(pc.precision * 100).toFixed(1)}%
                         </td>
                         <td className="px-4 py-2.5 text-right font-mono text-sm font-medium text-gatepass-900">

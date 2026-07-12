@@ -7,10 +7,7 @@ export function TopNavBar() {
     <header className="flex h-16 items-center justify-between border-b border-gatepass-200 bg-white px-6 dark:border-gatepass-700 dark:bg-gatepass-900">
       {/* ── Search ── */}
       <div className="relative w-full max-w-[400px]">
-        <Search
-          size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gatepass-400"
-        />
+        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gatepass-400" />
         <input
           type="text"
           placeholder="Search vulnerabilities, repos, authors..."

@@ -38,11 +38,46 @@ const TREND_DATA = [
 
 /** Mock recent findings for the table. */
 const RECENT_FINDINGS = [
-  { id: "CGAI-RES-942", type: "SQL Injection", path: "src/api/routes/users.ts", severity: "critical", risk: "Critical", time: "2m ago" },
-  { id: "CGAI-RES-891", type: "CORS Misconfig", path: "src/middleware/cors.ts", severity: "high", risk: "High", time: "15m ago" },
-  { id: "CGAI-RES-877", type: "XSS Reflected", path: "src/components/Form.tsx", severity: "high", risk: "High", time: "1h ago" },
-  { id: "CGAI-RES-803", type: "Path Traversal", path: "src/lib/file-utils.ts", severity: "medium", risk: "Medium", time: "3h ago" },
-  { id: "CGAI-RES-754", type: "Insecure Crypto", path: "src/lib/encrypt.ts", severity: "medium", risk: "Medium", time: "6h ago" },
+  {
+    id: "CGAI-RES-942",
+    type: "SQL Injection",
+    path: "src/api/routes/users.ts",
+    severity: "critical",
+    risk: "Critical",
+    time: "2m ago",
+  },
+  {
+    id: "CGAI-RES-891",
+    type: "CORS Misconfig",
+    path: "src/middleware/cors.ts",
+    severity: "high",
+    risk: "High",
+    time: "15m ago",
+  },
+  {
+    id: "CGAI-RES-877",
+    type: "XSS Reflected",
+    path: "src/components/Form.tsx",
+    severity: "high",
+    risk: "High",
+    time: "1h ago",
+  },
+  {
+    id: "CGAI-RES-803",
+    type: "Path Traversal",
+    path: "src/lib/file-utils.ts",
+    severity: "medium",
+    risk: "Medium",
+    time: "3h ago",
+  },
+  {
+    id: "CGAI-RES-754",
+    type: "Insecure Crypto",
+    path: "src/lib/encrypt.ts",
+    severity: "medium",
+    risk: "Medium",
+    time: "6h ago",
+  },
 ];
 
 const MAX_BAR_HEIGHT = 160;
@@ -68,9 +103,7 @@ export default function Home() {
   if (!ready) {
     return (
       <main className="px-6 py-10">
-        <h1 className="text-2xl font-bold text-gatepass-900">
-          Gatepass Dashboard
-        </h1>
+        <h1 className="text-2xl font-bold text-gatepass-900">Gatepass Dashboard</h1>
         <p className="mt-1 text-sm text-gatepass-500">
           Monitor and manage your organization&apos;s application security posture
         </p>
@@ -79,12 +112,10 @@ export default function Home() {
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gatepass-100">
             <ClipboardList size={40} className="text-gatepass-400" />
           </div>
-          <h2 className="mt-6 text-xl font-semibold text-gatepass-900">
-            No Active Passes
-          </h2>
+          <h2 className="mt-6 text-xl font-semibold text-gatepass-900">No Active Passes</h2>
           <p className="mx-auto mt-2 max-w-sm text-sm text-gatepass-500">
-            Your organization doesn&apos;t have any active security passes. Start
-            by requesting a new analysis pass or reviewing your scan history.
+            Your organization doesn&apos;t have any active security passes. Start by requesting a new analysis pass or
+            reviewing your scan history.
           </p>
           <div className="mt-8 flex items-center justify-center gap-4">
             <button
@@ -111,9 +142,7 @@ export default function Home() {
     <main className="space-y-6">
       {/* ── Page Header ── */}
       <div>
-        <h1 className="text-2xl font-bold text-gatepass-900">
-          Gatepass Dashboard
-        </h1>
+        <h1 className="text-2xl font-bold text-gatepass-900">Gatepass Dashboard</h1>
         <p className="mt-1 text-sm text-gatepass-500">
           Monitor and manage your organization&apos;s application security posture
         </p>
@@ -163,10 +192,7 @@ export default function Home() {
             <span className="text-sm text-gatepass-400">%</span>
           </div>
           <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-gatepass-100">
-            <div
-              className="h-full rounded-full bg-emerald-500"
-              style={{ width: "92%" }}
-            />
+            <div className="h-full rounded-full bg-emerald-500" style={{ width: "92%" }} />
           </div>
           <div className="mt-2 flex items-center gap-1 text-xs text-emerald-600">
             <ArrowUpRight size={12} />
@@ -345,9 +371,7 @@ export default function Home() {
                   </td>
                   <td className="px-6 py-3 text-xs text-gatepass-500">{f.time}</td>
                   <td className="px-6 py-3 text-right">
-                    <button className="text-xs font-medium text-[#0891b2] hover:underline">
-                      View
-                    </button>
+                    <button className="text-xs font-medium text-[#0891b2] hover:underline">View</button>
                   </td>
                 </tr>
               ))}

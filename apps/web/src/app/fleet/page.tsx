@@ -5,16 +5,7 @@ import { api } from "@/lib/api-client";
 import { ORG_ID } from "@/lib/constants";
 import type { FleetView } from "@/lib/types";
 import { EmptyState } from "@/components/ui/EmptyState";
-import {
-  Server,
-  Loader2,
-  Plus,
-  RefreshCw,
-  AlertTriangle,
-  ShieldCheck,
-  Clock,
-  TrendingUp,
-} from "lucide-react";
+import { Server, Loader2, Plus, RefreshCw, AlertTriangle, ShieldCheck, Clock, TrendingUp } from "lucide-react";
 
 const POSTURE_COLORS: Record<string, string> = {
   unscanned: "bg-gatepass-100 text-gatepass-600 border-gatepass-200",
@@ -82,12 +73,8 @@ export default function FleetPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">
-            Fleet Monitoring
-          </h1>
-          <p className="mt-1 text-sm text-gatepass-500">
-            Real-time status and posture of connected assets.
-          </p>
+          <h1 className="text-2xl font-bold text-gatepass-900 dark:text-white">Fleet Monitoring</h1>
+          <p className="mt-1 text-sm text-gatepass-500">Real-time status and posture of connected assets.</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -113,9 +100,7 @@ export default function FleetPage() {
           {/* Total Nodes */}
           <div className="rounded-lg border border-gatepass-200 bg-white p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">
-                Total Nodes
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">Total Nodes</p>
               <Server size={18} className="text-gatepass-400" />
             </div>
             <p className="mt-2 text-3xl font-bold text-gatepass-900">{rollup.total}</p>
@@ -128,9 +113,7 @@ export default function FleetPage() {
           {/* Critical */}
           <div className="rounded-lg border border-gatepass-200 bg-white p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">
-                Critical
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">Critical</p>
               <AlertTriangle size={18} className="text-red-500" />
             </div>
             <p className="mt-2 text-3xl font-bold text-red-600">{rollup.critical}</p>
@@ -140,9 +123,7 @@ export default function FleetPage() {
           {/* Passing */}
           <div className="rounded-lg border border-gatepass-200 bg-white p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">
-                Passing
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">Passing</p>
               <ShieldCheck size={18} className="text-emerald-500" />
             </div>
             <p className="mt-2 text-3xl font-bold text-gatepass-900">{rollup.passing}</p>
@@ -152,9 +133,7 @@ export default function FleetPage() {
           {/* Unscanned */}
           <div className="rounded-lg border border-gatepass-200 bg-white p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">
-                Unscanned
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wider text-gatepass-500">Unscanned</p>
               <Clock size={18} className="text-gatepass-400" />
             </div>
             <p className="mt-2 text-3xl font-bold text-gatepass-900">{rollup.unscanned}</p>
@@ -195,9 +174,7 @@ export default function FleetPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gatepass-700">
-                Endpoint or repo path
-              </label>
+              <label className="block text-sm font-medium text-gatepass-700">Endpoint or repo path</label>
               <input
                 type="text"
                 value={formData.endpointOrRepo}
@@ -207,9 +184,7 @@ export default function FleetPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gatepass-700">
-                Config hash (optional)
-              </label>
+              <label className="block text-sm font-medium text-gatepass-700">Config hash (optional)</label>
               <input
                 type="text"
                 value={formData.configHash}
@@ -263,9 +238,7 @@ export default function FleetPage() {
               <div className="mt-3">
                 <button
                   type="button"
-                  onClick={() =>
-                    setExpandedServer(expandedServer === server.id ? null : server.id)
-                  }
+                  onClick={() => setExpandedServer(expandedServer === server.id ? null : server.id)}
                   className="cursor-pointer text-sm font-medium text-[#0891b2] hover:underline"
                 >
                   {expandedServer === server.id ? "Hide details" : "View details"}

@@ -62,7 +62,11 @@ export function Sidebar() {
   };
 
   // Shared nav item render logic
-  function renderNavItem(item: { href: string; label: string; icon: React.ComponentType<{ size: number; className?: string }> }) {
+  function renderNavItem(item: {
+    href: string;
+    label: string;
+    icon: React.ComponentType<{ size: number; className?: string }>;
+  }) {
     const isActive = pathname.startsWith(item.href);
 
     return (
@@ -75,10 +79,7 @@ export function Sidebar() {
               : "border-l-[3px] border-l-transparent text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900"
           }`}
         >
-          <item.icon
-            size={20}
-            className={`shrink-0 ${isActive ? "text-[#0D9488]" : "text-gatepass-400"}`}
-          />
+          <item.icon size={20} className={`shrink-0 ${isActive ? "text-[#0D9488]" : "text-gatepass-400"}`} />
           <span>{item.label}</span>
         </Link>
       </li>
@@ -166,9 +167,7 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
-          <ul className="space-y-1">
-            {NAV_ITEMS.map(renderNavItem)}
-          </ul>
+          <ul className="space-y-1">{NAV_ITEMS.map(renderNavItem)}</ul>
         </nav>
 
         {/* Footer */}
@@ -181,15 +180,10 @@ export function Sidebar() {
                   <Link
                     href={item.href}
                     className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium transition-colors duration-150 ${
-                      isActive
-                        ? "text-[#0D9488]"
-                        : "text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900"
+                      isActive ? "text-[#0D9488]" : "text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900"
                     }`}
                   >
-                    <item.icon
-                      size={18}
-                      className={`shrink-0 ${isActive ? "text-[#0D9488]" : "text-gatepass-400"}`}
-                    />
+                    <item.icon size={18} className={`shrink-0 ${isActive ? "text-[#0D9488]" : "text-gatepass-400"}`} />
                     <span>{item.label}</span>
                   </Link>
                 </li>

@@ -5,9 +5,7 @@ export default function SupportPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gatepass-900">Support</h1>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Get help with Gatepass and the AI-native security stack.
-        </p>
+        <p className="mt-1 text-sm text-gatepass-500">Get help with Gatepass and the AI-native security stack.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -63,8 +61,8 @@ export default function SupportPage() {
           <div>
             <p className="text-sm font-medium text-amber-800">Enterprise Support</p>
             <p className="mt-1 text-sm text-amber-700">
-              Enterprise tier customers get priority support with a dedicated engineer and
-              guaranteed 4-hour response time.
+              Enterprise tier customers get priority support with a dedicated engineer and guaranteed 4-hour response
+              time.
             </p>
           </div>
         </div>
