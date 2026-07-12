@@ -19,8 +19,8 @@ jobs:
 
       - name: Typecheck all packages
         run: |
-          for p in packages/*/tsconfig.json cli/tsconfig.json runner/tsconfig.json benchmark/tsconfig.json; do
-            npx tsc --noEmit -p "$p"
+          for p in packages/*/tsconfig.json apps/*/tsconfig.json cli/tsconfig.json runner/tsconfig.json benchmark/tsconfig.json; do
+            if [ -f "$p" ]; then npx tsc --noEmit -p "$p"; fi
           done
 
       - name: Lint

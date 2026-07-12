@@ -17,6 +17,8 @@ export interface ServerOptions {
   githubClient?: GitHubClient;
   llmTransport?: import("@gatepass/semantic").LlmTransport;
   llmModel?: string;
+  /** Set to false to skip seeding demo benchmark data (production PgStore). */
+  seedBenchmark?: boolean;
 }
 
 export async function createServer(opts: ServerOptions = {}): Promise<{ server: http.Server; store: Store }> {
@@ -70,7 +72,7 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     });
   }
 
-  if (store.publishBenchmark) {
+  if (store.publishBenchmark && opts.seedBenchmark !== false) {
     await store.publishBenchmark(
       "corpus-v1",
       "gatepass",
