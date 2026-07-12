@@ -4,6 +4,7 @@ import postgres from "postgres";
 import { and, eq } from "drizzle-orm";
 import * as schema from "./schema.js";
 import type { PlanTier } from "../src/plan-tier.js";
+import type { FindingsDocument, Finding, Location } from "@gatepass/findings";
 
 /**
  * Postgres-backed store implementing the Store interface.
@@ -37,12 +38,14 @@ export class PgStore {
         slug: org.id,
         planTier: org.planTier as "free" | "team" | "scale",
         llmAnalysisEnabled: org.llmEnabled,
+        agentLoopEnabled: org.agentLoopEnabled,
       })
       .onConflictDoUpdate({
         target: schema.organizations.id,
         set: {
           planTier: org.planTier as "free" | "team" | "scale",
           llmAnalysisEnabled: org.llmEnabled,
+          agentLoopEnabled: org.agentLoopEnabled,
         },
       });
     return org;
@@ -57,7 +60,7 @@ export class PgStore {
       id: row[0].id,
       planTier: row[0].planTier as PlanTier,
       llmEnabled: row[0].llmAnalysisEnabled,
-      agentLoopEnabled: row[0].llmAnalysisEnabled,
+      agentLoopEnabled: row[0].agentLoopEnabled,
     };
   }
 
@@ -67,15 +70,14 @@ export class PgStore {
     doc: {
       scan: { rulesetVersion: string };
       findings: Array<{
-        id: string;
         fingerprint: string;
         tier: string;
         classId: string;
         severity: string;
         locations: unknown;
         surfaces: string[];
-        reproduction: unknown | null;
-        confidence: number | null;
+        reproduction?: unknown | null;
+        confidence?: number | null;
         explanation: string;
       }>;
     };
@@ -99,7 +101,7 @@ export class PgStore {
         .insert(schema.findings)
         .values(
           scan.doc.findings.map((f) => ({
-            id: f.id,
+            id: randomUUID(),
             orgId: scan.orgId,
             scanId: scan.id,
             fingerprint: f.fingerprint,
@@ -122,11 +124,7 @@ export class PgStore {
     | {
         id: string;
         orgId: string;
-        doc: {
-          schema: string;
-          scan: { id: string; rulesetVersion: string; executionMode: string; surfacesScanned: string[] };
-          findings: unknown[];
-        };
+        doc: FindingsDocument;
         disputes: Map<string, string>;
         createdAt: Date;
       }
@@ -137,21 +135,23 @@ export class PgStore {
 
     const findingRows = await this.db.select().from(schema.findings).where(eq(schema.findings.scanId, scanId));
 
-    const findings = findingRows.map((r) => ({
-      id: r.id,
-      orgId: r.orgId,
-      scanId: r.scanId,
-      fingerprint: r.fingerprint,
-      tier: r.tier,
-      classId: r.classId,
-      severity: r.severity,
-      locations: JSON.parse(r.locations),
-      surfaces: r.surfaces,
-      reproduction: r.reproduction ? JSON.parse(r.reproduction) : null,
-      confidence: r.confidence ? Number(r.confidence) : null,
-      explanation: r.explanation,
-      status: r.status,
-    }));
+    const findings = findingRows.map((r) => {
+      const f: Finding = {
+        fingerprint: r.fingerprint,
+        classId: r.classId,
+        severity: r.severity as Finding["severity"],
+        surfaces: r.surfaces as Finding["surfaces"],
+        locations: JSON.parse(r.locations) as Location[],
+        explanation: r.explanation,
+        tier: r.tier as Finding["tier"],
+      } as Finding;
+      if (f.tier === "verified") {
+        f.reproduction = r.reproduction ? JSON.parse(r.reproduction) : undefined;
+      } else {
+        f.confidence = r.confidence ? Number(r.confidence) : 0;
+      }
+      return f;
+    });
 
     return {
       id: scanRow[0].id,
@@ -161,7 +161,7 @@ export class PgStore {
         scan: {
           id: scanRow[0].id,
           rulesetVersion: scanRow[0].rulesetVersion,
-          executionMode: scanRow[0].executionMode,
+          executionMode: scanRow[0].executionMode as "hosted" | "runner" | "cli",
           surfacesScanned: [],
         },
         findings,
@@ -171,26 +171,28 @@ export class PgStore {
     };
   }
 
-  async findingsOf(scanId: string, includeSuppressed = false): Promise<unknown[]> {
+  async findingsOf(scanId: string, includeSuppressed = false): Promise<Finding[]> {
     const rows = await this.db.select().from(schema.findings).where(eq(schema.findings.scanId, scanId));
 
     return rows
       .filter((r) => includeSuppressed || r.status !== "suppressed")
-      .map((r) => ({
-        id: r.id,
-        orgId: r.orgId,
-        scanId: r.scanId,
-        fingerprint: r.fingerprint,
-        tier: r.tier,
-        classId: r.classId,
-        severity: r.severity,
-        locations: JSON.parse(r.locations),
-        surfaces: r.surfaces,
-        reproduction: r.reproduction ? JSON.parse(r.reproduction) : null,
-        confidence: r.confidence ? Number(r.confidence) : null,
-        explanation: r.explanation,
-        status: r.status,
-      }));
+      .map((r) => {
+        const f: Finding = {
+          fingerprint: r.fingerprint,
+          classId: r.classId,
+          severity: r.severity as Finding["severity"],
+          surfaces: r.surfaces as Finding["surfaces"],
+          locations: JSON.parse(r.locations) as Location[],
+          explanation: r.explanation,
+          tier: r.tier as Finding["tier"],
+        } as Finding;
+        if (f.tier === "verified") {
+          f.reproduction = r.reproduction ? JSON.parse(r.reproduction) : undefined;
+        } else {
+          f.confidence = r.confidence ? Number(r.confidence) : 0;
+        }
+        return f;
+      });
   }
 
   async suppress(orgId: string, fingerprint: string): Promise<void> {
@@ -222,7 +224,7 @@ export class PgStore {
     endpointOrRepo: string;
     configHash: string;
     lastScanId?: string;
-    posture: string;
+    posture: "unscanned" | "passing" | "findings_open" | "critical";
   }): Promise<{
     id: string;
     orgId: string;
@@ -230,7 +232,7 @@ export class PgStore {
     endpointOrRepo: string;
     configHash: string;
     lastScanId?: string;
-    posture: string;
+    posture: "unscanned" | "passing" | "findings_open" | "critical";
   }> {
     await this.db
       .insert(schema.fleetServers)
@@ -262,7 +264,7 @@ export class PgStore {
         endpointOrRepo: string;
         configHash: string;
         lastScanId?: string;
-        posture: string;
+        posture: "unscanned" | "passing" | "findings_open" | "critical";
       }
     | undefined
   > {
@@ -287,7 +289,7 @@ export class PgStore {
       endpointOrRepo: string;
       configHash: string;
       lastScanId?: string;
-      posture: string;
+      posture: "unscanned" | "passing" | "findings_open" | "critical";
     }>;
     rollup: Record<string, number>;
   }> {

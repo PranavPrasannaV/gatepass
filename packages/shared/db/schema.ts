@@ -34,6 +34,7 @@ export const organizations = pgTable("organizations", {
   slug: text("slug").notNull().unique(),
   planTier: planTierEnum("plan_tier").notNull().default("free"),
   llmAnalysisEnabled: boolean("llm_analysis_enabled").notNull().default(true),
+  agentLoopEnabled: boolean("agent_loop_enabled").notNull().default(false),
   ssoConnectionId: text("sso_connection_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

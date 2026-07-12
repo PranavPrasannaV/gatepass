@@ -198,6 +198,9 @@ importers:
 
   packages/shared:
     dependencies:
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../findings
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(postgres@3.4.9)
