@@ -244,7 +244,7 @@ export default function Home() {
               {TREND_DATA.map((d, i) => {
                 const x = i * 40 + 10;
                 const barWidth = 22;
-                const total = d.critical + d.high + d.medium + d.low;
+                const _total = d.critical + d.high + d.medium + d.low;
                 const maxVal = Math.max(...TREND_DATA.map((t) => t.critical + t.high + t.medium + t.low));
                 const scale = MAX_BAR_HEIGHT / maxVal;
 

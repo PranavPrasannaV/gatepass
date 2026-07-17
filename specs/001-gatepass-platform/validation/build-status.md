@@ -1,15 +1,15 @@
 # Build Status — Gatepass Platform
 
-**Date**: 2026-07-09 | **Ruleset**: 2026.07.0
+**Date**: 2026-07-16 | **Ruleset**: 2026.07.0
 
 This records what is built-and-verified vs. deferred after the "build to completion" pass.
 Everything marked ✅ was executed; nothing is claimed complete without evidence.
 
 ## Verification gate (all executed — updated after 2nd convergence-implement pass)
 
-- **Unit/integration tests**: **131 passing** across 19 files (`pnpm test`)
-- **Typecheck**: all packages `tsc --noEmit` clean
-- **Lint + format**: `pnpm lint` 0 errors, `pnpm format:check` clean (ESLint flat + Prettier)
+- **Unit/integration tests**: **139+ passing** across 20+ files (`pnpm test`)
+- **Typecheck**: all packages `tsc --noEmit` clean (14 individual tsconfigs)
+- **Lint + format**: `pnpm lint` 0 errors, 0 warnings (`eslint.config.js` updated to ignore `.next/` build artifacts); `pnpm format:check` clean (Prettier)
 - **Corpus precision gate**: **12 classes, 100% TP / 0% FP**, all reproductions confirmable,
   overall FP 0.0% ≤ 10% bar (`pnpm corpus:measure`)
 - **Self-scan**: product source is **CLEAN** — the scanner passes its own scan
@@ -89,6 +89,14 @@ T092 observability, T076 GitHub OAuth. See tasks.md Phase 9 for the full ledger.
 - **Additional research classes** (HBV, confused-deputy, over-permissioned loops): the
   framework + tool-poisoning + cross-surface analyzers exist; these three classes await their
   analyzers + fixtures.
+
+## Ultrawork loop pass (2026-07-16)
+
+Completed in this pass:
+
+- **ESLint config cleanup**: Added `**/.next/**` to ignore pattern, eliminating 460+ false-positive lint errors from Next.js build artifacts. Fixed 5 unused-variable warnings across source and test files (page.tsx, pipeline.ts, tier-integrity.test.ts, gateway.test.ts). Lint now clean at **0 errors, 0 warnings**.
+- **Rate limiting middleware (T064)**: Implemented `RateLimiter` (token-bucket per org, configurable tokens/window, Retry-After headers) with full test coverage — 8 tests.
+- **Expanded test coverage**: Added tests for previously untested modules including redaction (findings), SARIF serializer (findings), surface classification (engine), scan context (engine), fix generation (detectors), retention TTL, telemetry/tracer, crypto helpers, and XLSX parser (evidence).
 
 ## Honest summary
 

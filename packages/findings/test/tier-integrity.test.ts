@@ -41,7 +41,7 @@ describe("tier integrity (Constitution Principle II)", () => {
   });
 
   it("REJECTS a verified finding without a reproduction (FR-008)", () => {
-    const { reproduction, ...bad } = verified;
+    const { reproduction: _reproduction, ...bad } = verified;
     expect(safeParseFinding(bad).success).toBe(false);
   });
 
@@ -51,7 +51,7 @@ describe("tier integrity (Constitution Principle II)", () => {
   });
 
   it("REJECTS a research finding without a confidence score (FR-009)", () => {
-    const { confidence, ...bad } = research;
+    const { confidence: _confidence, ...bad } = research;
     expect(safeParseFinding(bad).success).toBe(false);
   });
 

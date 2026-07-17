@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { LlmGateway, parseAnalysis, type LlmTransport, type LlmRequest } from "../src/index.js";
 
 function recordingTransport(reply: string): LlmTransport & { calls: LlmRequest[] } {

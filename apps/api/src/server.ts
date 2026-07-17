@@ -2,6 +2,7 @@ import http from "node:http";
 import { URL } from "node:url";
 import { MemoryStore, type Store } from "./store.js";
 import { makeHandlers, NotFoundError, ForbiddenError } from "./handlers.js";
+import { RateLimiter, rateLimitHeaders } from "./rate-limit.js";
 import type { GitHubClient } from "@gatepass/github";
 import { PlanTierError } from "@gatepass/shared";
 import { RunnerUploadError } from "@gatepass/runner";
@@ -23,6 +24,7 @@ export interface ServerOptions {
 
 export async function createServer(opts: ServerOptions = {}): Promise<{ server: http.Server; store: Store }> {
   const store = opts.store ?? new MemoryStore();
+  const rateLimiter = new RateLimiter();
   const h = makeHandlers(store, {
     githubClient: opts.githubClient,
     llmTransport: opts.llmTransport,
@@ -102,12 +104,35 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     void handle(req, res).catch((err) => sendError(res, err));
   });
 
+  /**
+   * Extract the org identifier from the request for rate limiting.
+   * Priority: X-Org-Id header > path param > query param.
+   */
+  function resolveOrgId(req: http.IncomingMessage, p: string[], q: URLSearchParams): string {
+    const fromHeader = (req.headers["x-org-id"] as string | undefined) ?? "";
+    if (fromHeader) return fromHeader;
+    // Routes with org in path: /v1/orgs/:org/...
+    if (p[1] === "orgs" && p[2]) return p[2];
+    // Runner route: POST /v1/runner/results?orgId=
+    if (p[1] === "runner") return q.get("orgId") ?? "unknown";
+    return "unknown";
+  }
+
   async function handle(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     const url = new URL(req.url ?? "/", "http://localhost");
     const p = url.pathname.split("/").filter(Boolean);
     const q = url.searchParams;
     const body = await readBody(req);
     const M = req.method;
+
+    // Rate limit check (T064)
+    const orgId = resolveOrgId(req, p, q);
+    const rl = rateLimiter.check(orgId);
+    if (!rl.allowed) {
+      res.writeHead(429, { "content-type": "application/json", ...rateLimitHeaders(rl) });
+      res.end(JSON.stringify({ error: "rate limit exceeded", retryAfter: Math.ceil(rl.retryAfterMs / 1000) }));
+      return;
+    }
 
     // CORS preflight
     if (M === "OPTIONS") {

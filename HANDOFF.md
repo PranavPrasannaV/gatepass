@@ -102,7 +102,7 @@ corpus/             Versioned labeled fixtures (12 classes) + harness + eval rep
 **Everything below was executed and verified — nothing is claimed done without evidence.**
 Full accounting: [`validation/build-status.md`](specs/001-gatepass-platform/validation/build-status.md).
 
-- **131 tests pass** across 19 files — `pnpm test`
+- **358 tests pass** across 35 files — `pnpm test`
 - **All packages typecheck clean** — `tsc --noEmit`
 - **Lint 0 errors / format clean** — `pnpm lint`, `pnpm format:check`
 - **Corpus gate PASS** — 12 classes, **100% TP / 0% FP**, all reproductions confirmable — `pnpm corpus:measure`
@@ -173,7 +173,7 @@ Other environment notes:
 pnpm install
 
 # 1. The full verification gate (what CI runs)
-pnpm test                         # 131 tests
+pnpm test                         # 358 tests
 pnpm lint                         # ESLint (0 errors)
 pnpm format:check                 # Prettier
 pnpm corpus:measure --corpus corpus-v1   # precision + reproduction gate (must PASS)
@@ -235,6 +235,7 @@ Mirrors [`CLAUDE.md`](CLAUDE.md), repeated here because they are load-bearing:
 81b4fbe  Implement Phase 9 convergence tasks (offline-testable subset)
 41c3d19  Converge (2nd pass): append Phase 10 (T095-T100) for partial-remainders
 e5d3396  Implement all offline-completable convergence work (Phase 9/10 subset)
++ (current) Confidence calibration (T028), 227 new tests, coverage config, deep-import cleanup
 ```
 
 ## 10. Founder / project context (was previously only in the AI's working memory)

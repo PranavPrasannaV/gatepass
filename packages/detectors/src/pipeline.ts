@@ -73,7 +73,7 @@ export function runScan(ctx: ScanContext, opts: RunScanOptions): FindingsDocumen
       if (raw.tier === "verified" && raw.reproduction && raw.rawSecrets?.length) {
         assertRedacted(raw.reproduction, raw.rawSecrets);
       }
-      const { rawSecrets, ...findingData } = raw;
+      const { rawSecrets: _rawSecrets, ...findingData } = raw;
       findings.push(parseFinding({ ...findingData, fingerprint: fp }));
     }
   }

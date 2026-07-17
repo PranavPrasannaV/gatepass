@@ -10,5 +10,11 @@ export default defineConfig({
       "apps/**/test/**/*.test.ts",
     ],
     passWithNoTests: false,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      include: ["packages/*/src/**"],
+      exclude: ["**/*.test.ts", "**/node_modules/**"],
+    },
   },
 });

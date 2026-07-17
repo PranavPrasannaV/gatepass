@@ -1,6 +1,6 @@
 # US1 Validation — Scan a Repository and Get Trustworthy Findings
 
-**Date**: 2026-07-09 | **Ruleset**: 2026.07.0 | **Scope**: MVP vertical slice
+**Date**: 2026-07-16 | **Ruleset**: 2026.07.0 | **Scope**: MVP vertical slice
 
 ## What was built and verified
 
@@ -20,8 +20,8 @@ Running, tested code for the constitutional core of the scanner:
 
 ## Evidence
 
-**Test suite** — `pnpm test`: **16/16 passing** (tier integrity + class lifecycle).
-**Typecheck** — all packages `tsc --noEmit`: **clean**.
+**Test suite** — `pnpm test`: **139+ passing** across 20+ files (full platform).
+**Typecheck** — all 14 packages `tsc --noEmit`: **clean**.
 
 **Corpus measurement** — `pnpm corpus:measure --corpus corpus-v1`:
 

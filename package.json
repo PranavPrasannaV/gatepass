@@ -12,6 +12,7 @@
     "build": "tsc --build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --build --noEmit || tsc -p tsconfig.base.json --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",

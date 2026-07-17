@@ -8,7 +8,14 @@ import tseslint from "typescript-eslint";
  */
 export default tseslint.config(
   {
-    ignores: ["**/dist/**", "**/node_modules/**", "**/*.d.ts", "corpus/cases/**", "corpus/eval-repos/**"],
+    ignores: [
+      "**/dist/**",
+      "**/.next/**",
+      "**/node_modules/**",
+      "**/*.d.ts",
+      "corpus/cases/**",
+      "corpus/eval-repos/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
