@@ -5,5 +5,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@gatepass/engine": "workspace:*",
+    "@gatepass/detectors": "workspace:*",
+    "@gatepass/findings": "workspace:*",
+    "@gatepass/semantic": "workspace:*"
   }
 }

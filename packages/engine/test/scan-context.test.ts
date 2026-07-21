@@ -34,7 +34,7 @@ describe("buildScanContext", () => {
       "node_modules/lodash/index.js": "module.exports = {}",
     });
     expect(ctx.files).toHaveLength(1);
-    expect(ctx.files[0].relPath).toBe("src/app.ts");
+    expect(ctx.files[0]!.relPath).toBe("src/app.ts");
   });
 
   it("ignores .git directory", async () => {
@@ -43,7 +43,7 @@ describe("buildScanContext", () => {
       ".git/config": "[core]\n\trepositoryformatversion = 0",
     });
     expect(ctx.files).toHaveLength(1);
-    expect(ctx.files[0].relPath).toBe("src/app.ts");
+    expect(ctx.files[0]!.relPath).toBe("src/app.ts");
   });
 
   it("skips files larger than 5MB", async () => {
@@ -52,7 +52,7 @@ describe("buildScanContext", () => {
       "large.js": Buffer.alloc(6 * 1024 * 1024, "x").toString(),
     });
     expect(ctx.files).toHaveLength(1);
-    expect(ctx.files[0].relPath).toBe("small.ts");
+    expect(ctx.files[0]!.relPath).toBe("small.ts");
   });
 
   it("surfaces are classified per file", async () => {
@@ -106,7 +106,7 @@ describe("buildScanContext", () => {
 
   it("reads file content correctly", async () => {
     const ctx = await ctxFor({ "greeting.ts": "export const msg = 'hello';" });
-    expect(ctx.files[0].content).toBe("export const msg = 'hello';");
+    expect(ctx.files[0]!.content).toBe("export const msg = 'hello';");
   });
 
   it("ignores coverage and vendor directories", async () => {
@@ -116,7 +116,7 @@ describe("buildScanContext", () => {
       "vendor/bundle.js": "var x = 1;",
     });
     expect(ctx.files).toHaveLength(1);
-    expect(ctx.files[0].relPath).toBe("src/app.ts");
+    expect(ctx.files[0]!.relPath).toBe("src/app.ts");
   });
 
   it("includes manifest files like go.mod and Dockerfile", async () => {

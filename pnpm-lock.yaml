@@ -116,7 +116,20 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shared
 
-  benchmark: {}
+  benchmark:
+    dependencies:
+      '@gatepass/detectors':
+        specifier: workspace:*
+        version: link:../packages/detectors
+      '@gatepass/engine':
+        specifier: workspace:*
+        version: link:../packages/engine
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../packages/findings
+      '@gatepass/semantic':
+        specifier: workspace:*
+        version: link:../packages/semantic
 
   cli:
     dependencies:

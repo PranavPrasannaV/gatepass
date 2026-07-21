@@ -162,7 +162,7 @@ describe("calibrateFindings", () => {
     const findings = [{ classId: "unmetered", confidence: 0.75 }];
     const results = calibrateFindings(findings, new Map());
     expect(results).toHaveLength(1);
-    expect(results[0].calibratedConfidence).toBe(0.75);
-    expect(results[0].precision).toBe(0);
+    expect(results[0]!.calibratedConfidence).toBe(0.75);
+    expect(results[0]!.precision).toBe(0);
   });
 });

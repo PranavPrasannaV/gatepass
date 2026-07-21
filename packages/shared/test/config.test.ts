@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { loadConfig, requireConfig } from "../src/index.js";
 
+type Env = Record<string, string | undefined>;
+
 describe("loadConfig", () => {
   it("returns default values when env is empty", () => {
-    const config = loadConfig({} as NodeJS.ProcessEnv);
+    const config = loadConfig({} as Env);
     expect(config.databaseUrl).toBeUndefined();
     expect(config.redisUrl).toBeUndefined();
     expect(config.githubAppId).toBeUndefined();
@@ -14,27 +16,27 @@ describe("loadConfig", () => {
   });
 
   it("maps DATABASE_URL correctly", () => {
-    const config = loadConfig({ DATABASE_URL: "postgres://localhost/mydb" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ DATABASE_URL: "postgres://localhost/mydb" } as Env);
     expect(config.databaseUrl).toBe("postgres://localhost/mydb");
   });
 
   it("maps REDIS_URL correctly", () => {
-    const config = loadConfig({ REDIS_URL: "redis://localhost:6379" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ REDIS_URL: "redis://localhost:6379" } as Env);
     expect(config.redisUrl).toBe("redis://localhost:6379");
   });
 
   it("maps GITHUB_APP_ID correctly", () => {
-    const config = loadConfig({ GITHUB_APP_ID: "123456" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ GITHUB_APP_ID: "123456" } as Env);
     expect(config.githubAppId).toBe("123456");
   });
 
   it("maps ANTHROPIC_API_KEY correctly", () => {
-    const config = loadConfig({ ANTHROPIC_API_KEY: "sk-ant-xxx" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ ANTHROPIC_API_KEY: "sk-ant-xxx" } as Env);
     expect(config.anthropicApiKey).toBe("sk-ant-xxx");
   });
 
   it("maps S3_BUCKET correctly", () => {
-    const config = loadConfig({ S3_BUCKET: "my-bucket" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ S3_BUCKET: "my-bucket" } as Env);
     expect(config.s3Bucket).toBe("my-bucket");
   });
 
@@ -46,7 +48,7 @@ describe("loadConfig", () => {
       ANTHROPIC_API_KEY: "sk-ant-key",
       GATEPASS_LLM_ENABLED: "true",
       S3_BUCKET: "b",
-    } as NodeJS.ProcessEnv);
+    } as Env);
 
     expect(config).toEqual({
       databaseUrl: "postgres://db",
@@ -60,33 +62,33 @@ describe("loadConfig", () => {
 
   describe("llmEnabled default", () => {
     it("is true when GATEPASS_LLM_ENABLED is unset", () => {
-      expect(loadConfig({} as NodeJS.ProcessEnv).llmEnabled).toBe(true);
+      expect(loadConfig({} as Env).llmEnabled).toBe(true);
     });
 
     it("is true when GATEPASS_LLM_ENABLED is 'true'", () => {
-      expect(loadConfig({ GATEPASS_LLM_ENABLED: "true" } as NodeJS.ProcessEnv).llmEnabled).toBe(true);
+      expect(loadConfig({ GATEPASS_LLM_ENABLED: "true" } as Env).llmEnabled).toBe(true);
     });
 
     it("is false when GATEPASS_LLM_ENABLED is 'false'", () => {
-      expect(loadConfig({ GATEPASS_LLM_ENABLED: "false" } as NodeJS.ProcessEnv).llmEnabled).toBe(false);
+      expect(loadConfig({ GATEPASS_LLM_ENABLED: "false" } as Env).llmEnabled).toBe(false);
     });
 
     it("is true when GATEPASS_LLM_ENABLED is any non-'false' value", () => {
-      expect(loadConfig({ GATEPASS_LLM_ENABLED: "0" } as NodeJS.ProcessEnv).llmEnabled).toBe(true);
-      expect(loadConfig({ GATEPASS_LLM_ENABLED: "1" } as NodeJS.ProcessEnv).llmEnabled).toBe(true);
-      expect(loadConfig({ GATEPASS_LLM_ENABLED: "yes" } as NodeJS.ProcessEnv).llmEnabled).toBe(true);
+      expect(loadConfig({ GATEPASS_LLM_ENABLED: "0" } as Env).llmEnabled).toBe(true);
+      expect(loadConfig({ GATEPASS_LLM_ENABLED: "1" } as Env).llmEnabled).toBe(true);
+      expect(loadConfig({ GATEPASS_LLM_ENABLED: "yes" } as Env).llmEnabled).toBe(true);
     });
   });
 });
 
 describe("requireConfig", () => {
   it("returns the value when the key is present", () => {
-    const config = loadConfig({ DATABASE_URL: "postgres://db" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ DATABASE_URL: "postgres://db" } as Env);
     expect(requireConfig(config, "databaseUrl")).toBe("postgres://db");
   });
 
   it("returns an empty string value (present but empty — treated as missing)", () => {
-    const config = loadConfig({ DATABASE_URL: "" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ DATABASE_URL: "" } as Env);
     // loadConfig maps empty string correctly
     expect(config.databaseUrl).toBe("");
     // requireConfig throws for empty string
@@ -94,24 +96,24 @@ describe("requireConfig", () => {
   });
 
   it("throws with the correct message when a key is missing", () => {
-    const config = loadConfig({} as NodeJS.ProcessEnv);
+    const config = loadConfig({} as Env);
     expect(() => requireConfig(config, "databaseUrl")).toThrow("Missing required config: databaseUrl");
   });
 
   it("throws for undefined value", () => {
-    const config = loadConfig({} as NodeJS.ProcessEnv);
+    const config = loadConfig({} as Env);
     expect(() => requireConfig(config, "anthropicApiKey")).toThrow("Missing required config: anthropicApiKey");
   });
 
   it("throws with the correct key name in the error message", () => {
-    const config = loadConfig({} as NodeJS.ProcessEnv);
+    const config = loadConfig({} as Env);
     expect(() => requireConfig(config, "githubAppId")).toThrow("githubAppId");
     expect(() => requireConfig(config, "redisUrl")).toThrow("redisUrl");
     expect(() => requireConfig(config, "s3Bucket")).toThrow("s3Bucket");
   });
 
   it("is type-safe — non-nullable return type", () => {
-    const config = loadConfig({ DATABASE_URL: "postgres://db", GITHUB_APP_ID: "42" } as NodeJS.ProcessEnv);
+    const config = loadConfig({ DATABASE_URL: "postgres://db", GITHUB_APP_ID: "42" } as Env);
     const db: string = requireConfig(config, "databaseUrl");
     expect(db).toBe("postgres://db");
 

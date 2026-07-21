@@ -9,6 +9,8 @@ import {
   requireConfig,
 } from "../src/index.js";
 
+type Env = Record<string, string | undefined>;
+
 describe("plan-tier gating (FR-025)", () => {
   it("free tier has the open scanner but not CI gating", () => {
     expect(hasFeature("free", "open_scanner")).toBe(true);
@@ -53,11 +55,11 @@ describe("audited writer (SC-005, Principle III)", () => {
 
 describe("config loader", () => {
   it("defaults llmEnabled true unless explicitly disabled", () => {
-    expect(loadConfig({} as NodeJS.ProcessEnv).llmEnabled).toBe(true);
-    expect(loadConfig({ GATEPASS_LLM_ENABLED: "false" } as NodeJS.ProcessEnv).llmEnabled).toBe(false);
+    expect(loadConfig({} as Env).llmEnabled).toBe(true);
+    expect(loadConfig({ GATEPASS_LLM_ENABLED: "false" } as Env).llmEnabled).toBe(false);
   });
 
   it("requireConfig throws for a missing required value", () => {
-    expect(() => requireConfig(loadConfig({} as NodeJS.ProcessEnv), "databaseUrl")).toThrow(/Missing required/);
+    expect(() => requireConfig(loadConfig({} as Env), "databaseUrl")).toThrow(/Missing required/);
   });
 });

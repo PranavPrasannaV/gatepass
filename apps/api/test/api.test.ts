@@ -21,11 +21,11 @@ async function post(path: string, body: unknown) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
-  return { status: res.status, json: await res.json() };
+  return { status: res.status, json: (await res.json()) as any };
 }
 async function get(path: string) {
   const res = await fetch(base + path);
-  return { status: res.status, json: await res.json() };
+  return { status: res.status, json: (await res.json()) as any };
 }
 
 describe("API integration (T013/T030/T031 wiring)", () => {
