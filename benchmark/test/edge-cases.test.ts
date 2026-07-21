@@ -67,4 +67,13 @@ describe("edge case resilience", () => {
 
   // The completely clean codebase should produce ZERO findings.
   runEdgeCaseNoFindings("edge-no-findings");
+
+  // Near-miss adversarial cases: look like vulnerabilities but are actually clean.
+  // These assert zero findings to prove the detector isn't tricked by surface patterns.
+  runEdgeCaseNoFindings("nearmiss-secret-in-comment");
+  runEdgeCaseNoFindings("nearmiss-cors-in-comment");
+  runEdgeCaseNoFindings("nearmiss-while-true-with-break");
+  runEdgeCaseNoFindings("nearmiss-akia-in-identifier");
+  runEdgeCaseNoFindings("nearmiss-tool-description-mentions-poisoning");
+  runEdgeCaseNoFindings("nearmiss-pinned-to-vulnerable");
 });

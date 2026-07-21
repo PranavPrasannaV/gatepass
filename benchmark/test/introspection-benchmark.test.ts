@@ -28,7 +28,7 @@ import {
   type RunScanOptions,
 } from "@gatepass/detectors";
 import { LlmGateway } from "@gatepass/semantic";
-import { scoreTool, type CorpusCaseLabel, type Detection, type ToolBenchmark } from "../src/index.js";
+import { scoreTool, releaseGate, type CorpusCaseLabel, type Detection, type ToolBenchmark } from "../src/index.js";
 import path from "node:path";
 import fs from "node:fs";
 
@@ -317,15 +317,14 @@ describe("introspection benchmark", () => {
             return { caseId: c.caseId, flaggedClassIds: [], findings: null };
           }
           const { classIds, findings } = await detectForCase(caseDir, gateway);
-          const flaggedClassIds = classIds.has(c.classId) ? [c.classId] : [];
+          // Record ALL detected classIds so the scorer can detect cross-class FPs on vuln cases too.
+          const flaggedClassIds = [...classIds];
 
-          // Cross-class safety: for clean cases, flag ANY unexpected finding.
+          // Cross-class safety: flag ANY unexpected finding (both clean and vuln cases).
           let crossClassIssue: BenchReport["crossClassIssues"][number] | null = null;
-          if (c.label === "clean") {
-            const unexpected = [...classIds].filter((id) => id !== c.classId);
-            if (unexpected.length > 0) {
-              crossClassIssue = { caseId: c.caseId, unexpectedClassIds: unexpected };
-            }
+          const unexpected = [...classIds].filter((id) => id !== c.classId);
+          if (unexpected.length > 0) {
+            crossClassIssue = { caseId: c.caseId, unexpectedClassIds: unexpected };
           }
 
           return { caseId: c.caseId, flaggedClassIds, findings: crossClassIssue };
@@ -345,6 +344,53 @@ describe("introspection benchmark", () => {
 
     // Score.
     const result = scoreTool("gatepass", "introspection-benchmark-v1", labels, detections);
+
+    // Warn if any class has zero vulnerable cases (scoreTool silently reports 100% TP for those).
+    const vulnByClass = new Map<string, number>();
+    for (const c of BENCH_CASES) {
+      if (c.label === "vulnerable") vulnByClass.set(c.classId, (vulnByClass.get(c.classId) ?? 0) + 1);
+    }
+    for (const s of result.perClass) {
+      const count = vulnByClass.get(s.classId) ?? 0;
+      if (count === 0) {
+        console.warn(`  ⚠  Class "${s.classId}" has zero vulnerable cases — 100% TP is vacuously true`);
+      }
+    }
+
+    // Release gate: compare against the most recent published report.
+    const publishedReports = fs.readdirSync(REPORTS_DIR)
+      .filter((f) => f.startsWith("benchmark-") && f.endsWith(".json"))
+      .sort()
+      .reverse();
+    if (publishedReports.length > 1) {
+      // The most recent report BEFORE this run is at index 1 (index 0 is the current run).
+      const prevReportPath = path.join(REPORTS_DIR, publishedReports[1]);
+      try {
+        const prevReport: BenchReport = JSON.parse(fs.readFileSync(prevReportPath, "utf8"));
+        const prevScore: ToolBenchmark = {
+          tool: "gatepass",
+          corpusVersion: "introspection-benchmark-v1",
+          perClass: prevReport.perClass.map((p) => ({
+            classId: p.classId,
+            truePositives: p.tp,
+            falseNegatives: p.fn,
+            falsePositives: p.fp,
+            trueNegatives: p.tn,
+            tpRate: p.tpRate,
+            fpRate: p.fpRate,
+          })),
+          overallFpRate: prevReport.overallFpRate,
+        };
+        const gate = releaseGate(prevScore, result);
+        if (!gate.pass) {
+          console.warn(`  ⚠  Release gate BLOCKED — regressed classes: ${gate.regressedClasses.join(", ")}`);
+        } else {
+          console.log(`  ✓ Release gate: no regression from ${path.basename(prevReportPath)}`);
+        }
+      } catch {
+        console.warn(`  ⚠  Could not read previous report at ${prevReportPath} — skipping release gate`);
+      }
+    }
 
     // Build report.
     const report: BenchReport = {
