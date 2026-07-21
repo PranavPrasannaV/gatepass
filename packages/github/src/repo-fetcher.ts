@@ -81,7 +81,7 @@ export class TarballRepoFetcher implements RepoFetcher {
 
 /** Dev/test fetcher: scans an existing local directory (no download, no cleanup). */
 export class LocalDirFetcher implements RepoFetcher {
-  async fetch(repo: string): Promise<RepoWorkspace> {
+  async fetch(repo: string, _ref?: string): Promise<RepoWorkspace> {
     return { dir: repo, cleanup: async () => {} };
   }
 }

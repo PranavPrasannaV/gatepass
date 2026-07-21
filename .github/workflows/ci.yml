@@ -23,6 +23,10 @@ jobs:
             npx tsc --noEmit -p "$p"
           done
 
+      # Per-package tsconfigs only include src/ — the root project also covers tests.
+      - name: Typecheck root project (includes tests)
+        run: pnpm typecheck
+
       - name: Lint
         run: pnpm lint
 
