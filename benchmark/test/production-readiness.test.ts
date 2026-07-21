@@ -513,9 +513,8 @@ describe("production readiness", () => {
       // We already computed heuristicCrossClass above. If no heuristic results
       // (e.g., test ran in isolation), compute them now.
       let crossClass = heuristicCrossClass;
-      let detectionEntries = heuristicDetections;
 
-      if (crossClass.length === 0 && detectionEntries.length === 0) {
+      if (crossClass.length === 0 && heuristicDetections.length === 0) {
         // Compute on-demand.
         const allResults: { caseId: string; flaggedClassIds: string[]; crossClass: typeof heuristicCrossClass[number] | null }[] = [];
 
@@ -535,7 +534,6 @@ describe("production readiness", () => {
           allResults.push({ caseId: c.caseId, flaggedClassIds, crossClass: cc });
         }
 
-        detectionEntries = allResults.map((r) => ({ caseId: r.caseId, flaggedClassIds: r.flaggedClassIds }));
         crossClass = allResults.map((r) => r.crossClass).filter((x): x is typeof heuristicCrossClass[number] => x !== null);
       }
 
@@ -716,15 +714,16 @@ describe("production readiness", () => {
         durationMs = Date.now() - start;
       }
 
-      const durationSec = (durationMs / 1000).toFixed(1);
       const totalCases = BENCH_CASES.length;
       const warnThreshold = 30_000;
 
+      const durationStr = durationMs < 1000 ? `${durationMs}ms` : `${(durationMs / 1000).toFixed(1)}s`;
+
       if (durationMs > warnThreshold) {
-        console.warn(`  ⚠  Benchmark scan took ${durationSec}s — exceeds 30s threshold`);
-        record("Performance", "WARN", `${durationSec}s (${totalCases} cases scanned) — exceeds 30s threshold`);
+        console.warn(`  ⚠  Benchmark scan took ${durationStr} — exceeds 30s threshold`);
+        record("Performance", "WARN", `${durationStr} (${totalCases} cases scanned) — exceeds 30s threshold`);
       } else {
-        record("Performance", "PASS", `${durationSec}s (${totalCases} cases scanned)`);
+        record("Performance", "PASS", `${durationStr} (${totalCases} cases scanned)`);
       }
 
       // Soft assertion: log warning but don't fail the test.
