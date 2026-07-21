@@ -6,7 +6,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.125.0"
   },
   "categories": [
     "Linters"
@@ -33,7 +33,16 @@
       }
     }
   },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "package": "vsce package --no-dependencies"
+  },
   "dependencies": {
     "@gatepass/findings": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.125.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.1"
   }
 }
