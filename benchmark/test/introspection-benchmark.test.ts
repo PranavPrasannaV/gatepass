@@ -316,7 +316,7 @@ describe("introspection benchmark", () => {
             console.warn(`  ⚠  Case directory not found: ${caseDir} — skipping`);
             return { caseId: c.caseId, flaggedClassIds: [], findings: null };
           }
-          const { classIds, findings } = await detectForCase(caseDir, gateway);
+          const { classIds } = await detectForCase(caseDir, gateway);
           // Record ALL detected classIds so the scorer can detect cross-class FPs on vuln cases too.
           const flaggedClassIds = [...classIds];
 
