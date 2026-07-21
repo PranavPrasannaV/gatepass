@@ -30,19 +30,22 @@ Alternatives considered.
 
 ## R3. Research-tier semantic layer
 
-- **Decision**: LLM-assisted analyzers in `packages/semantic` call Anthropic Claude
-  (claude-sonnet-5 default; claude-haiku-4-5 for cheap pre-filters) through a Gatepass-owned
-  gateway with zero-data-retention terms. Prompts operate on extracted artifacts (tool
+- **Decision**: LLM-assisted analyzers in `packages/semantic` call NVIDIA NIM
+  (default model `z-ai/glm-5.2`) through a Gatepass-owned OpenAI-compatible gateway
+  (`createNimTransport` → `https://integrate.api.nvidia.com/v1/chat/completions`,
+  `Authorization: Bearer $NVIDIA_API_KEY`). Prompts operate on extracted artifacts (tool
   definitions, permission scopes, code slices from the surface graph), not whole repos.
   Confidence scoring calibrated against corpus labels; per-org disable flag falls back to
-  static heuristics with reduced-coverage warning (FR-011a).
+  static heuristics with reduced-coverage warning (FR-011a). The `LlmTransport` seam keeps
+  the provider swappable.
 - **Rationale**: Tool poisoning/HBV/confused-deputy detection is semantic by nature (spec §
   problem statement); calibration against the labeled corpus is what turns LLM output into a
-  measured confidence score rather than vibes — Principle II.
+  measured confidence score rather than vibes — Principle II. Provider choice is operational
+  (NIM GLM 5.2); abstraction preserves future swaps.
 - **Alternatives**: Static-only (fails precision bar on semantic classes); customer-supplied
   keys (non-reproducible benchmark, inconsistent precision — rejected in clarification Q2);
   self-hosted open-weights model (operational burden; revisit for the self-hosted runner if
-  enterprise demand materializes).
+  enterprise demand materializes); Anthropic Claude (prior default; replaced by NIM for live wiring).
 
 ## R4. Scan execution & isolation
 

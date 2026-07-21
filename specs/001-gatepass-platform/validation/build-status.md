@@ -80,8 +80,9 @@ T092 observability, T076 GitHub OAuth. See tasks.md Phase 9 for the full ledger.
   daemon was not running). The tier invariant they encode is independently enforced + tested
   at the app layer (findings schema, 11 tests).
 - **Live integrations**: GitHub App webhooks/Octokit calls, Vanta/Drata API calls, WorkOS
-  SSO/SCIM, the Anthropic gateway transport — all have built interfaces + tested logic; only
-  the network edge is unwired (needs credentials/live endpoints).
+  SSO/SCIM — have built interfaces + tested logic; only the network edge is unwired (needs
+  credentials/live endpoints). Research-tier LLM transport is wired to NVIDIA NIM GLM 5.2
+  (`createNimTransport` + `NVIDIA_API_KEY`).
 - **tree-sitter AST parsing**: detectors currently use line/regex + JSON parsing; AST parsing
   (T011) would deepen a few detectors.
 - **Next.js dashboard, ECS/Fargate infra, load tests at 50k scans/day, IDE extension**:

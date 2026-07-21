@@ -9,7 +9,7 @@ describe("loadConfig", () => {
     expect(config.databaseUrl).toBeUndefined();
     expect(config.redisUrl).toBeUndefined();
     expect(config.githubAppId).toBeUndefined();
-    expect(config.anthropicApiKey).toBeUndefined();
+    expect(config.nvidiaApiKey).toBeUndefined();
     expect(config.s3Bucket).toBeUndefined();
     // llmEnabled defaults to true when GATEPASS_LLM_ENABLED is not set
     expect(config.llmEnabled).toBe(true);
@@ -30,9 +30,9 @@ describe("loadConfig", () => {
     expect(config.githubAppId).toBe("123456");
   });
 
-  it("maps ANTHROPIC_API_KEY correctly", () => {
-    const config = loadConfig({ ANTHROPIC_API_KEY: "sk-ant-xxx" } as Env);
-    expect(config.anthropicApiKey).toBe("sk-ant-xxx");
+  it("maps NVIDIA_API_KEY correctly", () => {
+    const config = loadConfig({ NVIDIA_API_KEY: "nvapi-xxx" } as Env);
+    expect(config.nvidiaApiKey).toBe("nvapi-xxx");
   });
 
   it("maps S3_BUCKET correctly", () => {
@@ -45,7 +45,7 @@ describe("loadConfig", () => {
       DATABASE_URL: "postgres://db",
       REDIS_URL: "redis://r",
       GITHUB_APP_ID: "42",
-      ANTHROPIC_API_KEY: "sk-ant-key",
+      NVIDIA_API_KEY: "nvapi-key",
       GATEPASS_LLM_ENABLED: "true",
       S3_BUCKET: "b",
     } as Env);
@@ -54,7 +54,7 @@ describe("loadConfig", () => {
       databaseUrl: "postgres://db",
       redisUrl: "redis://r",
       githubAppId: "42",
-      anthropicApiKey: "sk-ant-key",
+      nvidiaApiKey: "nvapi-key",
       llmEnabled: true,
       s3Bucket: "b",
     });
@@ -102,7 +102,7 @@ describe("requireConfig", () => {
 
   it("throws for undefined value", () => {
     const config = loadConfig({} as Env);
-    expect(() => requireConfig(config, "anthropicApiKey")).toThrow("Missing required config: anthropicApiKey");
+    expect(() => requireConfig(config, "nvidiaApiKey")).toThrow("Missing required config: nvidiaApiKey");
   });
 
   it("throws with the correct key name in the error message", () => {

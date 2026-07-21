@@ -33,6 +33,7 @@ export function verifyHmac(payload: string, secret: string, signature: string): 
 export function redactForLog(text: string): string {
   return text
     .replace(/\bAKIA[0-9A-Z]{16}\b/g, "«AWS_KEY»")
+    .replace(/\bnvapi-[A-Za-z0-9_-]{20,}\b/g, "«NVIDIA_KEY»")
     .replace(/\bsk-ant-[A-Za-z0-9_-]{20,}\b/g, "«ANTHROPIC_KEY»")
     .replace(/\bsk-[A-Za-z0-9]{32,}\b/g, "«API_KEY»")
     .replace(/\bxox[baprs]-[0-9A-Za-z-]{10,}\b/g, "«SLACK_TOKEN»")

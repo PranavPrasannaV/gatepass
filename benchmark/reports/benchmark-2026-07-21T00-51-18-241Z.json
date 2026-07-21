@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-07-21T00-51-18-241Z",
+  "llmEnabled": false,
+  "testRepo": "/Users/aadisaraf/Documents/YC/gate_pass_test_repo",
+  "overallFpRate": 0,
+  "perClass": [
+    {
+      "classId": "confused-deputy",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "cors-misconfig",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "cross-surface-scope-mismatch",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "exposed-secret",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "hbv",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "missing-schema-validation",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "over-permissioned-loop",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "rls-gap",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "tool-poisoning",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "unauth-mcp-transport",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "unbounded-tool-param",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    },
+    {
+      "classId": "unpinned-dependency",
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "tn": 2,
+      "tpRate": 1,
+      "fpRate": 0,
+      "pass": true
+    }
+  ],
+  "crossClassIssues": []
+}

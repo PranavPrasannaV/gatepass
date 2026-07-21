@@ -89,6 +89,18 @@ describe("redactForLog", () => {
     expect(result).toBe("«ANTHROPIC_KEY»");
   });
 
+  it("redacts NVIDIA NIM API keys (nvapi-...)", () => {
+    const result = redactForLog("nvapi-abcdefghijklmnopqrstuvwxyz0123456789ABCDEF");
+    expect(result).toBe("«NVIDIA_KEY»");
+  });
+
+  it("redacts NVIDIA keys embedded in text", () => {
+    const key = "nvapi-abcdefghijklmnopqrstuvwxyz0123456789";
+    const result = redactForLog(`key=${key} ok`);
+    expect(result).toContain("«NVIDIA_KEY»");
+    expect(result).not.toContain(key);
+  });
+
   it("redacts general API keys (sk-...)", () => {
     const result = redactForLog("sk-abcdefghijklmnopqrstuvwxyz0123456789ab");
     expect(result).toBe("«API_KEY»");

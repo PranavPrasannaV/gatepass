@@ -7,7 +7,8 @@ export interface AppConfig {
   databaseUrl?: string;
   redisUrl?: string;
   githubAppId?: string;
-  anthropicApiKey?: string;
+  /** NVIDIA NIM API key for research-tier semantic analysis (nvapi-…). */
+  nvidiaApiKey?: string;
   llmEnabled: boolean;
   s3Bucket?: string;
 }
@@ -17,7 +18,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     databaseUrl: env.DATABASE_URL,
     redisUrl: env.REDIS_URL,
     githubAppId: env.GITHUB_APP_ID,
-    anthropicApiKey: env.ANTHROPIC_API_KEY,
+    nvidiaApiKey: env.NVIDIA_API_KEY,
     llmEnabled: env.GATEPASS_LLM_ENABLED !== "false",
     s3Bucket: env.S3_BUCKET,
   };

@@ -30,7 +30,7 @@ pnpm --filter @gatepass/api start                   # run the API on :3000
 - **Corpus gate:** 12 vulnerability classes, **100% TP / 0% FP**, all reproductions confirmable
 - **Self-scan:** Gatepass passes its own scan
 - The analysis core and platform logic are complete and tested. Remaining work needs live
-  infrastructure (Postgres, GitHub App, Vanta, Anthropic key, cloud deploy, dashboard) — see
+  infrastructure (Postgres, GitHub App, Vanta, NVIDIA NIM key, cloud deploy, dashboard) — see
   the blockers table in [HANDOFF.md §5](HANDOFF.md).
 
 ## How it's organized

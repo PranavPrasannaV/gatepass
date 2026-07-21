@@ -26,7 +26,7 @@ import type { LlmTransport } from "@gatepass/semantic";
 import type { GitHubClient } from "@gatepass/github";
 
 export interface HandlerOptions {
-  /** LLM transport for research-tier refinement. Production wires the Anthropic transport;
+  /** LLM transport for research-tier refinement. Production wires the NVIDIA NIM transport;
    *  absent means static-only (research findings keep heuristic confidence). */
   llmTransport?: LlmTransport;
   llmModel?: string;

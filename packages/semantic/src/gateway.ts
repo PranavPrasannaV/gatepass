@@ -34,7 +34,8 @@ export interface AnalysisResult {
   rationale?: string;
 }
 
-export const DEFAULT_MODEL = "claude-sonnet-5";
+/** Default research-tier model: NVIDIA NIM GLM 5.2. */
+export const DEFAULT_MODEL = "z-ai/glm-5.2";
 
 export class LlmGateway {
   constructor(private readonly opts: GatewayOptions) {}

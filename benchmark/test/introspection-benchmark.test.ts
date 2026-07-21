@@ -7,10 +7,11 @@
  * not flag). The pipeline runs every detector against each case in isolation, then
  * the harness scores every classId against its labeled cases.
  *
- * When ANTHROPIC_API_KEY is set in the environment, the async pipeline
+ * When NVIDIA_API_KEY is set in the environment, the async pipeline
  * (runScanAsync) is used, which sends research-tier artifacts through the LLM
- * gateway for confidence refinement. Without the key, the sync pipeline (runScan)
- * runs with heuristic pre-filtering only — still fully functional, same TP/FP.
+ * gateway (NVIDIA NIM GLM 5.2) for confidence refinement. Without the key, the
+ * sync pipeline (runScan) runs with heuristic pre-filtering only — still fully
+ * functional, same TP/FP.
  *
  * EXPECTED: 100 % TP rate (every vuln case flagged), 0 % FP rate (no clean case
  * flagged) across ALL detector classes.
@@ -27,7 +28,7 @@ import {
   runScanAsync,
   type RunScanOptions,
 } from "@gatepass/detectors";
-import { LlmGateway } from "@gatepass/semantic";
+import { LlmGateway, createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 import { scoreTool, releaseGate, type CorpusCaseLabel, type Detection, type ToolBenchmark } from "../src/index.js";
 import path from "node:path";
 import fs from "node:fs";
@@ -50,39 +51,17 @@ const SCAN_OPTS: RunScanOptions = {
 };
 
 // ---------------------------------------------------------------------------
-// LLM gateway setup — used when ANTHROPIC_API_KEY is present
+// LLM gateway setup — used when NVIDIA_API_KEY is present
 // ---------------------------------------------------------------------------
 
 function buildGateway(): LlmGateway | undefined {
-  const apiKey = process.env["ANTHROPIC_API_KEY"];
+  const apiKey = process.env["NVIDIA_API_KEY"];
   if (!apiKey) return undefined;
   return new LlmGateway({
     enabled: true,
     apiKey,
-    transport: {
-      async complete(req) {
-        const resp = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            model: req.model,
-            system: req.system,
-            messages: [{ role: "user", content: req.artifact }],
-            max_tokens: 256,
-          }),
-        });
-        if (!resp.ok) {
-          throw new Error(`Anthropic API error: ${resp.status} ${await resp.text()}`);
-        }
-        const json = await resp.json();
-        const text = json.content?.[0]?.text ?? "";
-        return { text };
-      },
-    },
+    model: DEFAULT_MODEL,
+    transport: createNimTransport({ apiKey }),
   });
 }
 
@@ -295,10 +274,10 @@ describe("introspection benchmark", () => {
     }));
 
     if (llmEnabled) {
-      console.log(`\n  LLM gateway enabled — using runScanAsync (research-tier confidence refined by Anthropic)\n`);
+      console.log(`\n  LLM gateway enabled — using runScanAsync (research-tier confidence refined by NVIDIA NIM GLM 5.2)\n`);
     } else {
       console.log(`\n  LLM gateway disabled — using runScan (heuristic pre-filtering). ` +
-        `Set ANTHROPIC_API_KEY to enable LLM refinement.\n`);
+        `Set NVIDIA_API_KEY to enable LLM refinement.\n`);
     }
   });
 

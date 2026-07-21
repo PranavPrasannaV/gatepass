@@ -133,7 +133,7 @@ would violate honesty and the Constitution's "measured" ethos). Precise blockers
 |---|---|---|
 | A running **Postgres 16** | T005/T006 (run migrations), T077 (replace in-memory store) | `docker compose up -d postgres`, then run the SQL in `packages/shared/db/migrations/`, then swap `apps/api/src/store.ts` for a Drizzle-backed repo |
 | A **GitHub App** install + token | T016/T072 (webhooks), T073/T074/T096 (actually post), T076 (OAuth/RBAC) | Create a GitHub App (scopes: contents:read, pull_requests:write, checks:write, metadata:read — see `contracts/github-integration.md`); construct `RestGitHubClient` with the installation token |
-| An **Anthropic API key** | The live LLM transport behind T095's gateway | Implement an `LlmTransport` calling the Anthropic API with zero-retention headers; inject it via `makeHandlers(store, { llmTransport })` |
+| An **NVIDIA NIM API key** (`NVIDIA_API_KEY`, model `z-ai/glm-5.2`) | Live research-tier LLM refinement | Set `NVIDIA_API_KEY` in `.env`; `apps/api` wires `createNimTransport` automatically. Benchmarks: `pnpm benchmark:with-llm` |
 | **Vanta/Drata** sandbox + API key | T083 (evidence push) | Implement exporters posting `evaluatePosture()` items to their evidence APIs |
 | A **cloud deploy target** (ECS/RDS/S3/Redis) | T015/T015a/T086 (isolation/encryption IaC), T063/T092 (SLO/status), T091 (load) | Write IaC (Terraform); wire OTel exporter into the `telemetry.ts` `setTracer()` seam |
 | (optional) build tooling | T098 (tree-sitter AST) | Precision refinement of already-passing detectors — low priority |

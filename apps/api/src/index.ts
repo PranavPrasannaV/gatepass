@@ -3,8 +3,9 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { createServer } from "./server.js";
 import { MemoryStore } from "./store.js";
-import { PgStore } from "@gatepass/shared";
+import { PgStore, loadConfig } from "@gatepass/shared";
 import { getInstallationToken, RestGitHubClient } from "@gatepass/github";
+import { createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 
 export { createServer } from "./server.js";
 export { makeHandlers } from "./handlers.js";
@@ -12,7 +13,8 @@ export { MemoryStore } from "./store.js";
 
 const isEntry = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isEntry) {
-  const dbUrl = process.env.DATABASE_URL;
+  const config = loadConfig();
+  const dbUrl = config.databaseUrl ?? process.env.DATABASE_URL;
   const store = dbUrl ? new PgStore(dbUrl) : new MemoryStore();
 
   const appId = process.env.GITHUB_APP_ID;
@@ -26,7 +28,19 @@ if (isEntry) {
     console.log(`GitHub App client ready (installation ${installationId})`);
   }
 
-  const { server } = await createServer({ store, githubClient });
+  const llmTransport = config.nvidiaApiKey
+    ? createNimTransport({ apiKey: config.nvidiaApiKey })
+    : undefined;
+  if (llmTransport) {
+    console.log(`LLM transport ready (NVIDIA NIM, model ${DEFAULT_MODEL})`);
+  }
+
+  const { server } = await createServer({
+    store,
+    githubClient,
+    llmTransport,
+    llmModel: DEFAULT_MODEL,
+  });
   const port = Number(process.env.PORT ?? 3000);
   server.listen(port, () => {
     console.log(`Gatepass API on :${port} (store: ${dbUrl ? "postgres" : "memory"})`);

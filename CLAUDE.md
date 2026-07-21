@@ -23,8 +23,8 @@ developer-workflow remediation, a public precision benchmark, and compliance evi
 - Analysis engine: tree-sitter parsing (TS/JS, Python, Go, SQL) + config parsers;
   `packages/engine` + `packages/detectors` are pure libraries embedded identically by hosted
   workers, OSS CLI, and self-hosted runner (finding parity is by construction)
-- Research-tier semantic analysis: Anthropic Claude via Gatepass gateway, zero-retention,
-  per-org disable flag
+- Research-tier semantic analysis: NVIDIA NIM GLM 5.2 (`z-ai/glm-5.2`) via Gatepass
+  gateway (`createNimTransport`), `NVIDIA_API_KEY`, per-org disable flag
 - Platform: Fastify API, Next.js dashboard, PostgreSQL 16 (Drizzle, org RLS), Redis/BullMQ,
   S3 artifacts with TTL; per-scan container isolation (ECS Fargate)
 - GitHub App: contents:read, pull_requests:write, checks:write — never contents:write

@@ -18,7 +18,7 @@ LLM-assisted semantic layer (zero-retention) for research-tier classes.
 **Language/Version**: TypeScript 5.x on Node 22 LTS (platform, engine, CLI); rule fixtures
 polyglot (TS/JS, Python, Go, SQL, JSON/YAML)
 **Primary Dependencies**: tree-sitter (multi-language parsing), GitHub App APIs (Octokit),
-Anthropic Claude API (research-tier semantic analysis, zero-retention), Next.js (dashboard),
+NVIDIA NIM GLM 5.2 API (research-tier semantic analysis via OpenAI-compatible gateway), Next.js (dashboard),
 Fastify (API), BullMQ on Redis (scan queue), Drizzle ORM
 **Storage**: PostgreSQL 16 (primary data, RLS-enabled), S3-compatible object storage
 (scan artifacts, encrypted, TTL-bound), Redis (queue/cache)
