@@ -255,7 +255,9 @@ function printSummary(): void {
 // Suite
 // ---------------------------------------------------------------------------
 
-describe("production readiness", () => {
+const hasTestRepo = fs.existsSync(TEST_REPO);
+
+describe.skipIf(!hasTestRepo)("production readiness", () => {
   let labels: CorpusCaseLabel[];
   let gateway: LlmGateway | undefined;
   let llmEnabled: boolean;
@@ -294,12 +296,6 @@ describe("production readiness", () => {
 
   describe("test repo integrity", () => {
     it("exists and contains all expected case directories", () => {
-      if (!fs.existsSync(TEST_REPO)) {
-        record("Test Repo Integrity", "FAIL", `repo not found at ${TEST_REPO}`);
-        expect(fs.existsSync(TEST_REPO)).toBe(true);
-        return;
-      }
-
       const expectedDirs = BENCH_CASES.map((c) => c.caseId);
       const missing: string[] = [];
       for (const d of expectedDirs) {

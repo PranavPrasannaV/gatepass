@@ -246,7 +246,9 @@ function formatTable(result: ToolBenchmark, crossClassIssues: BenchReport["cross
 // Benchmark suite
 // ---------------------------------------------------------------------------
 
-describe("introspection benchmark", () => {
+const hasTestRepo = fs.existsSync(path.join(TEST_REPO, "cases"));
+
+describe.skipIf(!hasTestRepo)("introspection benchmark", () => {
   let labels: CorpusCaseLabel[];
   let casesRoot: string;
   let gateway: LlmGateway | undefined;
@@ -254,12 +256,6 @@ describe("introspection benchmark", () => {
 
   beforeAll(() => {
     casesRoot = path.join(TEST_REPO, "cases");
-    if (!fs.existsSync(casesRoot)) {
-      throw new Error(
-        `Test repo cases directory not found at ${casesRoot}. ` +
-          `Clone / create the test repo at ${TEST_REPO} or set GATE_PASS_TEST_REPO.`,
-      );
-    }
 
     gateway = buildGateway();
     llmEnabled = !!gateway?.enabled;
