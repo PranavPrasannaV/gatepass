@@ -45,6 +45,8 @@ if (isEntry) {
     llmModel: DEFAULT_MODEL,
     webhookSecret: process.env.GITHUB_WEBHOOK_SECRET,
     webhookOrgId: process.env.GATEPASS_WEBHOOK_ORG,
+    vantaToken: process.env.VANTA_API_TOKEN,
+    drataToken: process.env.DRATA_API_TOKEN,
   });
   if (process.env.GITHUB_WEBHOOK_SECRET) {
     console.log("GitHub webhook receiver ready at POST /v1/webhooks/github");

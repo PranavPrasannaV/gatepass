@@ -21,6 +21,8 @@ export interface ServerOptions {
   llmModel?: string;
   webhookSecret?: string;
   webhookOrgId?: string;
+  vantaToken?: string;
+  drataToken?: string;
   /** Set to false to skip seeding demo benchmark data (production PgStore). */
   seedBenchmark?: boolean;
 }
@@ -35,6 +37,8 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     llmModel: opts.llmModel,
     webhookSecret: opts.webhookSecret,
     webhookOrgId: opts.webhookOrgId,
+    vantaToken: opts.vantaToken,
+    drataToken: opts.drataToken,
   });
 
   // Seed demo orgs for integration tests and dev use
@@ -190,8 +194,16 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
       return sendJson(res, 200, await h.disputeFinding(p[2]!, String(body.scanId), String(body.reason)));
     }
     // GET /v1/orgs/:org/evidence?scanId=
-    if (M === "GET" && p[1] === "orgs" && p[3] === "evidence") {
+    if (M === "GET" && p[1] === "orgs" && p[3] === "evidence" && p[4] !== "export") {
       return sendJson(res, 200, await h.getEvidence(p[2]!, q.get("scanId") ?? ""));
+    }
+    // POST /v1/orgs/:org/evidence/export { scanId, platform }  — push to Vanta/Drata
+    if (M === "POST" && p[1] === "orgs" && p[3] === "evidence" && p[4] === "export") {
+      return sendJson(
+        res,
+        200,
+        await h.exportEvidence(p[2]!, String(body.scanId), (body.platform as never) ?? "vanta"),
+      );
     }
     // POST /v1/orgs/:org/questionnaires { scanId, format, content }
     if (M === "POST" && p[1] === "orgs" && p[3] === "questionnaires") {

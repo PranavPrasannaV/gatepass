@@ -12,7 +12,15 @@ import {
   type WebhookHeaders,
 } from "@gatepass/github";
 import { AuditedWriter, InMemoryAuditSink } from "@gatepass/shared";
-import { evaluatePosture, draftAnswers, ingest, type Scan as PostureScan, type SourceFormat } from "@gatepass/evidence";
+import {
+  evaluatePosture,
+  draftAnswers,
+  ingest,
+  ApiEvidenceExporter,
+  type Scan as PostureScan,
+  type SourceFormat,
+  type CompliancePlatform,
+} from "@gatepass/evidence";
 import { requireFeature, type PlanTier } from "@gatepass/shared";
 import { validateRunnerUpload } from "@gatepass/runner";
 import { scoreTool, type CorpusCaseLabel, type Detection } from "@gatepass/benchmark";
@@ -46,6 +54,9 @@ export interface HandlerOptions {
   webhookSecret?: string;
   /** Org that webhook-triggered scans run under (installation→org mapping; MVP default). */
   webhookOrgId?: string;
+  /** Compliance-platform API tokens for evidence export (T083). */
+  vantaToken?: string;
+  drataToken?: string;
 }
 
 export function makeHandlers(store: Store, options: HandlerOptions = {}) {
@@ -228,6 +239,17 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       requireFeature(org.planTier as PlanTier, "evidence_export");
       const scan = await requireScan(scanId);
       return evaluatePosture(await asPostureScan(scan));
+    },
+
+    // Push posture evidence to Vanta/Drata (FR-021, T083). Scale-tier gated; needs a token.
+    async exportEvidence(orgId: string, scanId: string, platform: CompliancePlatform) {
+      const org = await requireOrg(orgId);
+      requireFeature(org.planTier as PlanTier, "evidence_export");
+      const token = platform === "vanta" ? options.vantaToken : options.drataToken;
+      if (!token) throw new ForbiddenError(`no ${platform} API token configured`);
+      const scan = await requireScan(scanId);
+      const items = evaluatePosture(await asPostureScan(scan));
+      return new ApiEvidenceExporter(platform, token).export(items);
     },
 
     async draftQuestionnaire(orgId: string, scanId: string, format: SourceFormat, content: string) {
