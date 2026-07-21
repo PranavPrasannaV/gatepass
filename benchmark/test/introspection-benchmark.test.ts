@@ -23,11 +23,7 @@
 
 import { describe, it, expect, beforeAll } from "vitest";
 import { buildScanContext } from "@gatepass/engine";
-import {
-  runScan,
-  runScanAsync,
-  type RunScanOptions,
-} from "@gatepass/detectors";
+import { runScan, runScanAsync, type RunScanOptions } from "@gatepass/detectors";
 import { LlmGateway, createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 import { scoreTool, releaseGate, type CorpusCaseLabel, type Detection, type ToolBenchmark } from "../src/index.js";
 import path from "node:path";
@@ -37,10 +33,7 @@ import fs from "node:fs";
 // Configuration
 // ---------------------------------------------------------------------------
 
-const DEFAULT_TEST_REPO = path.resolve(
-  import.meta.dirname,
-  "../../../../gate_pass_test_repo",
-);
+const DEFAULT_TEST_REPO = path.resolve(import.meta.dirname, "../../../../gate_pass_test_repo");
 const TEST_REPO = process.env["GATE_PASS_TEST_REPO"] || DEFAULT_TEST_REPO;
 
 const SCAN_OPTS: RunScanOptions = {
@@ -140,7 +133,11 @@ const BENCH_CASES: BenchCase[] = [
   { caseId: "vuln-tool-poisoning-variant2", classId: "tool-poisoning", label: "vulnerable" },
   { caseId: "clean-tool-poisoning-variant2", classId: "tool-poisoning", label: "clean" },
 
-  { caseId: "vuln-cross-surface-scope-mismatch-variant2", classId: "cross-surface-scope-mismatch", label: "vulnerable" },
+  {
+    caseId: "vuln-cross-surface-scope-mismatch-variant2",
+    classId: "cross-surface-scope-mismatch",
+    label: "vulnerable",
+  },
   { caseId: "clean-cross-surface-scope-mismatch-variant2", classId: "cross-surface-scope-mismatch", label: "clean" },
 
   { caseId: "vuln-hbv-variant2", classId: "hbv", label: "vulnerable" },
@@ -274,16 +271,24 @@ describe("introspection benchmark", () => {
     }));
 
     if (llmEnabled) {
-      console.log(`\n  LLM gateway enabled — using runScanAsync (research-tier confidence refined by NVIDIA NIM GLM 5.2)\n`);
+      console.log(
+        `\n  LLM gateway enabled — using runScanAsync (research-tier confidence refined by NVIDIA NIM GLM 5.2)\n`,
+      );
     } else {
-      console.log(`\n  LLM gateway disabled — using runScan (heuristic pre-filtering). ` +
-        `Set NVIDIA_API_KEY to enable LLM refinement.\n`);
+      console.log(
+        `\n  LLM gateway disabled — using runScan (heuristic pre-filtering). ` +
+          `Set NVIDIA_API_KEY to enable LLM refinement.\n`,
+      );
     }
   });
 
   it("scans every case with 100% TP / 0% FP and cross-class safety", async () => {
     const BATCH_SIZE = 12;
-    const allResults: { caseId: string; flaggedClassIds: string[]; findings: BenchReport["crossClassIssues"][number] | null }[] = [];
+    const allResults: {
+      caseId: string;
+      flaggedClassIds: string[];
+      findings: BenchReport["crossClassIssues"][number] | null;
+    }[] = [];
 
     // Process in batches so the LLM gateway rate-limit isn't overwhelmed.
     for (let i = 0; i < BENCH_CASES.length; i += BATCH_SIZE) {
@@ -337,7 +342,8 @@ describe("introspection benchmark", () => {
     }
 
     // Release gate: compare against the most recent published report.
-    const publishedReports = fs.readdirSync(REPORTS_DIR)
+    const publishedReports = fs
+      .readdirSync(REPORTS_DIR)
       .filter((f) => f.startsWith("benchmark-") && f.endsWith(".json"))
       .sort()
       .reverse();
@@ -398,19 +404,16 @@ describe("introspection benchmark", () => {
 
     // Assert cross-class safety.
     for (const issue of crossClassIssues) {
-      expect(issue.unexpectedClassIds,
+      expect(
+        issue.unexpectedClassIds,
         `${issue.caseId}: unexpected findings ${issue.unexpectedClassIds.join(", ")} from detectors that should not fire on this case`,
       ).toHaveLength(0);
     }
 
     // Assert perfect scores for every class.
     for (const s of result.perClass) {
-      expect(s.tpRate,
-        `${s.classId}: expected TP rate 1 (vuln cases flagged) but got ${s.tpRate}`,
-      ).toBe(1);
-      expect(s.fpRate,
-        `${s.classId}: expected FP rate 0 (clean cases not flagged) but got ${s.fpRate}`,
-      ).toBe(0);
+      expect(s.tpRate, `${s.classId}: expected TP rate 1 (vuln cases flagged) but got ${s.tpRate}`).toBe(1);
+      expect(s.fpRate, `${s.classId}: expected FP rate 0 (clean cases not flagged) but got ${s.fpRate}`).toBe(0);
     }
   });
 });

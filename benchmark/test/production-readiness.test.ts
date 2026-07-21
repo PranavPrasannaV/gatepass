@@ -11,11 +11,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { buildScanContext } from "@gatepass/engine";
-import {
-  runScan,
-  runScanAsync,
-  type RunScanOptions,
-} from "@gatepass/detectors";
+import { runScan, runScanAsync, type RunScanOptions } from "@gatepass/detectors";
 import { LlmGateway, createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 import { toSarif } from "@gatepass/findings";
 import { scoreTool, type CorpusCaseLabel, type ToolBenchmark } from "../src/index.js";
@@ -26,10 +22,7 @@ import fs from "node:fs";
 // Configuration
 // ---------------------------------------------------------------------------
 
-const DEFAULT_TEST_REPO = path.resolve(
-  import.meta.dirname,
-  "../../../../gate_pass_test_repo",
-);
+const DEFAULT_TEST_REPO = path.resolve(import.meta.dirname, "../../../../gate_pass_test_repo");
 const TEST_REPO = process.env["GATE_PASS_TEST_REPO"] || DEFAULT_TEST_REPO;
 const CASES_ROOT = path.join(TEST_REPO, "cases");
 
@@ -130,7 +123,11 @@ const BENCH_CASES: BenchCase[] = [
   { caseId: "vuln-tool-poisoning-variant2", classId: "tool-poisoning", label: "vulnerable" },
   { caseId: "clean-tool-poisoning-variant2", classId: "tool-poisoning", label: "clean" },
 
-  { caseId: "vuln-cross-surface-scope-mismatch-variant2", classId: "cross-surface-scope-mismatch", label: "vulnerable" },
+  {
+    caseId: "vuln-cross-surface-scope-mismatch-variant2",
+    classId: "cross-surface-scope-mismatch",
+    label: "vulnerable",
+  },
   { caseId: "clean-cross-surface-scope-mismatch-variant2", classId: "cross-surface-scope-mismatch", label: "clean" },
 
   { caseId: "vuln-hbv-variant2", classId: "hbv", label: "vulnerable" },
@@ -191,10 +188,7 @@ interface DetectResult {
   rawFindings: unknown[];
 }
 
-async function detectForCase(
-  caseDir: string,
-  gateway?: LlmGateway,
-): Promise<DetectResult> {
+async function detectForCase(caseDir: string, gateway?: LlmGateway): Promise<DetectResult> {
   const ctx = await buildScanContext(caseDir);
 
   let doc;
@@ -283,10 +277,14 @@ describe("production readiness", () => {
     }));
 
     if (llmEnabled) {
-      console.log(`\n  LLM gateway enabled — using runScanAsync (research-tier confidence refined by NVIDIA NIM GLM 5.2)\n`);
+      console.log(
+        `\n  LLM gateway enabled — using runScanAsync (research-tier confidence refined by NVIDIA NIM GLM 5.2)\n`,
+      );
     } else {
-      console.log(`\n  LLM gateway disabled — using runScan (heuristic pre-filtering). ` +
-        `Set NVIDIA_API_KEY to enable LLM refinement.\n`);
+      console.log(
+        `\n  LLM gateway disabled — using runScan (heuristic pre-filtering). ` +
+          `Set NVIDIA_API_KEY to enable LLM refinement.\n`,
+      );
     }
   });
 
@@ -311,7 +309,11 @@ describe("production readiness", () => {
       }
 
       if (missing.length > 0) {
-        record("Test Repo Integrity", "FAIL", `missing ${missing.length} case dirs: ${missing.slice(0, 5).join(", ")}...`);
+        record(
+          "Test Repo Integrity",
+          "FAIL",
+          `missing ${missing.length} case dirs: ${missing.slice(0, 5).join(", ")}...`,
+        );
         expect(missing).toHaveLength(0);
         return;
       }
@@ -348,7 +350,11 @@ describe("production readiness", () => {
 
       const start = Date.now();
       const BATCH_SIZE = 12;
-      const allResults: { caseId: string; flaggedClassIds: string[]; crossClass: typeof heuristicCrossClass[number] | null }[] = [];
+      const allResults: {
+        caseId: string;
+        flaggedClassIds: string[];
+        crossClass: (typeof heuristicCrossClass)[number] | null;
+      }[] = [];
 
       for (let i = 0; i < BENCH_CASES.length; i += BATCH_SIZE) {
         const batch = BENCH_CASES.slice(i, i + BATCH_SIZE);
@@ -362,7 +368,7 @@ describe("production readiness", () => {
             const { classIds } = await detectForCase(caseDir); // no gateway = heuristic only
             const flaggedClassIds = [...classIds];
 
-            let crossClass: typeof heuristicCrossClass[number] | null = null;
+            let crossClass: (typeof heuristicCrossClass)[number] | null = null;
             const unexpected = flaggedClassIds.filter((id) => id !== c.classId);
             if (unexpected.length > 0) {
               crossClass = { caseId: c.caseId, unexpectedClassIds: unexpected };
@@ -372,7 +378,9 @@ describe("production readiness", () => {
           }),
         );
         allResults.push(...batchResults);
-        console.log(`  Heuristic batch progress: ${Math.min(i + BATCH_SIZE, BENCH_CASES.length)}/${BENCH_CASES.length} cases scanned`);
+        console.log(
+          `  Heuristic batch progress: ${Math.min(i + BATCH_SIZE, BENCH_CASES.length)}/${BENCH_CASES.length} cases scanned`,
+        );
       }
 
       heuristicDurationMs = Date.now() - start;
@@ -384,30 +392,31 @@ describe("production readiness", () => {
 
       heuristicCrossClass = allResults
         .map((r) => r.crossClass)
-        .filter((x): x is typeof heuristicCrossClass[number] => x !== null);
+        .filter((x): x is (typeof heuristicCrossClass)[number] => x !== null);
 
       heuristicResult = scoreTool("gatepass", "production-heuristic-v1", labels, heuristicDetections);
 
       // Assert cross-class safety: no unexpected classId should fire on any case.
       for (const issue of heuristicCrossClass) {
-        expect(issue.unexpectedClassIds,
+        expect(
+          issue.unexpectedClassIds,
           `${issue.caseId}: unexpected findings ${issue.unexpectedClassIds.join(", ")} from detectors that should not fire on this case`,
         ).toHaveLength(0);
       }
 
       // Assert perfect scores for every class.
       for (const s of heuristicResult.perClass) {
-        expect(s.tpRate,
-          `${s.classId}: expected TP rate 1 (vuln cases flagged) but got ${s.tpRate}`,
-        ).toBe(1);
-        expect(s.fpRate,
-          `${s.classId}: expected FP rate 0 (clean cases not flagged) but got ${s.fpRate}`,
-        ).toBe(0);
+        expect(s.tpRate, `${s.classId}: expected TP rate 1 (vuln cases flagged) but got ${s.tpRate}`).toBe(1);
+        expect(s.fpRate, `${s.classId}: expected FP rate 0 (clean cases not flagged) but got ${s.fpRate}`).toBe(0);
       }
 
       const passed = heuristicResult.perClass.every((s) => s.tpRate === 1 && s.fpRate === 0);
-      const classSummary = heuristicResult.perClass.map((s) => `${s.classId}=TP:${s.truePositives} FP:${s.falsePositives}`).join(", ");
-      record("Heuristic Benchmark", passed ? "PASS" : "FAIL",
+      const classSummary = heuristicResult.perClass
+        .map((s) => `${s.classId}=TP:${s.truePositives} FP:${s.falsePositives}`)
+        .join(", ");
+      record(
+        "Heuristic Benchmark",
+        passed ? "PASS" : "FAIL",
         `${BENCH_CASES.length}/${BENCH_CASES.length} cases, 100% TP, 0% FP — ${classSummary}`,
       );
     });
@@ -451,7 +460,9 @@ describe("production readiness", () => {
           }),
         );
         allResults.push(...batchResults);
-        console.log(`  LLM batch progress: ${Math.min(i + BATCH_SIZE, BENCH_CASES.length)}/${BENCH_CASES.length} cases scanned`);
+        console.log(
+          `  LLM batch progress: ${Math.min(i + BATCH_SIZE, BENCH_CASES.length)}/${BENCH_CASES.length} cases scanned`,
+        );
       }
 
       _llmDurationMs = Date.now() - start;
@@ -463,7 +474,8 @@ describe("production readiness", () => {
         for (const s of llmResult.perClass) {
           const h = heuristicResult.perClass.find((hs) => hs.classId === s.classId);
           if (h) {
-            expect(s.tpRate,
+            expect(
+              s.tpRate,
               `${s.classId}: LLM TP rate (${s.tpRate}) should not be below heuristic TP rate (${h.tpRate})`,
             ).toBeGreaterThanOrEqual(h.tpRate - 1e-9);
           }
@@ -471,7 +483,9 @@ describe("production readiness", () => {
       }
 
       const passed = llmResult.perClass.every((s) => s.tpRate === 1 && s.fpRate === 0);
-      record("LLM Benchmark", passed ? "PASS" : "FAIL",
+      record(
+        "LLM Benchmark",
+        passed ? "PASS" : "FAIL",
         `${BENCH_CASES.length}/${BENCH_CASES.length} cases with LLM refinement`,
       );
     });
@@ -494,7 +508,11 @@ describe("production readiness", () => {
 
       if (crossClass.length === 0 && heuristicDetections.length === 0) {
         // Compute on-demand.
-        const allResults: { caseId: string; flaggedClassIds: string[]; crossClass: typeof heuristicCrossClass[number] | null }[] = [];
+        const allResults: {
+          caseId: string;
+          flaggedClassIds: string[];
+          crossClass: (typeof heuristicCrossClass)[number] | null;
+        }[] = [];
 
         for (const c of BENCH_CASES) {
           const caseDir = path.join(CASES_ROOT, c.caseId);
@@ -504,7 +522,7 @@ describe("production readiness", () => {
           }
           const { classIds } = await detectForCase(caseDir);
           const flaggedClassIds = [...classIds];
-          let cc: typeof heuristicCrossClass[number] | null = null;
+          let cc: (typeof heuristicCrossClass)[number] | null = null;
           const unexpected = flaggedClassIds.filter((id) => id !== c.classId);
           if (unexpected.length > 0) {
             cc = { caseId: c.caseId, unexpectedClassIds: unexpected };
@@ -512,16 +530,21 @@ describe("production readiness", () => {
           allResults.push({ caseId: c.caseId, flaggedClassIds, crossClass: cc });
         }
 
-        crossClass = allResults.map((r) => r.crossClass).filter((x): x is typeof heuristicCrossClass[number] => x !== null);
+        crossClass = allResults
+          .map((r) => r.crossClass)
+          .filter((x): x is (typeof heuristicCrossClass)[number] => x !== null);
       }
 
       for (const issue of crossClass) {
-        expect(issue.unexpectedClassIds,
+        expect(
+          issue.unexpectedClassIds,
           `${issue.caseId}: unexpected findings ${issue.unexpectedClassIds.join(", ")} from detectors that should not fire on this case`,
         ).toHaveLength(0);
       }
 
-      record("Cross-Class Safety", crossClass.length === 0 ? "PASS" : "FAIL",
+      record(
+        "Cross-Class Safety",
+        crossClass.length === 0 ? "PASS" : "FAIL",
         crossClass.length === 0
           ? "0 cross-class issues across all cases"
           : `${crossClass.length} cross-class issues found`,
@@ -721,8 +744,8 @@ describe("production readiness", () => {
       }
 
       // Pick two cases to test determinism: one vuln and one clean.
-      const testCases = BENCH_CASES.filter((c) =>
-        c.classId === "exposed-secret" || c.classId === "unpinned-dependency"
+      const testCases = BENCH_CASES.filter(
+        (c) => c.classId === "exposed-secret" || c.classId === "unpinned-dependency",
       );
 
       for (const c of testCases) {

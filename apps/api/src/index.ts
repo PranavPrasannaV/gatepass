@@ -28,9 +28,7 @@ if (isEntry) {
     console.log(`GitHub App client ready (installation ${installationId})`);
   }
 
-  const llmTransport = config.nvidiaApiKey
-    ? createNimTransport({ apiKey: config.nvidiaApiKey })
-    : undefined;
+  const llmTransport = config.nvidiaApiKey ? createNimTransport({ apiKey: config.nvidiaApiKey }) : undefined;
   if (llmTransport) {
     console.log(`LLM transport ready (NVIDIA NIM, model ${DEFAULT_MODEL})`);
   }

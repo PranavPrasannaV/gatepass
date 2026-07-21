@@ -13,3 +13,5 @@ specs/
 .specify/
 *.sql
 .github/
+graphify-out/
+benchmark/reports/

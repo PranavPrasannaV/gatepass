@@ -1,9 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  createNimTransport,
-  NIM_CHAT_COMPLETIONS_URL,
-  NIM_DEFAULT_MODEL,
-} from "../src/nim-transport.js";
+import { createNimTransport, NIM_CHAT_COMPLETIONS_URL, NIM_DEFAULT_MODEL } from "../src/nim-transport.js";
 import { DEFAULT_MODEL, LlmGateway, parseAnalysis } from "../src/gateway.js";
 import type { LlmRequest } from "../src/gateway.js";
 
@@ -53,20 +49,21 @@ describe("createNimTransport (NVIDIA NIM)", () => {
   });
 
   it("extracts choices[0].message.content and ignores reasoning_content", async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(
-        JSON.stringify({
-          choices: [
-            {
-              message: {
-                content: "CONFIDENCE: 0.7",
-                reasoning_content: "internal chain of thought should not leak",
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            choices: [
+              {
+                message: {
+                  content: "CONFIDENCE: 0.7",
+                  reasoning_content: "internal chain of thought should not leak",
+                },
               },
-            },
-          ],
-        }),
-        { status: 200 },
-      ),
+            ],
+          }),
+          { status: 200 },
+        ),
     );
 
     const transport = createNimTransport({
@@ -93,9 +90,7 @@ describe("createNimTransport (NVIDIA NIM)", () => {
       apiKey: "k",
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
-    await expect(transport.complete(sampleRequest())).rejects.toThrow(
-      /NVIDIA NIM API error: 404 model not found/,
-    );
+    await expect(transport.complete(sampleRequest())).rejects.toThrow(/NVIDIA NIM API error: 404 model not found/);
   });
 
   it("uses the request model (not a hardcoded override inside the body)", async () => {
@@ -121,10 +116,7 @@ describe("createNimTransport (NVIDIA NIM)", () => {
     const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
       const body = JSON.parse(String(init?.body));
       expect(body.model).toBe("z-ai/glm-5.2");
-      return new Response(
-        JSON.stringify({ choices: [{ message: { content: "CONFIDENCE: 0.88" } }] }),
-        { status: 200 },
-      );
+      return new Response(JSON.stringify({ choices: [{ message: { content: "CONFIDENCE: 0.88" } }] }), { status: 200 });
     });
 
     const transport = createNimTransport({

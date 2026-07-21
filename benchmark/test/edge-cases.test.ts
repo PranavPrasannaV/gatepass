@@ -21,8 +21,7 @@ import path from "node:path";
 import fs from "node:fs";
 
 const TEST_REPO =
-  process.env["GATE_PASS_TEST_REPO"] ||
-  path.resolve(import.meta.dirname, "../../../../gate_pass_test_repo");
+  process.env["GATE_PASS_TEST_REPO"] || path.resolve(import.meta.dirname, "../../../../gate_pass_test_repo");
 
 const SCAN_OPTS: RunScanOptions = {
   scanId: "edge-cases",
