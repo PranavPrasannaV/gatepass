@@ -2,7 +2,7 @@ import { randomUUID, createHash } from "node:crypto";
 import { buildScanContext, detectFrameworks } from "@gatepass/engine";
 import { runScan, runScanAsync, generateSuggestedFix } from "@gatepass/detectors";
 import { LlmGateway } from "@gatepass/semantic";
-import { toSarif, parseFindingsDocument, type Finding } from "@gatepass/findings";
+import { toSarif, parseFindingsDocument, diffFindings, type Finding } from "@gatepass/findings";
 import {
   evaluateGate,
   verifyAndParseWebhook,
@@ -136,26 +136,48 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
 
       const repo = event.type === "pull_request" || event.type === "push" ? event.repo : "";
       const ref = event.type === "pull_request" ? event.sha : event.type === "push" ? event.sha || event.ref : "HEAD";
+
+      // Capture the repo's prior scan (baseline) BEFORE this scan overwrites it, so we can
+      // report only the findings this change INTRODUCED (incremental / fair gate — T035).
+      let baselineFindings: Finding[] | undefined;
+      if (store.getRepos) {
+        const priorScanId = (await store.getRepos(orgId)).find((r) => r.name === repo)?.lastScanId;
+        if (priorScanId) baselineFindings = await store.findingsOf(priorScanId);
+      }
+
       const ws = await options.repoFetcher.fetch(repo, ref);
       try {
         const summary = await scanDirectory(org, ws.dir, { commitSha: ws.sha, repoRef: repo });
-        const findings = await store.findingsOf(summary.scanId);
+        const headFindings = await store.findingsOf(summary.scanId);
+
+        // Incremental: gate/review only on findings introduced by this change.
+        const diff = baselineFindings ? diffFindings(baselineFindings, headFindings) : undefined;
+        const reportFindings = diff ? diff.added : headFindings;
 
         // PR: deliver review + gate check run through the audited writer (if a client is wired).
         if (event.type === "pull_request" && options.githubClient) {
           const writer = new AuditedWriter(new InMemoryAuditSink(), "gatepass-webhook");
           const remediator = new Remediator(options.githubClient, writer);
-          await remediator.deliverReview(orgId, repo, event.prNumber, findings);
+          await remediator.deliverReview(orgId, repo, event.prNumber, reportFindings);
           await remediator.publishGate(
             orgId,
             repo,
             event.sha,
             { mode: "block_verified", failureMode: "fail_open" },
-            findings,
+            reportFindings,
             true,
           );
         }
-        return { ok: true, scanned: true, event: event.type, repo, ...summary };
+        return {
+          ok: true,
+          scanned: true,
+          event: event.type,
+          repo,
+          ...summary,
+          incremental: !!diff,
+          added: diff ? diff.added.length : undefined,
+          fixed: diff ? diff.removed.length : undefined,
+        };
       } finally {
         await ws.cleanup();
       }

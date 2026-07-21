@@ -89,4 +89,22 @@ describe("GitHub webhook receiver (T072)", () => {
     expect(status).toBe(202);
     expect((json as any).scanned).toBe(false);
   });
+
+  it("reports only findings the PR introduced (incremental fair gate, T035)", async () => {
+    const pr = (n: number) => ({
+      action: "opened",
+      repository: { full_name: "acme/incr" },
+      pull_request: { number: n, head: { sha: `s${n}`, ref: "b" } },
+    });
+    const first = await sendWebhook("pull_request", pr(1));
+    expect((first.json as any).incremental).toBe(false); // no baseline yet
+    expect((first.json as any).verified).toBeGreaterThanOrEqual(1);
+
+    posted.length = 0;
+    const second = await sendWebhook("pull_request", pr(2)); // identical content
+    expect((second.json as any).incremental).toBe(true);
+    expect((second.json as any).added).toBe(0); // nothing new introduced
+    // gate on the 2nd PR passes since no NEW verified findings were introduced
+    expect(posted.some((c) => c.startsWith("check:acme/incr@s2:success"))).toBe(true);
+  });
 });
