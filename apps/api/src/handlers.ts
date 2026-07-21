@@ -11,7 +11,15 @@ import {
   type GateConfig,
   type WebhookHeaders,
 } from "@gatepass/github";
-import { AuditedWriter, InMemoryAuditSink } from "@gatepass/shared";
+import {
+  AuditedWriter,
+  InMemoryAuditSink,
+  createSession,
+  verifySession,
+  type Role,
+  type Session,
+} from "@gatepass/shared";
+import { authorizeUrl, exchangeCodeForUser, type OAuthConfig } from "@gatepass/github";
 import {
   evaluatePosture,
   draftAnswers,
@@ -57,6 +65,11 @@ export interface HandlerOptions {
   /** Compliance-platform API tokens for evidence export (T083). */
   vantaToken?: string;
   drataToken?: string;
+  /** GitHub OAuth sign-in config + session secret (FR-027, T076). */
+  oauthConfig?: OAuthConfig;
+  sessionSecret?: string;
+  /** Injectable fetch for the OAuth exchange (tests). */
+  oauthFetch?: typeof fetch;
 }
 
 export function makeHandlers(store: Store, options: HandlerOptions = {}) {
@@ -192,6 +205,34 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       } finally {
         await ws.cleanup();
       }
+    },
+
+    // --- GitHub OAuth sign-in + sessions (FR-027, T076) ---
+
+    /** Begin OAuth: the URL to send the user to. */
+    authLoginUrl(state: string) {
+      if (!options.oauthConfig) throw new Error("OAuth not configured");
+      return { url: authorizeUrl(options.oauthConfig, state) };
+    },
+
+    /** OAuth callback: exchange the code, issue a signed session token. */
+    async authCallback(code: string, orgId?: string) {
+      if (!options.oauthConfig || !options.sessionSecret) throw new Error("OAuth/session not configured");
+      const user = await exchangeCodeForUser(code, options.oauthConfig, options.oauthFetch);
+      const org = orgId ?? options.webhookOrgId ?? "demo";
+      // MVP role: default member; production maps the user's GitHub repo permission (roleFromGitHubPermission).
+      const role: Role = "member";
+      const token = createSession(
+        { userId: String(user.githubUserId), login: user.login, orgId: org, role },
+        options.sessionSecret,
+      );
+      return { token, user: { id: user.githubUserId, login: user.login }, orgId: org, role };
+    },
+
+    /** Verify a session token (for the /auth/me route and RBAC guards). */
+    verifySessionToken(token: string | undefined): Session | null {
+      if (!options.sessionSecret) return null;
+      return verifySession(token, options.sessionSecret);
     },
 
     async getFindings(scanId: string, includeSuppressed = false): Promise<Finding[]> {

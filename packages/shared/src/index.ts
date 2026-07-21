@@ -5,4 +5,6 @@ export * from "./disclosure.js";
 export * from "./crypto.js";
 export * from "./telemetry.js";
 export * from "./retention.js";
+export * from "./roles.js";
+export * from "./session.js";
 export * from "../db/index.js";

@@ -6,3 +6,4 @@ export * from "./rest-client.js";
 export * from "./tar.js";
 export * from "./repo-fetcher.js";
 export * from "./webhook.js";
+export * from "./oauth.js";

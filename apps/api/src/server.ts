@@ -23,6 +23,9 @@ export interface ServerOptions {
   webhookOrgId?: string;
   vantaToken?: string;
   drataToken?: string;
+  oauthConfig?: import("@gatepass/github").OAuthConfig;
+  sessionSecret?: string;
+  oauthFetch?: typeof fetch;
   /** Set to false to skip seeding demo benchmark data (production PgStore). */
   seedBenchmark?: boolean;
 }
@@ -39,6 +42,9 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     webhookOrgId: opts.webhookOrgId,
     vantaToken: opts.vantaToken,
     drataToken: opts.drataToken,
+    oauthConfig: opts.oauthConfig,
+    sessionSecret: opts.sessionSecret,
+    oauthFetch: opts.oauthFetch,
   });
 
   // Seed demo orgs for integration tests and dev use
@@ -155,6 +161,27 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
       });
       res.end();
       return;
+    }
+
+    // --- Auth (FR-027) ---
+    // GET /v1/auth/github/login?state=
+    if (M === "GET" && p[1] === "auth" && p[2] === "github" && p[3] === "login") {
+      return sendJson(res, 200, h.authLoginUrl(q.get("state") ?? ""));
+    }
+    // POST /v1/auth/github/callback { code, orgId }
+    if (M === "POST" && p[1] === "auth" && p[2] === "github" && p[3] === "callback") {
+      return sendJson(res, 200, await h.authCallback(String(body.code), body.orgId ? String(body.orgId) : undefined));
+    }
+    // GET /v1/auth/me  (Authorization: Bearer <session>)
+    if (M === "GET" && p[1] === "auth" && p[2] === "me") {
+      const token = (req.headers["authorization"] ?? "").replace(/^Bearer\s+/i, "");
+      const session = h.verifySessionToken(token);
+      if (!session) {
+        res.writeHead(401, { "content-type": "application/json" });
+        res.end(JSON.stringify({ error: "not authenticated" }));
+        return;
+      }
+      return sendJson(res, 200, session);
     }
 
     // POST /v1/webhooks/github  — GitHub webhook receiver (raw body, HMAC-verified)

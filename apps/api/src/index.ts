@@ -47,6 +47,15 @@ if (isEntry) {
     webhookOrgId: process.env.GATEPASS_WEBHOOK_ORG,
     vantaToken: process.env.VANTA_API_TOKEN,
     drataToken: process.env.DRATA_API_TOKEN,
+    oauthConfig:
+      process.env.GITHUB_OAUTH_CLIENT_ID && process.env.GITHUB_OAUTH_CLIENT_SECRET
+        ? {
+            clientId: process.env.GITHUB_OAUTH_CLIENT_ID,
+            clientSecret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
+            redirectUri: process.env.GITHUB_OAUTH_REDIRECT_URI,
+          }
+        : undefined,
+    sessionSecret: process.env.SESSION_SECRET,
   });
   if (process.env.GITHUB_WEBHOOK_SECRET) {
     console.log("GitHub webhook receiver ready at POST /v1/webhooks/github");
