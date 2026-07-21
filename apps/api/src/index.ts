@@ -43,7 +43,12 @@ if (isEntry) {
     repoFetcher,
     llmTransport,
     llmModel: DEFAULT_MODEL,
+    webhookSecret: process.env.GITHUB_WEBHOOK_SECRET,
+    webhookOrgId: process.env.GATEPASS_WEBHOOK_ORG,
   });
+  if (process.env.GITHUB_WEBHOOK_SECRET) {
+    console.log("GitHub webhook receiver ready at POST /v1/webhooks/github");
+  }
   const port = Number(process.env.PORT ?? 3000);
   server.listen(port, () => {
     console.log(`Gatepass API on :${port} (store: ${dbUrl ? "postgres" : "memory"})`);

@@ -3,7 +3,7 @@ import { URL } from "node:url";
 import { MemoryStore, type Store } from "./store.js";
 import { makeHandlers, NotFoundError, ForbiddenError } from "./handlers.js";
 import { RateLimiter, rateLimitHeaders } from "./rate-limit.js";
-import type { GitHubClient } from "@gatepass/github";
+import { WebhookSignatureError, type GitHubClient } from "@gatepass/github";
 import { PlanTierError } from "@gatepass/shared";
 import { RunnerUploadError } from "@gatepass/runner";
 
@@ -19,6 +19,8 @@ export interface ServerOptions {
   repoFetcher?: import("@gatepass/github").RepoFetcher;
   llmTransport?: import("@gatepass/semantic").LlmTransport;
   llmModel?: string;
+  webhookSecret?: string;
+  webhookOrgId?: string;
   /** Set to false to skip seeding demo benchmark data (production PgStore). */
   seedBenchmark?: boolean;
 }
@@ -31,6 +33,8 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     repoFetcher: opts.repoFetcher,
     llmTransport: opts.llmTransport,
     llmModel: opts.llmModel,
+    webhookSecret: opts.webhookSecret,
+    webhookOrgId: opts.webhookOrgId,
   });
 
   // Seed demo orgs for integration tests and dev use
@@ -121,10 +125,12 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
   }
 
   async function handle(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    // Set CORS headers first so every response path (JSON, errors, 429, preflight) carries them.
+    applyCors(req, res);
     const url = new URL(req.url ?? "/", "http://localhost");
     const p = url.pathname.split("/").filter(Boolean);
     const q = url.searchParams;
-    const body = await readBody(req);
+    const { raw: rawBody, json: body } = await readBody(req);
     const M = req.method;
 
     // Rate limit check (T064)
@@ -136,10 +142,9 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
       return;
     }
 
-    // CORS preflight
+    // CORS preflight — allow-origin/vary are already set per-request by applyCors above.
     if (M === "OPTIONS") {
       res.writeHead(204, {
-        "access-control-allow-origin": "*",
         "access-control-allow-methods": "GET,POST,PATCH,OPTIONS",
         "access-control-allow-headers": "content-type",
         "access-control-max-age": "86400",
@@ -148,6 +153,10 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
       return;
     }
 
+    // POST /v1/webhooks/github  — GitHub webhook receiver (raw body, HMAC-verified)
+    if (M === "POST" && p[0] === "v1" && p[1] === "webhooks" && p[2] === "github") {
+      return sendJson(res, 202, await h.handleWebhook(rawBody, req.headers as never));
+    }
     // POST /v1/orgs/:org/scan-remote { repo, ref }  — clone-and-scan a real GitHub repo
     if (M === "POST" && p[0] === "v1" && p[1] === "orgs" && p[3] === "scan-remote") {
       return sendJson(
@@ -252,31 +261,59 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
   return { server, store };
 }
 
+/**
+ * CORS origin allow-list, driven by GATEPASS_ALLOWED_ORIGINS (comma-separated). Defaults to the
+ * dashboard's dev origin. A security product must not ship a wildcard CORS API, so the allowed
+ * origin is always drawn from this explicit list — never a blanket allow-all.
+ */
+function allowedOrigins(): string[] {
+  const raw = process.env.GATEPASS_ALLOWED_ORIGINS;
+  if (raw && raw.trim()) {
+    return raw
+      .split(",")
+      .map((o) => o.trim())
+      .filter(Boolean);
+  }
+  return ["http://localhost:3001"];
+}
+
+/**
+ * Apply CORS response headers for this request. The request Origin is echoed back only when it
+ * is present in the allow-list; otherwise no allow-origin header is sent. Always varies on the
+ * Origin header so shared caches never serve one origin's allowed response to another. Note:
+ * allow-credentials is intentionally never set — a reflected-yet-allow-listed origin stays safe.
+ */
+function applyCors(req: http.IncomingMessage, res: http.ServerResponse): void {
+  res.setHeader("vary", "Origin");
+  const requestOrigin = req.headers.origin;
+  if (typeof requestOrigin === "string" && allowedOrigins().includes(requestOrigin)) {
+    res.setHeader("access-control-allow-origin", requestOrigin);
+  }
+}
+
 function sendJson(res: http.ServerResponse, status: number, data: unknown): void {
-  res.writeHead(status, {
-    "content-type": "application/json",
-    "access-control-allow-origin": "*",
-  });
+  // The allow-origin header (if the request Origin is allow-listed) is set per-request by applyCors.
+  res.writeHead(status, { "content-type": "application/json" });
   res.end(JSON.stringify(data));
 }
 
 function sendError(res: http.ServerResponse, err: unknown): void {
   if (err instanceof NotFoundError) return sendJson(res, 404, { error: err.message });
-  if (err instanceof ForbiddenError || err instanceof PlanTierError)
+  if (err instanceof ForbiddenError || err instanceof PlanTierError || err instanceof WebhookSignatureError)
     return sendJson(res, 403, { error: (err as Error).message });
   if (err instanceof RunnerUploadError) return sendJson(res, 422, { error: err.message });
   sendJson(res, 500, { error: (err as Error).message });
 }
 
-async function readBody(req: http.IncomingMessage): Promise<Record<string, unknown>> {
-  if (req.method !== "POST") return {};
+async function readBody(req: http.IncomingMessage): Promise<{ raw: string; json: Record<string, unknown> }> {
+  if (req.method !== "POST") return { raw: "", json: {} };
   const chunks: Buffer[] = [];
   for await (const c of req) chunks.push(c as Buffer);
   const raw = Buffer.concat(chunks).toString("utf8");
-  if (!raw) return {};
+  if (!raw) return { raw: "", json: {} };
   try {
-    return JSON.parse(raw);
+    return { raw, json: JSON.parse(raw) };
   } catch {
-    return {};
+    return { raw, json: {} };
   }
 }

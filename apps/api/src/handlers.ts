@@ -3,7 +3,15 @@ import { buildScanContext, detectFrameworks } from "@gatepass/engine";
 import { runScan, runScanAsync, generateSuggestedFix } from "@gatepass/detectors";
 import { LlmGateway } from "@gatepass/semantic";
 import { toSarif, parseFindingsDocument, type Finding } from "@gatepass/findings";
-import { evaluateGate, type GateConfig } from "@gatepass/github";
+import {
+  evaluateGate,
+  verifyAndParseWebhook,
+  shouldScan,
+  Remediator,
+  type GateConfig,
+  type WebhookHeaders,
+} from "@gatepass/github";
+import { AuditedWriter, InMemoryAuditSink } from "@gatepass/shared";
 import { evaluatePosture, draftAnswers, ingest, type Scan as PostureScan, type SourceFormat } from "@gatepass/evidence";
 import { requireFeature, type PlanTier } from "@gatepass/shared";
 import { validateRunnerUpload } from "@gatepass/runner";
@@ -34,6 +42,10 @@ export interface HandlerOptions {
   githubClient?: GitHubClient;
   /** Repo fetcher for clone-and-scan of real GitHub repos (§clone). */
   repoFetcher?: RepoFetcher;
+  /** GitHub webhook secret for signature verification (T072). */
+  webhookSecret?: string;
+  /** Org that webhook-triggered scans run under (installation→org mapping; MVP default). */
+  webhookOrgId?: string;
 }
 
 export function makeHandlers(store: Store, options: HandlerOptions = {}) {
@@ -102,6 +114,48 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       try {
         const result = await scanDirectory(org, ws.dir, { commitSha: ws.sha, repoRef: repo });
         return { ...result, repo, ref, sha: ws.sha };
+      } finally {
+        await ws.cleanup();
+      }
+    },
+
+    /**
+     * GitHub webhook receiver (T072). Verifies the HMAC signature, and on a PR/push event
+     * clone-and-scans the repo. For pull requests, it delivers the findings as a PR review
+     * plus a CI-gate Check Run through the audited writer (suggest-and-approve; never a code
+     * write — Principle III). Returns quickly with a summary.
+     */
+    async handleWebhook(rawBody: string, headers: WebhookHeaders) {
+      if (!options.webhookSecret) throw new Error("no webhook secret configured");
+      const event = verifyAndParseWebhook(headers, rawBody, options.webhookSecret);
+      if (!shouldScan(event)) return { ok: true, scanned: false, event: event.type };
+
+      const orgId = options.webhookOrgId ?? "demo";
+      const org = await requireOrg(orgId);
+      if (!options.repoFetcher) throw new Error("no repo fetcher configured");
+
+      const repo = event.type === "pull_request" || event.type === "push" ? event.repo : "";
+      const ref = event.type === "pull_request" ? event.sha : event.type === "push" ? event.sha || event.ref : "HEAD";
+      const ws = await options.repoFetcher.fetch(repo, ref);
+      try {
+        const summary = await scanDirectory(org, ws.dir, { commitSha: ws.sha, repoRef: repo });
+        const findings = await store.findingsOf(summary.scanId);
+
+        // PR: deliver review + gate check run through the audited writer (if a client is wired).
+        if (event.type === "pull_request" && options.githubClient) {
+          const writer = new AuditedWriter(new InMemoryAuditSink(), "gatepass-webhook");
+          const remediator = new Remediator(options.githubClient, writer);
+          await remediator.deliverReview(orgId, repo, event.prNumber, findings);
+          await remediator.publishGate(
+            orgId,
+            repo,
+            event.sha,
+            { mode: "block_verified", failureMode: "fail_open" },
+            findings,
+            true,
+          );
+        }
+        return { ok: true, scanned: true, event: event.type, repo, ...summary };
       } finally {
         await ws.cleanup();
       }
