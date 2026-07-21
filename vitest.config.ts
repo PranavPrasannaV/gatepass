@@ -8,6 +8,7 @@ export default defineConfig({
       "runner/**/test/**/*.test.ts",
       "benchmark/**/test/**/*.test.ts",
       "apps/**/test/**/*.test.ts",
+      "ide/**/test/**/*.test.ts",
     ],
     passWithNoTests: false,
     coverage: {

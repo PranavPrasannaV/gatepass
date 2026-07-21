@@ -12,6 +12,7 @@ export default tseslint.config(
       "**/dist/**",
       "**/.next/**",
       "**/node_modules/**",
+      "ide/**/extension.ts",
       "**/*.d.ts",
       "corpus/cases/**",
       "corpus/eval-repos/**",

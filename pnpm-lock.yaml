@@ -155,6 +155,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/findings
 
+  ide/vscode:
+    dependencies:
+      '@gatepass/findings':
+        specifier: workspace:*
+        version: link:../../packages/findings
+
   packages/detectors:
     dependencies:
       '@gatepass/engine':

@@ -5,3 +5,4 @@ packages:
   - "runner"
   - "corpus/harness"
   - "benchmark"
+  - "ide/*"

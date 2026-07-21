@@ -1,0 +1,39 @@
+{
+  "name": "gatepass-vscode",
+  "displayName": "Gatepass",
+  "description": "Show Gatepass findings inline in your editor.",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gatepass.showFindings",
+        "title": "Gatepass: Load findings into Problems"
+      }
+    ],
+    "configuration": {
+      "title": "Gatepass",
+      "properties": {
+        "gatepass.findingsPath": {
+          "type": "string",
+          "default": "gatepass.findings.json",
+          "description": "Path (relative to the workspace root) of the findings JSON to display."
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@gatepass/findings": "workspace:*"
+  }
+}
