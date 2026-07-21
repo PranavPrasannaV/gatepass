@@ -4,7 +4,7 @@ import { pathToFileURL } from "node:url";
 import { createServer } from "./server.js";
 import { MemoryStore } from "./store.js";
 import { PgStore, loadConfig } from "@gatepass/shared";
-import { getInstallationToken, RestGitHubClient } from "@gatepass/github";
+import { getInstallationToken, RestGitHubClient, TarballRepoFetcher, githubTarballDownloader } from "@gatepass/github";
 import { createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 
 export { createServer } from "./server.js";
@@ -21,11 +21,15 @@ if (isEntry) {
   const keyPath = process.env.GITHUB_APP_PRIVATE_KEY_PATH;
   const installationId = process.env.GITHUB_INSTALLATION_ID;
   let githubClient = undefined;
+  let repoFetcher = undefined;
   if (appId && keyPath && installationId) {
     const privateKey = readFileSync(resolve(keyPath), "utf-8");
-    const { token } = await getInstallationToken({ appId, privateKey, installationId });
+    const appConfig = { appId, privateKey, installationId };
+    const { token } = await getInstallationToken(appConfig);
     githubClient = new RestGitHubClient(token);
-    console.log(`GitHub App client ready (installation ${installationId})`);
+    // Clone-and-scan: fetch real repos as tarballs with the installation token.
+    repoFetcher = new TarballRepoFetcher(githubTarballDownloader(appConfig));
+    console.log(`GitHub App client + repo fetcher ready (installation ${installationId})`);
   }
 
   const llmTransport = config.nvidiaApiKey ? createNimTransport({ apiKey: config.nvidiaApiKey }) : undefined;
@@ -36,6 +40,7 @@ if (isEntry) {
   const { server } = await createServer({
     store,
     githubClient,
+    repoFetcher,
     llmTransport,
     llmModel: DEFAULT_MODEL,
   });

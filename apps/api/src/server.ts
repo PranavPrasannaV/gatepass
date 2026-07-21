@@ -16,6 +16,7 @@ import { RunnerUploadError } from "@gatepass/runner";
 export interface ServerOptions {
   store?: Store;
   githubClient?: GitHubClient;
+  repoFetcher?: import("@gatepass/github").RepoFetcher;
   llmTransport?: import("@gatepass/semantic").LlmTransport;
   llmModel?: string;
   /** Set to false to skip seeding demo benchmark data (production PgStore). */
@@ -27,6 +28,7 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
   const rateLimiter = new RateLimiter();
   const h = makeHandlers(store, {
     githubClient: opts.githubClient,
+    repoFetcher: opts.repoFetcher,
     llmTransport: opts.llmTransport,
     llmModel: opts.llmModel,
   });
@@ -146,6 +148,14 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
       return;
     }
 
+    // POST /v1/orgs/:org/scan-remote { repo, ref }  — clone-and-scan a real GitHub repo
+    if (M === "POST" && p[0] === "v1" && p[1] === "orgs" && p[3] === "scan-remote") {
+      return sendJson(
+        res,
+        201,
+        await h.scanRemoteRepo(p[2]!, String(body.repo), body.ref ? String(body.ref) : undefined),
+      );
+    }
     // POST /v1/orgs/:org/scans
     if (M === "POST" && p[0] === "v1" && p[1] === "orgs" && p[3] === "scans") {
       sendJson(res, 201, await h.createScan(p[2]!, String(body.path)));

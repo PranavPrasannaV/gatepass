@@ -23,7 +23,7 @@ export class NotFoundError extends Error {}
 export class ForbiddenError extends Error {}
 
 import type { LlmTransport } from "@gatepass/semantic";
-import type { GitHubClient } from "@gatepass/github";
+import type { GitHubClient, RepoFetcher } from "@gatepass/github";
 
 export interface HandlerOptions {
   /** LLM transport for research-tier refinement. Production wires the NVIDIA NIM transport;
@@ -32,6 +32,8 @@ export interface HandlerOptions {
   llmModel?: string;
   /** GitHub App client for PR review and check-run delivery (T096). */
   githubClient?: GitHubClient;
+  /** Repo fetcher for clone-and-scan of real GitHub repos (§clone). */
+  repoFetcher?: RepoFetcher;
 }
 
 export function makeHandlers(store: Store, options: HandlerOptions = {}) {
@@ -51,35 +53,58 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
     findings: await store.findingsOf(s.id),
   });
 
+  // Shared scan logic: analyze a local directory, persist, return the summary.
+  const scanDirectory = async (org: OrgRecord, dir: string, opts: { commitSha?: string; repoRef?: string } = {}) => {
+    const ctx = await buildScanContext(dir);
+    const gateway = new LlmGateway({
+      enabled: org.llmEnabled,
+      apiKey: options.llmTransport ? "configured" : undefined,
+      model: options.llmModel,
+      transport: options.llmTransport,
+    });
+    const doc = await runScanAsync(
+      ctx,
+      {
+        scanId: randomUUID(),
+        rulesetVersion: RULESET_VERSION,
+        executionMode: "hosted",
+        semanticEnabled: org.llmEnabled,
+        commitSha: opts.commitSha,
+      },
+      gateway,
+    );
+    await store.putScan({ id: doc.scan.id, orgId: org.id, doc, disputes: new Map() });
+    if (store.putRepo) await store.putRepo(org.id, opts.repoRef ?? dir, doc.scan.id);
+    const visible = await store.findingsOf(doc.scan.id);
+    return {
+      scanId: doc.scan.id,
+      frameworks: detectFrameworks(ctx),
+      verified: visible.filter((f) => f.tier === "verified").length,
+      research: visible.filter((f) => f.tier === "research").length,
+    };
+  };
+
   return {
     async createScan(orgId: string, repoPath: string) {
       const org = await requireOrg(orgId);
-      const ctx = await buildScanContext(repoPath);
-      const gateway = new LlmGateway({
-        enabled: org.llmEnabled,
-        apiKey: options.llmTransport ? "configured" : undefined,
-        model: options.llmModel,
-        transport: options.llmTransport,
-      });
-      const doc = await runScanAsync(
-        ctx,
-        {
-          scanId: randomUUID(),
-          rulesetVersion: RULESET_VERSION,
-          executionMode: "hosted",
-          semanticEnabled: org.llmEnabled,
-        },
-        gateway,
-      );
-      await store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
-      if (store.putRepo) await store.putRepo(orgId, repoPath, doc.scan.id);
-      const visible = await store.findingsOf(doc.scan.id);
-      return {
-        scanId: doc.scan.id,
-        frameworks: detectFrameworks(ctx),
-        verified: visible.filter((f) => f.tier === "verified").length,
-        research: visible.filter((f) => f.tier === "research").length,
-      };
+      return scanDirectory(org, repoPath, { repoRef: repoPath });
+    },
+
+    /**
+     * Clone-and-scan a real GitHub repo (§clone). Fetches the repo tarball into a temp
+     * workspace via the configured RepoFetcher, scans it, and always cleans up the workspace
+     * (customer code is never retained beyond the scan — FR-026).
+     */
+    async scanRemoteRepo(orgId: string, repo: string, ref = "HEAD") {
+      const org = await requireOrg(orgId);
+      if (!options.repoFetcher) throw new Error("no repo fetcher configured (set options.repoFetcher)");
+      const ws = await options.repoFetcher.fetch(repo, ref);
+      try {
+        const result = await scanDirectory(org, ws.dir, { commitSha: ws.sha, repoRef: repo });
+        return { ...result, repo, ref, sha: ws.sha };
+      } finally {
+        await ws.cleanup();
+      }
     },
 
     async getFindings(scanId: string, includeSuppressed = false): Promise<Finding[]> {
