@@ -22,6 +22,7 @@
     "benchmark:ci": "GATE_PASS_TEST_REPO=${GATE_PASS_TEST_REPO:-../../gate_pass_test_repo} vitest run benchmark/test/introspection-benchmark.test.ts benchmark/test/edge-cases.test.ts --reporter=verbose",
     "benchmark:with-llm": "NVIDIA_API_KEY=${NVIDIA_API_KEY:?Set NVIDIA_API_KEY for LLM refinement} vitest run benchmark/test/introspection-benchmark.test.ts --reporter=verbose",
     "benchmark:production": "NVIDIA_API_KEY=${NVIDIA_API_KEY:-\"\"} vitest run benchmark/test/production-readiness.test.ts --reporter=verbose",
+    "benchmark:incumbent": "tsx benchmark/src/run-incumbent.ts",
     "corpus:measure": "tsx corpus/harness/cli.ts",
     "scan": "tsx cli/src/index.ts"
   },
