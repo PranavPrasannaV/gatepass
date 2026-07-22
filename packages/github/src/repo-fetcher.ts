@@ -35,13 +35,25 @@ const MAX_TARBALL_BYTES = 512 * 1024 * 1024; // 512 MB safety cap
 export function githubTarballDownloader(config: GitHubAppConfig, fetchImpl: typeof fetch = fetch): TarballDownloader {
   return async (repo, ref) => {
     const { token } = await getInstallationToken(config);
-    const url = `https://api.github.com/repos/${repo}/tarball/${ref}`;
-    const res = await fetchImpl(url, {
-      headers: {
-        authorization: `Bearer ${token}`,
-        accept: "application/vnd.github+json",
-        "x-github-api-version": "2022-11-28",
-      },
+    const headers = {
+      authorization: `Bearer ${token}`,
+      accept: "application/vnd.github+json",
+      "x-github-api-version": "2022-11-28",
+    };
+
+    // Resolve the ref to its commit SHA first so findings are traceable to a real commit.
+    // Best-effort: a failed resolution yields sha undefined — never a fabricated value.
+    let sha: string | undefined;
+    const shaRes = await fetchImpl(`https://api.github.com/repos/${repo}/commits/${ref}`, {
+      headers: { ...headers, accept: "application/vnd.github.sha" },
+    }).catch(() => undefined);
+    if (shaRes?.ok) {
+      const text = (await shaRes.text()).trim();
+      if (/^[0-9a-f]{40}$/i.test(text)) sha = text;
+    }
+
+    const res = await fetchImpl(`https://api.github.com/repos/${repo}/tarball/${ref}`, {
+      headers,
       redirect: "follow",
     });
     if (!res.ok) {
@@ -49,11 +61,6 @@ export function githubTarballDownloader(config: GitHubAppConfig, fetchImpl: type
     }
     const ab = await res.arrayBuffer();
     if (ab.byteLength > MAX_TARBALL_BYTES) throw new Error(`tarball for ${repo} exceeds size cap`);
-    const sha =
-      res.headers
-        .get("etag")
-        ?.replace(/[^0-9a-f]/gi, "")
-        .slice(0, 40) || undefined;
     return { body: Buffer.from(ab), sha };
   };
 }
