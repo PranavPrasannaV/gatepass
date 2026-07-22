@@ -221,6 +221,29 @@ describe("async pipeline with in-line LLM refinement (T095, FR-011a)", () => {
     const secret = doc.findings.find((f) => f.classId === "exposed-secret");
     expect(secret?.tier).toBe("verified"); // untouched
   });
+
+  it("survives an LLM outage: transport errors degrade to heuristic confidence, never fail the scan", async () => {
+    const ctx = await ctxOf({ ...tree, "dist/app.js": 'var k="AKIAIOSFODNN7EXAMPLE";' });
+    const transport: LlmTransport = {
+      async complete() {
+        throw new Error("NVIDIA NIM API error: 429 Too Many Requests");
+      },
+    };
+    const gw = new LlmGateway({ enabled: true, apiKey: "k", transport });
+    const sync = runScan(ctx, { scanId: "s", rulesetVersion: "t", executionMode: "hosted", semanticEnabled: true });
+    const doc = await runScanAsync(
+      ctx,
+      { scanId: "s", rulesetVersion: "t", executionMode: "hosted", semanticEnabled: true },
+      gw,
+    );
+    // Identical to the deterministic scan: same findings, heuristic confidence retained.
+    expect(doc.findings.map((f) => f.fingerprint)).toEqual(sync.findings.map((f) => f.fingerprint));
+    const poison = doc.findings.find((f) => f.classId === "tool-poisoning");
+    const syncPoison = sync.findings.find((f) => f.classId === "tool-poisoning");
+    expect(poison && "confidence" in poison && poison.confidence).toBe(
+      syncPoison && "confidence" in syncPoison && syncPoison.confidence,
+    );
+  });
 });
 
 describe("SARIF export", () => {

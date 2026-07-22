@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createServer } from "./server.js";
 import { MemoryStore } from "./store.js";
-import { PgStore, loadConfig } from "@gatepass/shared";
+import { PgStore, loadConfig, loadDotEnv } from "@gatepass/shared";
 import { getInstallationToken, RestGitHubClient, TarballRepoFetcher, githubTarballDownloader } from "@gatepass/github";
 import { createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 
@@ -13,6 +13,9 @@ export { MemoryStore } from "./store.js";
 
 const isEntry = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isEntry) {
+  // Dev convenience: pick up .env from the cwd or the repo root. Real env vars always win.
+  loadDotEnv(".env");
+  loadDotEnv(resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", ".env"));
   const config = loadConfig();
   const dbUrl = config.databaseUrl ?? process.env.DATABASE_URL;
   const store = dbUrl ? new PgStore(dbUrl) : new MemoryStore();

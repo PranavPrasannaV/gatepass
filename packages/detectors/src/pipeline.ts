@@ -117,12 +117,18 @@ export async function runScanAsync(
       if (f.tier !== "research") return f;
       const loc = f.locations[0]!;
       const artifact = (contentByPath.get(loc.path) ?? "").slice(0, ARTIFACT_MAX);
-      const result = await analyzeSemantic(
-        { classId: f.classId, artifact, heuristicConfidence: f.confidence },
-        gateway,
-      );
-      // Re-validate through the schema so a refined finding cannot violate tier integrity.
-      return parseFinding({ ...f, confidence: result.confidence });
+      // Refinement is best-effort: an LLM outage (rate limit, timeout) must never fail the
+      // scan — the finding keeps its heuristic confidence, same as running without a gateway.
+      try {
+        const result = await analyzeSemantic(
+          { classId: f.classId, artifact, heuristicConfidence: f.confidence },
+          gateway,
+        );
+        // Re-validate through the schema so a refined finding cannot violate tier integrity.
+        return parseFinding({ ...f, confidence: result.confidence });
+      } catch {
+        return f;
+      }
     }),
   );
   findings.sort((a, b) => a.fingerprint.localeCompare(b.fingerprint));
