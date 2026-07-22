@@ -158,54 +158,108 @@ async function copyDir(src: string, dest: string): Promise<void> {
 
 const SEMGREP_CONFIGS = ["p/security-audit", "p/secrets", "p/default"];
 
-export async function runSemgrepBenchmark(casesRoot: string, corpusVersion = "corpus-v1"): Promise<{
+/** A CLI incumbent that scans the staged corpus once and emits SARIF to {out}. */
+interface IncumbentTool {
+  id: string;
+  bin: string;
+  versionArgs: string[];
+  /** Args template: {dir} = staged corpus root, {out} = SARIF output path. */
+  args: (dir: string, out: string) => string[];
+  install: string;
+  label: (version: string) => string;
+}
+
+const TOOLS: IncumbentTool[] = [
+  {
+    id: "semgrep",
+    bin: process.platform === "win32" ? "semgrep.exe" : "semgrep",
+    versionArgs: ["--version"],
+    args: (dir, out) => [
+      "scan",
+      ...SEMGREP_CONFIGS.flatMap((c) => ["--config", c]),
+      "--sarif",
+      "--output",
+      out,
+      "--metrics=off",
+      "--no-git-ignore",
+      "--quiet",
+      dir,
+    ],
+    install: "pip install semgrep",
+    label: (v) => `semgrep@${v} (${SEMGREP_CONFIGS.join(" + ")})`,
+  },
+  {
+    id: "gitleaks",
+    bin: "gitleaks",
+    versionArgs: ["version"],
+    args: (dir, out) => ["dir", dir, "--report-format", "sarif", "--report-path", out, "--exit-code", "0", "--no-banner"],
+    install: "winget install Gitleaks.Gitleaks",
+    label: (v) => `gitleaks@${v}`,
+  },
+  {
+    id: "trivy",
+    bin: "trivy",
+    versionArgs: ["--version"],
+    args: (dir, out) => ["fs", "--scanners", "secret,misconfig", "--format", "sarif", "--output", out, dir],
+    install: "winget install AquaSecurity.Trivy",
+    label: (v) => `trivy@${v} (secret + misconfig)`,
+  },
+];
+
+export interface IncumbentRun {
   benchmark: ToolBenchmark;
   rulesByCase: Map<string, Set<string>>;
-  semgrepVersion: string;
-}> {
-  const bin = process.platform === "win32" ? "semgrep.exe" : "semgrep";
-  const versionOut = await run(bin, ["--version"], process.cwd());
-  const semgrepVersion = versionOut.stdout.trim().split(/\r?\n/).pop() ?? "unknown";
-  if (versionOut.code !== 0 || !semgrepVersion) {
-    throw new Error("semgrep is not installed or not on PATH (pip install semgrep)");
-  }
+}
 
+/** Run one CLI incumbent against a pre-staged corpus copy and score it. */
+async function runTool(
+  tool: IncumbentTool,
+  stage: string,
+  cases: readonly { id: string; classId: string; label: "vulnerable" | "clean" }[],
+  corpusVersion: string,
+): Promise<IncumbentRun | { skipped: string }> {
+  const versionOut = await run(tool.bin, tool.versionArgs, process.cwd());
+  const version = versionOut.stdout.match(/\d+\.\d+\.\d+/)?.[0];
+  if (versionOut.code !== 0 && !version) return { skipped: `${tool.id} not on PATH (${tool.install})` };
+
+  const out = path.join(stage, `${tool.id}.sarif`);
+  await run(tool.bin, tool.args(stage, out), stage);
+  const results = parseSarifResults(await fs.readFile(out, "utf8").catch(() => ""));
+  await fs.rm(out, { force: true });
+
+  const { classesByCase, rulesByCase } = attributeToCases(
+    results,
+    stage,
+    cases.map((c) => c.id),
+  );
+  const labels: CorpusCaseLabel[] = cases.map(({ id, classId, label }) => ({ caseId: id, classId, label }));
+  const detections: Detection[] = cases.map((c) => ({
+    caseId: c.id,
+    flaggedClassIds: [...(classesByCase.get(c.id) ?? [])],
+  }));
+  return { benchmark: scoreTool(tool.label(version ?? "unknown"), corpusVersion, labels, detections), rulesByCase };
+}
+
+export async function runIncumbentSuite(casesRoot: string, corpusVersion = "corpus-v1"): Promise<{
+  runs: IncumbentRun[];
+  skipped: string[];
+}> {
   const cases = await loadCases(casesRoot);
   if (cases.length === 0) throw new Error(`no corpus cases found under ${casesRoot}`);
 
   // Stage the corpus so default ignore rules (dist/, .gitignore) cannot hide fixtures.
   const stage = await fs.mkdtemp(path.join(os.tmpdir(), "gatepass-incumbent-"));
+  const runs: IncumbentRun[] = [];
+  const skipped: string[] = [];
   try {
     await copyDir(casesRoot, stage);
     await fs.writeFile(path.join(stage, ".semgrepignore"), "");
-
-    const sarifPath = path.join(stage, "incumbent.sarif");
-    const args = [
-      "scan",
-      ...SEMGREP_CONFIGS.flatMap((c) => ["--config", c]),
-      "--sarif",
-      "--output",
-      sarifPath,
-      "--metrics=off",
-      "--no-git-ignore",
-      "--quiet",
-      stage,
-    ];
-    await run(bin, args, stage);
-    const results = parseSarifResults(await fs.readFile(sarifPath, "utf8").catch(() => ""));
-
-    const { classesByCase, rulesByCase } = attributeToCases(
-      results,
-      stage,
-      cases.map((c) => c.id),
-    );
-    const labels: CorpusCaseLabel[] = cases.map(({ id, classId, label }) => ({ caseId: id, classId, label }));
-    const detections: Detection[] = cases.map((c) => ({
-      caseId: c.id,
-      flaggedClassIds: [...(classesByCase.get(c.id) ?? [])],
-    }));
-    const name = `semgrep@${semgrepVersion} (${SEMGREP_CONFIGS.join(" + ")})`;
-    return { benchmark: scoreTool(name, corpusVersion, labels, detections), rulesByCase, semgrepVersion };
+    for (const tool of TOOLS) {
+      const result = await runTool(tool, stage, cases, corpusVersion);
+      if ("skipped" in result) skipped.push(result.skipped);
+      else runs.push(result);
+    }
+    return { runs, skipped };
   } finally {
     await fs.rm(stage, { recursive: true, force: true });
   }
@@ -215,39 +269,41 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const isEntry = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isEntry) {
   const casesRoot = path.resolve(HERE, "..", "..", "corpus", "cases");
-  const { benchmark, rulesByCase } = await runSemgrepBenchmark(casesRoot);
+  const { runs, skipped } = await runIncumbentSuite(casesRoot);
 
-  console.log(`\nIncumbent: ${benchmark.tool}`);
-  console.log(`Corpus:    ${benchmark.corpusVersion}\n`);
-  console.log("Class                          TP   FN   FP   TN   TP-rate  FP-rate");
-  console.log("--------------------------------------------------------------------");
-  for (const s of benchmark.perClass) {
-    const row = [
-      s.classId.padEnd(30),
-      String(s.truePositives).padStart(3),
-      String(s.falseNegatives).padStart(4),
-      String(s.falsePositives).padStart(4),
-      String(s.trueNegatives).padStart(4),
-      `${(s.tpRate * 100).toFixed(1)}%`.padStart(8),
-      `${(s.fpRate * 100).toFixed(1)}%`.padStart(8),
-    ];
-    console.log(row.join(" "));
+  for (const { benchmark, rulesByCase } of runs) {
+    console.log(`\n=== ${benchmark.tool} (corpus ${benchmark.corpusVersion}) ===`);
+    const detected = benchmark.perClass.filter((s) => s.truePositives > 0).length;
+    console.log(`Classes detected: ${detected}/${benchmark.perClass.length}   overall FP rate: ${(benchmark.overallFpRate * 100).toFixed(1)}%`);
+    for (const s of benchmark.perClass.filter((c) => c.truePositives > 0 || c.falsePositives > 0)) {
+      console.log(
+        `  ${s.classId.padEnd(30)} TP ${s.truePositives}  FP ${s.falsePositives}  (${(s.tpRate * 100).toFixed(0)}% TP)`,
+      );
+    }
+    if (rulesByCase.size > 0) {
+      console.log("  raw rule hits:");
+      for (const [caseId, rules] of rulesByCase) console.log(`    ${caseId}: ${[...rules].join(", ")}`);
+    }
   }
-  const detected = benchmark.perClass.filter((s) => s.truePositives > 0).length;
-  console.log(`\nClasses detected: ${detected}/${benchmark.perClass.length}`);
-  console.log(`Overall FP rate:  ${(benchmark.overallFpRate * 100).toFixed(1)}%`);
-
-  if (rulesByCase.size > 0) {
-    console.log("\nRaw incumbent rule hits (all, including unmapped):");
-    for (const [caseId, rules] of rulesByCase) console.log(`  ${caseId}: ${[...rules].join(", ")}`);
-  }
+  for (const s of skipped) console.log(`\nSKIPPED: ${s}`);
 
   const reportsDir = path.resolve(HERE, "..", "reports");
   await fs.mkdir(reportsDir, { recursive: true });
-  const reportPath = path.join(reportsDir, "incumbent-semgrep.json");
+  const reportPath = path.join(reportsDir, "incumbents.json");
   await fs.writeFile(
     reportPath,
-    JSON.stringify({ generatedAt: new Date().toISOString(), ...benchmark, rawRuleHits: Object.fromEntries([...rulesByCase].map(([k, v]) => [k, [...v]])) }, null, 2),
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        skipped,
+        tools: runs.map(({ benchmark, rulesByCase }) => ({
+          ...benchmark,
+          rawRuleHits: Object.fromEntries([...rulesByCase].map(([k, v]) => [k, [...v]])),
+        })),
+      },
+      null,
+      2,
+    ),
   );
   console.log(`\nReport written: ${reportPath}`);
 }

@@ -1,11 +1,11 @@
-# Incumbent benchmark — Gatepass vs. Semgrep
+# Incumbent benchmark — Gatepass vs. the field
 
-Public precision comparison (FR-018, SC-007): a real, pinned incumbent scanner run against
+Public precision comparison (FR-018, SC-007): real, pinned incumbent scanners run against
 the same versioned corpus Gatepass is measured on, scored by the **identical** `scoreTool`
 pipeline. Reproduce with:
 
 ```bash
-pip install semgrep
+pip install semgrep && winget install Gitleaks.Gitleaks AquaSecurity.Trivy
 pnpm benchmark:incumbent
 ```
 
@@ -15,13 +15,22 @@ pnpm benchmark:incumbent
 |---|---|---|---|
 | **Gatepass** (`pnpm corpus:measure`) | **12 / 12** | **100%** | **0%** |
 | Semgrep 1.170.1 (`p/security-audit` + `p/secrets` + `p/default`, 216 applicable rules) | **1 / 12** | 8.3% | 0% |
+| Gitleaks 8.30.1 | **1 / 12** | 8.3% | 0% |
+| Trivy 0.72.0 (`secret` + `misconfig` scanners) | **0 / 12** | 0% | 0% |
+| Snyk Agent Scan 0.4.3 (née Invariant `mcp-scan`) | n/a — cannot scan source trees (see below) | — | — |
 
-Semgrep's single detection was the AWS access key in the `exposed-secret` case
-(`generic.secrets.security.detected-aws-access-key-id-value`). It detected none of the
-agentic-infrastructure classes — tool poisoning, confused deputy, unauthenticated MCP
-transport, over-permissioned loops, cross-surface scope mismatch, hidden-behavior
-vagueness, unbounded tool params — and none of the AI-native app-code classes (RLS gap,
-CORS misconfig, missing schema validation, unpinned dependency).
+Semgrep's and Gitleaks' single detection was the AWS access key in the `exposed-secret`
+case. No incumbent detected any agentic-infrastructure class — tool poisoning, confused
+deputy, unauthenticated MCP transport, over-permissioned loops, cross-surface scope
+mismatch, hidden-behavior vagueness, unbounded tool params — nor any of the AI-native
+app-code classes (RLS gap, CORS misconfig, missing schema validation, unpinned dependency).
+
+**The MCP-specific incumbent cannot participate at all**: Snyk Agent Scan (Invariant Labs'
+`mcp-scan`, acquired by Snyk) scans *live MCP client configs and running servers* — its own
+CLI usage is "Scan one or more MCP config files". Pointed at a repository's source tree
+(including a raw MCP tool-definition file), it produces nothing. It is a runtime/deploy-time
+guard; it cannot gate a pull request before the code ships. That pre-merge gap is the
+category Gatepass occupies.
 
 This is the expected result, and it is the point: general-purpose SAST is built for a code
 surface, not for the agentic attack surface. The corpus classes are drawn from published
