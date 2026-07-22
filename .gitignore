@@ -33,6 +33,15 @@ Thumbs.db
 *.findings.json
 /tmp-scan/
 
+# Credentials — never commit key material (a GitHub App key leaked here once; rotated)
+*.pem
+*.key
+*.p12
+*.pfx
+.env
+.env.*
+!.env.example
+
 # VSIX builds
 *.vsix
 
