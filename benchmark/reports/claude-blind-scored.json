@@ -1,0 +1,117 @@
+{
+  "tool": "claude (blind LLM scanner)",
+  "classesDetected": "12/12",
+  "overallRecall": 1,
+  "overallFpRate": 0,
+  "crossClassFalseFlags": 2,
+  "perClass": [
+    {
+      "classId": "confused-deputy",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "cors-misconfig",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "cross-surface-scope-mismatch",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "exposed-secret",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "hbv",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "missing-schema-validation",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "over-permissioned-loop",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "rls-gap",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "tool-poisoning",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "unauth-mcp-transport",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "unbounded-tool-param",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    },
+    {
+      "classId": "unpinned-dependency",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1,
+      "recall": 1,
+      "precision": 1
+    }
+  ]
+}

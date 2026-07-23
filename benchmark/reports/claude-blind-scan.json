@@ -1,0 +1,53 @@
+{
+  "sample-01": [
+    "over-permissioned-loop"
+  ],
+  "sample-02": [
+    "unauth-mcp-transport"
+  ],
+  "sample-03": [
+    "cors-misconfig"
+  ],
+  "sample-04": [
+    "missing-schema-validation"
+  ],
+  "sample-05": [],
+  "sample-06": [
+    "unbounded-tool-param",
+    "hbv"
+  ],
+  "sample-07": [],
+  "sample-08": [],
+  "sample-09": [],
+  "sample-10": [
+    "exposed-secret"
+  ],
+  "sample-11": [],
+  "sample-12": [],
+  "sample-13": [],
+  "sample-14": [],
+  "sample-15": [
+    "unbounded-tool-param"
+  ],
+  "sample-16": [
+    "unpinned-dependency"
+  ],
+  "sample-17": [],
+  "sample-18": [
+    "rls-gap"
+  ],
+  "sample-19": [
+    "unbounded-tool-param"
+  ],
+  "sample-20": [],
+  "sample-21": [
+    "tool-poisoning"
+  ],
+  "sample-22": [],
+  "sample-23": [
+    "cross-surface-scope-mismatch"
+  ],
+  "sample-24": [
+    "confused-deputy"
+  ]
+}
