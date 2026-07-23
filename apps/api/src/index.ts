@@ -1,14 +1,15 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createServer } from "./server.js";
+import { makeHandlers } from "./handlers.js";
 import { MemoryStore } from "./store.js";
 import { PgStore, loadConfig, loadDotEnv } from "@gatepass/shared";
 import { getInstallationToken, RestGitHubClient, TarballRepoFetcher, githubTarballDownloader } from "@gatepass/github";
 import { createNimTransport, DEFAULT_MODEL } from "@gatepass/semantic";
 
 export { createServer } from "./server.js";
-export { makeHandlers } from "./handlers.js";
+export { makeHandlers };
 export { MemoryStore } from "./store.js";
 
 const isEntry = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
@@ -65,6 +66,18 @@ if (isEntry) {
   });
   if (process.env.GITHUB_WEBHOOK_SECRET) {
     console.log("GitHub webhook receiver ready at POST /v1/webhooks/github");
+  }
+
+  // Dev nicety: when running from the repo with an empty store, seed one REAL scan of the
+  // bundled vulnerable fixture repo so the dashboard shows genuine findings, not mock data.
+  const evalRepo = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "corpus", "eval-repos", "vulnerable-nextjs-mcp");
+  if (!dbUrl && existsSync(evalRepo)) {
+    try {
+      const seed = await makeHandlers(store).createScan("demo", evalRepo);
+      console.log(`Seeded demo scan of corpus/eval-repos/vulnerable-nextjs-mcp (${seed.verified} verified, ${seed.research} research)`);
+    } catch (err) {
+      console.warn("demo scan seed failed:", (err as Error).message);
+    }
   }
   const port = Number(process.env.PORT ?? 3000);
   server.listen(port, () => {

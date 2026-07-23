@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Finding } from "@/lib/types";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -9,6 +10,7 @@ import { confidencePercent } from "@/lib/utils";
 
 interface Props {
   findings: Finding[];
+  scanId?: string;
   error: string | null;
 }
 
@@ -38,7 +40,9 @@ const severityPillActive: Record<string, string> = {
 
 const severityPillInactive = "border border-gatepass-300 bg-white text-gatepass-600";
 
-export default function FindingsClient({ findings, error }: Props) {
+export default function FindingsClient({ findings, scanId, error }: Props) {
+  const searchParams = useSearchParams();
+  const query = (searchParams.get("q") ?? "").toLowerCase();
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");
   const [expandedFingerprint, setExpandedFingerprint] = useState<string | null>(null);
@@ -53,18 +57,19 @@ export default function FindingsClient({ findings, error }: Props) {
   const filtered = findings.filter((f) => {
     if (tierFilter !== "all" && f.tier !== tierFilter) return false;
     if (severityFilter !== "all" && f.severity !== severityFilter) return false;
+    if (query) {
+      const hay = `${f.classId} ${f.severity} ${f.tier} ${f.explanation ?? ""} ${f.locations.map((l) => l.path).join(" ")}`.toLowerCase();
+      if (!hay.includes(query)) return false;
+    }
     return true;
   });
 
   async function handleDispute(fingerprint: string) {
     setDisputing(fingerprint);
     try {
-      const { ORG_ID } = await import("@/lib/constants");
       const { api } = await import("@/lib/api-client");
-      const repos = await api.getRepos(ORG_ID);
-      const lastScanId = repos.find((r) => r.lastScanId)?.lastScanId;
-      if (lastScanId) {
-        await api.disputeFinding(fingerprint, lastScanId, disputeReason || "Disputed");
+      if (scanId) {
+        await api.disputeFinding(fingerprint, scanId, disputeReason || "Disputed");
         setDisputeModal(null);
         setDisputeReason("");
       }

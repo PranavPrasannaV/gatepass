@@ -1,4 +1,4 @@
-import { randomUUID, createHash } from "node:crypto";
+﻿import { randomUUID, createHash } from "node:crypto";
 import { buildScanContext, detectFrameworks } from "@gatepass/engine";
 import { runScan, runScanAsync, generateSuggestedFix } from "@gatepass/detectors";
 import { LlmGateway } from "@gatepass/semantic";
@@ -36,7 +36,7 @@ import type { Store, StoredScan, FleetServer, OrgRecord } from "./store.js";
 
 /**
  * API handlers wiring the analysis, gate, evidence, and runner libraries over the store.
- * Pure functions (request → result) so they are unit-testable without a running server; the
+ * Pure functions (request â†’ result) so they are unit-testable without a running server; the
  * HTTP binding in server.ts is a thin adapter. RBAC/auth and DB persistence are the two
  * production swap-ins (both stubbed here as an in-memory store + trusted caller).
  */
@@ -56,11 +56,11 @@ export interface HandlerOptions {
   llmModel?: string;
   /** GitHub App client for PR review and check-run delivery (T096). */
   githubClient?: GitHubClient;
-  /** Repo fetcher for clone-and-scan of real GitHub repos (§clone). */
+  /** Repo fetcher for clone-and-scan of real GitHub repos (Â§clone). */
   repoFetcher?: RepoFetcher;
   /** GitHub webhook secret for signature verification (T072). */
   webhookSecret?: string;
-  /** Org that webhook-triggered scans run under (installation→org mapping; MVP default). */
+  /** Org that webhook-triggered scans run under (installationâ†’org mapping; MVP default). */
   webhookOrgId?: string;
   /** Compliance-platform API tokens for evidence export (T083). */
   vantaToken?: string;
@@ -109,7 +109,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       },
       gateway,
     );
-    await store.putScan({ id: doc.scan.id, orgId: org.id, doc, disputes: new Map() });
+    await store.putScan({ id: doc.scan.id, orgId: org.id, doc, disputes: new Map(), createdAt: new Date().toISOString() });
     if (store.putRepo) await store.putRepo(org.id, opts.repoRef ?? dir, doc.scan.id);
     const visible = await store.findingsOf(doc.scan.id);
     return {
@@ -126,10 +126,33 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       return scanDirectory(org, repoPath, { repoRef: repoPath });
     },
 
+    /** Scan history for the dashboard overview: per-scan finding summaries, oldest first. */
+    async listScans(orgId: string) {
+      await requireOrg(orgId);
+      if (!store.listScans) return [];
+      const repos = store.getRepos ? await store.getRepos(orgId) : [];
+      const scans = await store.listScans(orgId);
+      return Promise.all(
+        scans.map(async (s) => {
+          const findings = await store.findingsOf(s.id);
+          const bySeverity: Record<string, number> = {};
+          for (const f of findings) bySeverity[f.severity] = (bySeverity[f.severity] ?? 0) + 1;
+          return {
+            id: s.id,
+            createdAt: s.createdAt,
+            repo: repos.find((r) => r.lastScanId === s.id)?.name,
+            verified: findings.filter((f) => f.tier === "verified").length,
+            research: findings.filter((f) => f.tier === "research").length,
+            bySeverity,
+          };
+        }),
+      );
+    },
+
     /**
-     * Clone-and-scan a real GitHub repo (§clone). Fetches the repo tarball into a temp
+     * Clone-and-scan a real GitHub repo (Â§clone). Fetches the repo tarball into a temp
      * workspace via the configured RepoFetcher, scans it, and always cleans up the workspace
-     * (customer code is never retained beyond the scan — FR-026).
+     * (customer code is never retained beyond the scan â€” FR-026).
      */
     async scanRemoteRepo(orgId: string, repo: string, ref = "HEAD") {
       const org = await requireOrg(orgId);
@@ -147,7 +170,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
      * GitHub webhook receiver (T072). Verifies the HMAC signature, and on a PR/push event
      * clone-and-scans the repo. For pull requests, it delivers the findings as a PR review
      * plus a CI-gate Check Run through the audited writer (suggest-and-approve; never a code
-     * write — Principle III). Returns quickly with a summary.
+     * write â€” Principle III). Returns quickly with a summary.
      */
     async handleWebhook(rawBody: string, headers: WebhookHeaders) {
       if (!options.webhookSecret) throw new Error("no webhook secret configured");
@@ -162,7 +185,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       const ref = event.type === "pull_request" ? event.sha : event.type === "push" ? event.sha || event.ref : "HEAD";
 
       // Capture the repo's prior scan (baseline) BEFORE this scan overwrites it, so we can
-      // report only the findings this change INTRODUCED (incremental / fair gate — T035).
+      // report only the findings this change INTRODUCED (incremental / fair gate â€” T035).
       let baselineFindings: Finding[] | undefined;
       if (store.getRepos) {
         const priorScanId = (await store.getRepos(orgId)).find((r) => r.name === repo)?.lastScanId;
@@ -301,7 +324,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       return draftAnswers(questions, await asPostureScan(scan));
     },
 
-    // Fleet (FR-024, T085) — Scale tier.
+    // Fleet (FR-024, T085) â€” Scale tier.
     async registerFleetServer(
       orgId: string,
       name: string,
@@ -327,7 +350,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
         executionMode: "hosted",
         semanticEnabled: true,
       });
-      await store.putScan({ id: doc.scan.id, orgId: server.orgId, doc, disputes: new Map() });
+      await store.putScan({ id: doc.scan.id, orgId: server.orgId, doc, disputes: new Map(), createdAt: new Date().toISOString() });
       server.lastScanId = doc.scan.id;
       server.posture = posture(doc.findings);
       return server;
@@ -356,7 +379,7 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       await requireOrg(orgId);
       validateRunnerUpload(payload);
       const doc = parseFindingsDocument(payload);
-      await store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map() });
+      await store.putScan({ id: doc.scan.id, orgId, doc, disputes: new Map(), createdAt: new Date().toISOString() });
       return { scanId: doc.scan.id, findings: doc.findings.length };
     },
 

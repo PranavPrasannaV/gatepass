@@ -75,8 +75,8 @@ export function Sidebar() {
           href={item.href}
           className={`flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-150 ${
             isActive
-              ? "border-l-[3px] border-l-[#0D9488] bg-teal-50 text-[#0D9488]"
-              : "border-l-[3px] border-l-transparent text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900"
+              ? "border-l-[3px] border-l-[#0D9488] bg-teal-50 text-[#0D9488] dark:bg-teal-950/40"
+              : "border-l-[3px] border-l-transparent text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900 dark:text-gatepass-300 dark:hover:bg-gatepass-800 dark:hover:text-gatepass-100"
           }`}
         >
           <item.icon size={20} className={`shrink-0 ${isActive ? "text-[#0D9488]" : "text-gatepass-400"}`} />
@@ -89,7 +89,7 @@ export function Sidebar() {
   return (
     <>
       {/* ── Mobile top bar ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-gatepass-200 bg-white px-4 h-14 md:hidden">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-gatepass-200 bg-white px-4 h-14 md:hidden dark:border-gatepass-800 dark:bg-gatepass-900">
         <button
           onClick={() => setMobileOpen(true)}
           className="flex items-center justify-center rounded-lg p-2 -ml-2 text-gatepass-600 hover:bg-gatepass-100 transition-colors"
@@ -121,7 +121,7 @@ export function Sidebar() {
 
       {/* ── Sidebar ── */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gatepass-200 bg-white transition-transform duration-300 ease-out ${
+        className={`fixed md:static inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gatepass-200 bg-white transition-transform duration-300 ease-out dark:border-gatepass-800 dark:bg-gatepass-900 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } shadow-xl md:shadow-none`}
       >
@@ -143,14 +143,14 @@ export function Sidebar() {
         </div>
 
         {/* Desktop brand area */}
-        <div className="hidden md:flex flex-col border-b border-gatepass-200 px-4 py-5">
+        <div className="hidden md:flex flex-col border-b border-gatepass-200 px-4 py-5 dark:border-gatepass-800">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0D9488]">
               <Shield size={18} className="text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-bold text-gatepass-900">Gatepass</span>
-              <span className="text-xs text-gatepass-500">Enterprise Tier</span>
+              <span className="text-base font-bold text-gatepass-900 dark:text-gatepass-100">Gatepass</span>
+              <span className="text-xs text-gatepass-500 capitalize">{org ? `${org.planTier} tier` : "Precision AppSec"}</span>
             </div>
           </div>
           {org && (
@@ -171,7 +171,7 @@ export function Sidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="mt-auto border-t border-gatepass-200 px-3 py-4">
+        <div className="mt-auto border-t border-gatepass-200 px-3 py-4 dark:border-gatepass-800">
           <ul className="space-y-1 mb-4">
             {FOOTER_ITEMS.map((item) => {
               const isActive = pathname.startsWith(item.href);
@@ -180,7 +180,9 @@ export function Sidebar() {
                   <Link
                     href={item.href}
                     className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium transition-colors duration-150 ${
-                      isActive ? "text-[#0D9488]" : "text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900"
+                      isActive
+                        ? "text-[#0D9488]"
+                        : "text-gatepass-600 hover:bg-gatepass-50 hover:text-gatepass-900 dark:text-gatepass-300 dark:hover:bg-gatepass-800 dark:hover:text-gatepass-100"
                     }`}
                   >
                     <item.icon size={18} className={`shrink-0 ${isActive ? "text-[#0D9488]" : "text-gatepass-400"}`} />

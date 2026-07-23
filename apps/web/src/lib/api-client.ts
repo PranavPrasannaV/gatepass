@@ -9,6 +9,7 @@ import type {
   EvidenceExport,
   QuestionnaireDraft,
   BenchmarkData,
+  ScanSummary,
 } from "./types";
 import type { Finding } from "./types";
 import { ApiError } from "./types";
@@ -86,10 +87,13 @@ class ApiClient {
     });
   }
 
-  // The GET /v1/orgs/:org/scans path doesn't exist — scans are per-repo
-  // Use the scan-based findings endpoint
   getScan(scanId: string): Promise<{ id: string; status: string }> {
     return this.request(`/scans/${scanId}`);
+  }
+
+  /** Scan history with per-scan finding summaries (dashboard overview). */
+  listScans(orgId: string): Promise<ScanSummary[]> {
+    return this.request(`/orgs/${orgId}/scans`);
   }
 
   getFindings(scanId: string, includeSuppressed?: boolean): Promise<Finding[]> {

@@ -128,7 +128,13 @@
   --duration-slow: 300ms;
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
+/*
+ * Dark variant with real specificity. The Tailwind default uses :where() (zero specificity),
+ * which lets a base color utility (e.g. text-gatepass-900) win over its dark: override on
+ * source order — silently breaking dark mode on any element that sets both. Using :is(.dark *)
+ * gives dark: one extra class of specificity so it reliably wins under .dark.
+ */
+@custom-variant dark (&:is(.dark *));
 
 @layer base {
   *,
@@ -191,9 +197,12 @@
   background-size: 256px 256px;
 }
 
-/* ── Page background (light theme) ── */
+/* ── Page background — theme-aware so every surface using it darkens together ── */
 @utility bg-page {
   background-color: #f5f5f4;
+}
+.dark .bg-page {
+  background-color: #020617;
 }
 
 @keyframes skeleton-pulse {

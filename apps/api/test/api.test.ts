@@ -46,6 +46,16 @@ describe("API integration (T013/T030/T031 wiring)", () => {
     expect(sarif.json.version).toBe("2.1.0");
   });
 
+  it("lists scan history with real per-scan summaries (dashboard overview)", async () => {
+    const { status, json } = await get("/v1/orgs/demo/scans");
+    expect(status).toBe(200);
+    const entry = json.find((s: { id: string }) => s.id === scanId);
+    expect(entry).toBeDefined();
+    expect(entry.verified).toBeGreaterThanOrEqual(3);
+    expect(entry.createdAt).toBeTruthy();
+    expect(Object.keys(entry.bySeverity).length).toBeGreaterThan(0);
+  });
+
   it("the CI gate blocks on verified findings", async () => {
     const { json } = await post(`/v1/scans/${scanId}/gate`, { mode: "block_verified", failureMode: "fail_open" });
     expect(json.conclusion).toBe("failure");

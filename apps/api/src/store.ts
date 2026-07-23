@@ -19,6 +19,8 @@ export interface StoredScan {
   orgId: string;
   doc: FindingsDocument;
   disputes: Map<string, string>; // fingerprint -> reason
+  /** ISO timestamp set at creation; used for dashboard chronology. */
+  createdAt?: string;
 }
 
 export interface FleetServer {
@@ -53,6 +55,8 @@ export interface Store {
   getBenchmark?(corpusVersion?: string): Promise<unknown>;
   publishBenchmark?(corpusVersion: string, tool: string, results: string): Promise<void>;
   getLatestScan?(): Promise<{ id: string; orgId: string } | undefined>;
+  /** All scans for an org, oldest first (dashboard overview). */
+  listScans?(orgId: string): Promise<StoredScan[]>;
 }
 
 export class MemoryStore implements Store {
@@ -77,6 +81,10 @@ export class MemoryStore implements Store {
 
   async putScan(scan: StoredScan): Promise<void> {
     this.scans.set(scan.id, scan);
+  }
+
+  async listScans(orgId: string): Promise<StoredScan[]> {
+    return [...this.scans.values()].filter((s) => s.orgId === orgId);
   }
 
   async getScan(scanId: string): Promise<StoredScan | undefined> {

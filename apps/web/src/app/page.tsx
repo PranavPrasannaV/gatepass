@@ -1,95 +1,61 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { ORG_ID } from "@/lib/constants";
-import {
-  Loader2,
-  Plus,
-  Clock,
-  ClipboardList,
-  TrendingUp,
-  AlertTriangle,
-  Shield,
-  FileText,
-  Zap,
-  ArrowUpRight,
-  ArrowDown,
-} from "lucide-react";
-
-/** Mock trend data for the Analysis Trends bar chart (30 days). */
-const TREND_DATA = [
-  { day: "01 Oct", critical: 4, high: 7, medium: 12, low: 3 },
-  { day: "03 Oct", critical: 6, high: 5, medium: 10, low: 4 },
-  { day: "05 Oct", critical: 3, high: 8, medium: 15, low: 2 },
-  { day: "07 Oct", critical: 8, high: 10, medium: 9, low: 5 },
-  { day: "09 Oct", critical: 5, high: 6, medium: 14, low: 3 },
-  { day: "11 Oct", critical: 7, high: 9, medium: 11, low: 6 },
-  { day: "13 Oct", critical: 2, high: 4, medium: 8, low: 2 },
-  { day: "15 Oct", critical: 9, high: 12, medium: 13, low: 4 },
-  { day: "17 Oct", critical: 4, high: 7, medium: 10, low: 5 },
-  { day: "19 Oct", critical: 6, high: 8, medium: 12, low: 3 },
-  { day: "21 Oct", critical: 3, high: 5, medium: 9, low: 2 },
-  { day: "23 Oct", critical: 5, high: 6, medium: 11, low: 4 },
-  { day: "25 Oct", critical: 7, high: 10, medium: 14, low: 6 },
-  { day: "27 Oct", critical: 4, high: 7, medium: 10, low: 3 },
-  { day: "29 Oct", critical: 6, high: 9, medium: 13, low: 5 },
-];
-
-/** Mock recent findings for the table. */
-const RECENT_FINDINGS = [
-  {
-    id: "CGAI-RES-942",
-    type: "SQL Injection",
-    path: "src/api/routes/users.ts",
-    severity: "critical",
-    risk: "Critical",
-    time: "2m ago",
-  },
-  {
-    id: "CGAI-RES-891",
-    type: "CORS Misconfig",
-    path: "src/middleware/cors.ts",
-    severity: "high",
-    risk: "High",
-    time: "15m ago",
-  },
-  {
-    id: "CGAI-RES-877",
-    type: "XSS Reflected",
-    path: "src/components/Form.tsx",
-    severity: "high",
-    risk: "High",
-    time: "1h ago",
-  },
-  {
-    id: "CGAI-RES-803",
-    type: "Path Traversal",
-    path: "src/lib/file-utils.ts",
-    severity: "medium",
-    risk: "Medium",
-    time: "3h ago",
-  },
-  {
-    id: "CGAI-RES-754",
-    type: "Insecure Crypto",
-    path: "src/lib/encrypt.ts",
-    severity: "medium",
-    risk: "Medium",
-    time: "6h ago",
-  },
-];
+import type { ScanSummary, Finding } from "@/lib/types";
+import { Loader2, Plus, TrendingUp, AlertTriangle, Shield, FileText, ShieldCheck, FlaskConical } from "lucide-react";
 
 const MAX_BAR_HEIGHT = 160;
 
+interface Overview {
+  scans: ScanSummary[];
+  latestFindings: Finding[];
+  latestRepo?: string;
+}
+
+const SEVERITY_ORDER = ["critical", "high", "medium", "low"] as const;
+const SEVERITY_BAR: Record<string, string> = {
+  critical: "#DC2626",
+  high: "#F97316",
+  medium: "#F59E0B",
+  low: "#CBD5E1",
+};
+const RISK_BADGE: Record<string, string> = {
+  critical: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  high: "bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300",
+  medium: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
+  low: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+};
+
+function relativeTime(iso?: string): string {
+  if (!iso) return "";
+  const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (secs < 60) return "just now";
+  if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+  if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`;
+  return `${Math.floor(secs / 86400)}d ago`;
+}
+
 export default function Home() {
+  const [data, setData] = useState<Overview | null>(null);
   const [ready, setReady] = useState<boolean | null>(null);
 
   useEffect(() => {
-    api
-      .getOrg(ORG_ID)
-      .then(() => setReady(true))
-      .catch(() => setReady(false));
+    (async () => {
+      try {
+        await api.getOrg(ORG_ID);
+        const scans = await api.listScans(ORG_ID);
+        const sorted = [...scans].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
+        const latest = sorted[0];
+        const latestFindings = latest ? await api.getFindings(latest.id) : [];
+        setData({ scans: sorted, latestFindings, latestRepo: latest?.repo });
+        setReady(true);
+      } catch {
+        setReady(false);
+      }
+    })();
   }, []);
 
   if (ready === null) {
@@ -103,36 +69,42 @@ export default function Home() {
   if (!ready) {
     return (
       <main className="px-6 py-10">
-        <h1 className="text-2xl font-bold text-gatepass-900">Gatepass Dashboard</h1>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Monitor and manage your organization&apos;s application security posture
-        </p>
+        <h1 className="text-2xl font-bold text-gatepass-900 dark:text-gatepass-100">Gatepass Dashboard</h1>
+        <p className="mt-1 text-sm text-gatepass-500">Application security posture for the AI-native stack</p>
+        <div className="mt-12 mx-auto max-w-lg rounded-lg border border-gatepass-200 bg-white p-12 text-center dark:border-gatepass-800 dark:bg-gatepass-900">
+          <p className="text-sm text-gatepass-500">Could not reach the Gatepass API. Is it running on port 3000?</p>
+        </div>
+      </main>
+    );
+  }
 
-        <div className="mt-12 mx-auto max-w-lg rounded-lg border border-gatepass-200 bg-white p-12 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gatepass-100">
-            <ClipboardList size={40} className="text-gatepass-400" />
+  const scans = data?.scans ?? [];
+  const totalScanned = scans.length;
+  const totalVerified = scans.reduce((n, s) => n + s.verified, 0);
+  const totalResearch = scans.reduce((n, s) => n + s.research, 0);
+  const critical = scans.reduce((n, s) => n + (s.bySeverity.critical ?? 0), 0);
+
+  // No scans yet — a real, honest empty state, not fabricated metrics.
+  if (totalScanned === 0) {
+    return (
+      <main className="px-6 py-10">
+        <h1 className="text-2xl font-bold text-gatepass-900 dark:text-gatepass-100">Gatepass Dashboard</h1>
+        <p className="mt-1 text-sm text-gatepass-500">Application security posture for the AI-native stack</p>
+        <div className="mt-12 mx-auto max-w-lg rounded-lg border border-gatepass-200 bg-white p-12 text-center dark:border-gatepass-800 dark:bg-gatepass-900">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gatepass-100 dark:bg-gatepass-800">
+            <Shield size={32} className="text-gatepass-400" />
           </div>
-          <h2 className="mt-6 text-xl font-semibold text-gatepass-900">No Active Passes</h2>
+          <h2 className="mt-6 text-xl font-semibold text-gatepass-900 dark:text-gatepass-100">No scans yet</h2>
           <p className="mx-auto mt-2 max-w-sm text-sm text-gatepass-500">
-            Your organization doesn&apos;t have any active security passes. Start by requesting a new analysis pass or
-            reviewing your scan history.
+            Connect a repository or trigger a scan. Verified findings and posture will appear here.
           </p>
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-md bg-[#0891b2] px-6 py-2.5 text-sm font-medium text-white hover:bg-teal-700"
-            >
-              <Plus size={16} />
-              Request New Pass
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-md border border-gatepass-300 px-6 py-2.5 text-sm font-medium text-gatepass-700 hover:bg-gatepass-50"
-            >
-              <Clock size={16} />
-              View History
-            </button>
-          </div>
+          <Link
+            href="/fleet"
+            className="mt-8 inline-flex items-center gap-2 rounded-md bg-[#0D9488] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#0F766E]"
+          >
+            <Plus size={16} />
+            Register a server
+          </Link>
         </div>
       </main>
     );
@@ -140,245 +112,138 @@ export default function Home() {
 
   return (
     <main className="space-y-6">
-      {/* ── Page Header ── */}
       <div>
-        <h1 className="text-2xl font-bold text-gatepass-900">Gatepass Dashboard</h1>
-        <p className="mt-1 text-sm text-gatepass-500">
-          Monitor and manage your organization&apos;s application security posture
-        </p>
+        <h1 className="text-2xl font-bold text-gatepass-900 dark:text-gatepass-100">Gatepass Dashboard</h1>
+        <p className="mt-1 text-sm text-gatepass-500">Application security posture for the AI-native stack</p>
       </div>
 
-      {/* ── Row 1: Posture Score + SOC2 Compliance ── */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        {/* Security Posture Score */}
-        <div className="rounded-lg border border-gatepass-200 bg-white p-6 sm:col-span-2">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-gatepass-500">Security Posture Score</p>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-gatepass-900">84</span>
-                <span className="text-lg text-gatepass-400">/100</span>
-              </div>
-            </div>
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-              MODERATE RISK
-            </span>
-          </div>
+      {/* Row 1: finding tallies (all real, summed across scans) */}
+      <div className="grid gap-4 sm:grid-cols-4">
+        <MetricCard label="Verified findings" value={totalVerified} icon={<ShieldCheck size={18} className="text-emerald-500" />} accent="text-emerald-600 dark:text-emerald-400" />
+        <MetricCard label="Research findings" value={totalResearch} icon={<FlaskConical size={18} className="text-blue-500" />} accent="text-blue-600 dark:text-blue-400" />
+        <MetricCard label="Critical" value={critical} accent="text-red-600 dark:text-red-400" />
+        <MetricCard label="Scans" value={totalScanned} accent="text-gatepass-700 dark:text-gatepass-200" />
+      </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-4 border-t border-gatepass-100 pt-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">12</p>
-              <p className="text-xs text-gatepass-500">Critical</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-amber-600">45</p>
-              <p className="text-xs text-gatepass-500">Warnings</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gatepass-700">1,204</p>
-              <p className="text-xs text-gatepass-500">Scanned</p>
-            </div>
-          </div>
+      {/* Row 2: per-scan severity chart (real counts, chronological) */}
+      <div className="rounded-lg border border-gatepass-200 bg-white p-6 dark:border-gatepass-800 dark:bg-gatepass-900">
+        <div className="flex items-center gap-2">
+          <TrendingUp size={16} className="text-gatepass-400" />
+          <p className="text-sm font-medium text-gatepass-700 dark:text-gatepass-200">Findings by scan</p>
         </div>
-
-        {/* SOC2 Compliance */}
-        <div className="rounded-lg border border-gatepass-200 bg-white p-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-gatepass-500">SOC2 Compliance</p>
-            <Shield size={18} className="text-gatepass-400" />
-          </div>
-          <div className="mt-4 flex items-baseline gap-1">
-            <span className="text-3xl font-bold text-emerald-600">92</span>
-            <span className="text-sm text-gatepass-400">%</span>
-          </div>
-          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-gatepass-100">
-            <div className="h-full rounded-full bg-emerald-500" style={{ width: "92%" }} />
-          </div>
-          <div className="mt-2 flex items-center gap-1 text-xs text-emerald-600">
-            <ArrowUpRight size={12} />
-            <span>+3% this week</span>
-          </div>
+        <SeverityChart scans={[...scans].reverse()} />
+        <div className="mt-4 flex items-center gap-4 text-xs text-gatepass-500">
+          {SEVERITY_ORDER.map((s) => (
+            <span key={s} className="flex items-center gap-1.5 capitalize">
+              <span className="h-2.5 w-2.5 rounded-sm" style={{ background: SEVERITY_BAR[s] }} />
+              {s}
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* ── Row 2: AI Code Smells + Analysis Trends ── */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        {/* AI Code Smells */}
-        <div className="rounded-lg border border-gatepass-200 bg-white p-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-gatepass-500">AI Code Smells</p>
-            <Zap size={18} className="text-gatepass-400" />
-          </div>
-          <div className="mt-4 flex items-baseline gap-1">
-            <span className="text-3xl font-bold text-amber-600">28</span>
-            <span className="text-sm text-gatepass-400">items</span>
-          </div>
-          <span className="mt-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
-            Needs Review
-          </span>
-          <div className="mt-4 flex items-center gap-1 text-xs text-gatepass-500">
-            <AlertTriangle size={12} />
-            <span>4 require immediate attention</span>
-          </div>
-        </div>
-
-        {/* Analysis Trends — Bar Chart */}
-        <div className="rounded-lg border border-gatepass-200 bg-white p-6 sm:col-span-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp size={16} className="text-gatepass-400" />
-              <p className="text-sm font-medium text-gatepass-700">Analysis Trends (30 Days)</p>
-            </div>
-            <button className="rounded-md border border-gatepass-300 px-3 py-1.5 text-xs font-medium text-gatepass-600 hover:bg-gatepass-50 transition-colors">
-              Export Report
-            </button>
-          </div>
-
-          {/* SVG bar chart */}
-          <div className="mt-4" style={{ height: MAX_BAR_HEIGHT + 40 }}>
-            <svg
-              viewBox={`0 0 ${TREND_DATA.length * 40} ${MAX_BAR_HEIGHT + 40}`}
-              className="h-full w-full overflow-visible"
-              preserveAspectRatio="none"
-            >
-              {TREND_DATA.map((d, i) => {
-                const x = i * 40 + 10;
-                const barWidth = 22;
-                const _total = d.critical + d.high + d.medium + d.low;
-                const maxVal = Math.max(...TREND_DATA.map((t) => t.critical + t.high + t.medium + t.low));
-                const scale = MAX_BAR_HEIGHT / maxVal;
-
-                let yOffset = 0;
-                const segments = [
-                  { value: d.low, color: "#CBD5E1" },
-                  { value: d.medium, color: "#F59E0B" },
-                  { value: d.high, color: "#F97316" },
-                  { value: d.critical, color: "#DC2626" },
-                ];
-
-                return segments.map((seg) => {
-                  const h = seg.value * scale;
-                  const y = MAX_BAR_HEIGHT - yOffset - h + 10;
-                  yOffset += h;
-                  return (
-                    <rect
-                      key={`${i}-${seg.color}`}
-                      x={x}
-                      y={y}
-                      width={barWidth}
-                      height={Math.max(h, 1)}
-                      fill={seg.color}
-                      rx={2}
-                    />
-                  );
-                });
-              })}
-              {/* X-axis labels — show every 4th label to avoid crowding */}
-              {TREND_DATA.map((d, i) =>
-                i % 4 === 0 ? (
-                  <text
-                    key={`label-${i}`}
-                    x={i * 40 + 21}
-                    y={MAX_BAR_HEIGHT + 28}
-                    textAnchor="middle"
-                    className="fill-gatepass-400"
-                    style={{ fontSize: 9 }}
-                  >
-                    {d.day}
-                  </text>
-                ) : null,
-              )}
-            </svg>
-          </div>
-
-          {/* Legend */}
-          <div className="mt-2 flex items-center gap-4 text-xs text-gatepass-500">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-red-500" />
-              Critical
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-orange-500" />
-              High
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-amber-500" />
-              Medium
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-gatepass-200" />
-              Low
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Row 3: Recent Findings Table ── */}
-      <div className="rounded-lg border border-gatepass-200 bg-white">
-        <div className="flex items-center justify-between border-b border-gatepass-200 px-6 py-4">
+      {/* Row 3: real findings from the latest scan */}
+      <div className="rounded-lg border border-gatepass-200 bg-white dark:border-gatepass-800 dark:bg-gatepass-900">
+        <div className="flex items-center justify-between border-b border-gatepass-200 px-6 py-4 dark:border-gatepass-800">
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-gatepass-400" />
-            <h2 className="text-sm font-semibold text-gatepass-900">Recent Findings</h2>
+            <h2 className="text-sm font-semibold text-gatepass-900 dark:text-gatepass-100">
+              Latest findings{data?.latestRepo ? ` — ${data.latestRepo.split(/[\\/]/).pop()}` : ""}
+            </h2>
           </div>
-          <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-[#0891b2] hover:bg-gatepass-50 transition-colors">
+          <Link href="/findings" className="flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-[#0D9488] hover:bg-gatepass-50 dark:hover:bg-gatepass-800">
             View all
-            <ArrowDown size={12} />
-          </button>
+          </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gatepass-50">
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
-                  ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
-                  Vulnerability
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
-                  Path
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
-                  Risk
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
-                  Time
-                </th>
-                <th className="px-6 py-3" />
+              <tr className="bg-gatepass-50 dark:bg-gatepass-800/50">
+                {["Vulnerability", "Path", "Tier", "Risk"].map((h) => (
+                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {RECENT_FINDINGS.map((f) => (
-                <tr
-                  key={f.id}
-                  className="border-b border-gatepass-100 last:border-b-0 transition-colors hover:bg-gatepass-50/50"
-                >
-                  <td className="px-6 py-3 font-mono text-xs text-gatepass-700">{f.id}</td>
-                  <td className="px-6 py-3 font-medium text-gatepass-900">{f.type}</td>
-                  <td className="px-6 py-3 font-mono text-xs text-gatepass-500">{f.path}</td>
-                  <td className="px-6 py-3">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${
-                        f.risk === "Critical"
-                          ? "bg-red-50 text-red-700"
-                          : f.risk === "High"
-                            ? "bg-orange-50 text-orange-700"
-                            : "bg-blue-50 text-blue-700"
-                      }`}
-                    >
-                      {f.risk}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-xs text-gatepass-500">{f.time}</td>
-                  <td className="px-6 py-3 text-right">
-                    <button className="text-xs font-medium text-[#0891b2] hover:underline">View</button>
+              {data!.latestFindings.slice(0, 8).map((f) => {
+                const loc = f.locations[0];
+                return (
+                  <tr key={f.fingerprint} className="border-b border-gatepass-100 last:border-b-0 hover:bg-gatepass-50/50 dark:border-gatepass-800 dark:hover:bg-gatepass-800/40">
+                    <td className="px-6 py-3 font-medium text-gatepass-900 dark:text-gatepass-100">{f.classId}</td>
+                    <td className="px-6 py-3 font-mono text-xs text-gatepass-500">
+                      {loc ? `${loc.path}:${loc.startLine}` : "—"}
+                    </td>
+                    <td className="px-6 py-3">
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${f.tier === "verified" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"}`}>
+                        {f.tier === "verified" ? "verified" : `research${typeof f.confidence === "number" ? ` ${Math.round(f.confidence * 100)}%` : ""}`}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3">
+                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${RISK_BADGE[f.severity] ?? RISK_BADGE.low}`}>
+                        {f.severity}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+              {data!.latestFindings.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-sm text-gatepass-500">
+                    <AlertTriangle size={16} className="mx-auto mb-2 text-gatepass-400" />
+                    No findings in the latest scan.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
       </div>
     </main>
+  );
+}
+
+function MetricCard({ label, value, icon, accent }: { label: string; value: number; icon?: React.ReactNode; accent: string }) {
+  return (
+    <div className="rounded-lg border border-gatepass-200 bg-white p-6 dark:border-gatepass-800 dark:bg-gatepass-900">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-gatepass-500">{label}</p>
+        {icon}
+      </div>
+      <p className={`mt-2 text-3xl font-bold ${accent}`}>{value.toLocaleString()}</p>
+    </div>
+  );
+}
+
+function SeverityChart({ scans }: { scans: ScanSummary[] }) {
+  // HTML bars (not stretched SVG) so a single scan renders a clean fixed-width column
+  // and axis labels never distort. Each bar stacks severities to its real total.
+  const totals = scans.map((s) => SEVERITY_ORDER.reduce((n, sev) => n + (s.bySeverity[sev] ?? 0), 0));
+  const maxVal = Math.max(1, ...totals);
+  const labelEvery = Math.ceil((scans.length || 1) / 8);
+
+  return (
+    <div className="mt-4 flex items-end gap-2 overflow-x-auto" style={{ height: MAX_BAR_HEIGHT + 28 }}>
+      {scans.map((s, i) => {
+        const total = totals[i]!;
+        return (
+          <div key={s.id} className="flex shrink-0 flex-col items-center" style={{ width: 34 }} title={`${total} finding${total === 1 ? "" : "s"}`}>
+            <div className="flex w-full flex-col-reverse justify-start rounded-t-sm" style={{ height: MAX_BAR_HEIGHT }}>
+              {SEVERITY_ORDER.slice()
+                .reverse()
+                .map((sev) => {
+                  const count = s.bySeverity[sev] ?? 0;
+                  if (count === 0) return null;
+                  return <div key={sev} style={{ height: (count / maxVal) * MAX_BAR_HEIGHT, background: SEVERITY_BAR[sev] }} className="w-full first:rounded-t-sm" />;
+                })}
+            </div>
+            <span className="mt-2 h-4 truncate text-[9px] text-gatepass-400">
+              {i % labelEvery === 0 ? relativeTime(s.createdAt) || `#${i + 1}` : ""}
+            </span>
+          </div>
+        );
+      })}
+    </div>
   );
 }

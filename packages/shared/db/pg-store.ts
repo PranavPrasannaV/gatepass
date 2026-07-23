@@ -126,7 +126,7 @@ export class PgStore {
         orgId: string;
         doc: FindingsDocument;
         disputes: Map<string, string>;
-        createdAt: Date;
+        createdAt: string;
       }
     | undefined
   > {
@@ -166,7 +166,7 @@ export class PgStore {
         },
         findings,
       },
-      createdAt: scanRow[0].createdAt,
+      createdAt: scanRow[0].createdAt.toISOString(),
       disputes: new Map<string, string>(),
     };
   }

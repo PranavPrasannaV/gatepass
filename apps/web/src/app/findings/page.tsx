@@ -10,21 +10,20 @@ export const dynamic = "force-dynamic";
 // This is a Server Component that fetches data
 export default async function FindingsPage() {
   let findings: Finding[] = [];
+  let scanId: string | undefined;
   let error: string | null = null;
 
   try {
-    // Try to get the latest scan from the first repo
-    const repos = await api.getRepos(ORG_ID);
-    const completedRepos = repos.filter((r) => r.scanStatus === "complete");
-    if (completedRepos.length > 0) {
-      const scanRepo = completedRepos[0];
-      if (scanRepo?.lastScanId) {
-        findings = await api.getFindings(scanRepo.lastScanId);
-      }
+    // Latest scan for the org drives the findings view (matches the dashboard overview).
+    const scans = await api.listScans(ORG_ID);
+    const latest = [...scans].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))[0];
+    if (latest) {
+      scanId = latest.id;
+      findings = await api.getFindings(latest.id);
     }
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load findings";
   }
 
-  return <FindingsClient findings={findings} error={error} />;
+  return <FindingsClient findings={findings} scanId={scanId} error={error} />;
 }

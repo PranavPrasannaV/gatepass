@@ -1,5 +1,7 @@
 // Re-export canonical types from packages
-export type { Finding, Tier, Severity, Surface, Location, Reproduction, FindingsDocument } from "@gatepass/findings";
+export type { Finding, Tier, Surface, Location, Reproduction, FindingsDocument } from "@gatepass/findings";
+import type { Severity } from "@gatepass/findings";
+export type { Severity };
 import type { PlanTier } from "@gatepass/shared";
 export type { PlanTier };
 
@@ -26,6 +28,16 @@ export interface ScanResult {
   frameworks: string[];
   verified: number;
   research: number;
+}
+
+/** Per-scan summary from GET /v1/orgs/:org/scans (dashboard overview). */
+export interface ScanSummary {
+  id: string;
+  createdAt?: string;
+  repo?: string;
+  verified: number;
+  research: number;
+  bySeverity: Partial<Record<Severity, number>>;
 }
 
 export interface FleetServer {
