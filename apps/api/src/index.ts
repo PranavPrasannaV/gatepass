@@ -22,11 +22,14 @@ if (isEntry) {
 
   const appId = process.env.GITHUB_APP_ID;
   const keyPath = process.env.GITHUB_APP_PRIVATE_KEY_PATH;
+  // PaaS-friendly: the key can be provided as raw PEM content (e.g. Render/Railway env var)
+  // instead of a file path. Content wins when both are set.
+  const keyContent = process.env.GITHUB_APP_PRIVATE_KEY;
   const installationId = process.env.GITHUB_INSTALLATION_ID;
   let githubClient = undefined;
   let repoFetcher = undefined;
-  if (appId && keyPath && installationId) {
-    const privateKey = readFileSync(resolve(keyPath), "utf-8");
+  if (appId && (keyContent || keyPath) && installationId) {
+    const privateKey = keyContent ?? readFileSync(resolve(keyPath!), "utf-8");
     const appConfig = { appId, privateKey, installationId };
     const { token } = await getInstallationToken(appConfig);
     githubClient = new RestGitHubClient(token);

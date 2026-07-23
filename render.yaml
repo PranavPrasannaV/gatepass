@@ -1,0 +1,33 @@
+# Render Blueprint — deploys the Gatepass API on the free tier.
+# Dashboard deploys separately on Vercel (see DEPLOY.md).
+services:
+  - type: web
+    name: gatepass-api
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: pnpm --filter @gatepass/api start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: DATABASE_URL # Neon connection string (postgresql://...sslmode=require)
+        sync: false
+      - key: GITHUB_APP_ID
+        sync: false
+      - key: GITHUB_APP_PRIVATE_KEY # paste the full PEM content (multi-line values are supported)
+        sync: false
+      - key: GITHUB_INSTALLATION_ID
+        sync: false
+      - key: GITHUB_WEBHOOK_SECRET
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_ID
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: GATEPASS_ALLOWED_ORIGINS # e.g. https://gatepass.vercel.app
+        sync: false

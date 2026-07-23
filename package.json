@@ -24,6 +24,7 @@
     "benchmark:production": "NVIDIA_API_KEY=${NVIDIA_API_KEY:-\"\"} vitest run benchmark/test/production-readiness.test.ts --reporter=verbose",
     "benchmark:incumbent": "tsx benchmark/src/run-incumbent.ts",
     "corpus:measure": "tsx corpus/harness/cli.ts",
+    "db:migrate": "tsx packages/shared/db/migrate.ts",
     "scan": "tsx cli/src/index.ts"
   },
   "devDependencies": {

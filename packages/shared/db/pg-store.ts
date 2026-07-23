@@ -8,7 +8,7 @@ import type { FindingsDocument, Finding, Location } from "@gatepass/findings";
 
 /**
  * Postgres-backed store implementing the Store interface.
- * The SQL migrations (0001_core.sql, 0002_findings.sql) must be applied before using this store.
+ * Apply migrations first: `pnpm db:migrate` (generated from db/schema.ts into db/drizzle).
  */
 
 export class PgStore {
