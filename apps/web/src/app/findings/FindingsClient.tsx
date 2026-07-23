@@ -58,7 +58,8 @@ export default function FindingsClient({ findings, scanId, error }: Props) {
     if (tierFilter !== "all" && f.tier !== tierFilter) return false;
     if (severityFilter !== "all" && f.severity !== severityFilter) return false;
     if (query) {
-      const hay = `${f.classId} ${f.severity} ${f.tier} ${f.explanation ?? ""} ${f.locations.map((l) => l.path).join(" ")}`.toLowerCase();
+      const hay =
+        `${f.classId} ${f.severity} ${f.tier} ${f.explanation ?? ""} ${f.locations.map((l) => l.path).join(" ")}`.toLowerCase();
       if (!hay.includes(query)) return false;
     }
     return true;

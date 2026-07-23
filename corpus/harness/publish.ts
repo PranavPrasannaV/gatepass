@@ -43,7 +43,9 @@ const runs: { tool: string; perClass: PublishedClass[] }[] = [{ tool: "gatepass"
 
 // Merge incumbent runs when a benchmark:incumbent report exists.
 try {
-  const incumbents = JSON.parse(await fs.readFile(path.join(ROOT, "benchmark", "reports", "incumbents.json"), "utf8")) as {
+  const incumbents = JSON.parse(
+    await fs.readFile(path.join(ROOT, "benchmark", "reports", "incumbents.json"), "utf8"),
+  ) as {
     tools: {
       tool: string;
       perClass: { classId: string; truePositives: number; falsePositives: number; falseNegatives: number }[];

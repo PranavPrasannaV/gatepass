@@ -18,7 +18,7 @@ async function envFile(content: string): Promise<string> {
 
 describe("loadDotEnv", () => {
   it("parses KEY=VALUE lines, skipping comments, blanks, and empty values", async () => {
-    const file = await envFile("# comment\nFOO=bar\n\nEMPTY=\nQUOTED=\"with spaces\"\n");
+    const file = await envFile('# comment\nFOO=bar\n\nEMPTY=\nQUOTED="with spaces"\n');
     const env: NodeJS.ProcessEnv = {};
     const set = loadDotEnv(file, env);
     expect(set.sort()).toEqual(["FOO", "QUOTED"]);

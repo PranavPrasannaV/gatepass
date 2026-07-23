@@ -87,7 +87,9 @@ export interface SarifResultLite {
 export function parseSarifResults(sarifText: string): SarifResultLite[] {
   try {
     const sarif = JSON.parse(sarifText) as {
-      runs?: { results?: { ruleId?: string; locations?: { physicalLocation?: { artifactLocation?: { uri?: string } } }[] }[] }[];
+      runs?: {
+        results?: { ruleId?: string; locations?: { physicalLocation?: { artifactLocation?: { uri?: string } } }[] }[];
+      }[];
     };
     const out: SarifResultLite[] = [];
     for (const run of sarif.runs ?? []) {
@@ -104,7 +106,10 @@ export function parseSarifResults(sarifText: string): SarifResultLite[] {
 
 /** Normalize a SARIF uri or filesystem path for prefix comparison across platforms. */
 function normalizePath(p: string): string {
-  return decodeURIComponent(p.replace(/^file:\/+/i, "")).replace(/\\/g, "/").replace(/^\/(?=[a-zA-Z]:)/, "").toLowerCase();
+  return decodeURIComponent(p.replace(/^file:\/+/i, ""))
+    .replace(/\\/g, "/")
+    .replace(/^\/(?=[a-zA-Z]:)/, "")
+    .toLowerCase();
 }
 
 export interface CaseAttribution {
@@ -125,7 +130,9 @@ export function attributeToCases(
   const rulesByCase = new Map<string, Set<string>>();
   for (const r of results) {
     const p = normalizePath(r.uri);
-    const caseId = caseIds.find((id) => p.startsWith(`${stage}/${id.toLowerCase()}/`) || p.includes(`/${id.toLowerCase()}/`));
+    const caseId = caseIds.find(
+      (id) => p.startsWith(`${stage}/${id.toLowerCase()}/`) || p.includes(`/${id.toLowerCase()}/`),
+    );
     if (!caseId) continue;
     if (!rulesByCase.has(caseId)) rulesByCase.set(caseId, new Set());
     rulesByCase.get(caseId)!.add(r.ruleId);
@@ -192,7 +199,17 @@ const TOOLS: IncumbentTool[] = [
     id: "gitleaks",
     bin: "gitleaks",
     versionArgs: ["version"],
-    args: (dir, out) => ["dir", dir, "--report-format", "sarif", "--report-path", out, "--exit-code", "0", "--no-banner"],
+    args: (dir, out) => [
+      "dir",
+      dir,
+      "--report-format",
+      "sarif",
+      "--report-path",
+      out,
+      "--exit-code",
+      "0",
+      "--no-banner",
+    ],
     install: "winget install Gitleaks.Gitleaks",
     label: (v) => `gitleaks@${v}`,
   },
@@ -240,7 +257,10 @@ async function runTool(
   return { benchmark: scoreTool(tool.label(version ?? "unknown"), corpusVersion, labels, detections), rulesByCase };
 }
 
-export async function runIncumbentSuite(casesRoot: string, corpusVersion = "corpus-v1"): Promise<{
+export async function runIncumbentSuite(
+  casesRoot: string,
+  corpusVersion = "corpus-v1",
+): Promise<{
   runs: IncumbentRun[];
   skipped: string[];
 }> {
@@ -274,7 +294,9 @@ if (isEntry) {
   for (const { benchmark, rulesByCase } of runs) {
     console.log(`\n=== ${benchmark.tool} (corpus ${benchmark.corpusVersion}) ===`);
     const detected = benchmark.perClass.filter((s) => s.truePositives > 0).length;
-    console.log(`Classes detected: ${detected}/${benchmark.perClass.length}   overall FP rate: ${(benchmark.overallFpRate * 100).toFixed(1)}%`);
+    console.log(
+      `Classes detected: ${detected}/${benchmark.perClass.length}   overall FP rate: ${(benchmark.overallFpRate * 100).toFixed(1)}%`,
+    );
     for (const s of benchmark.perClass.filter((c) => c.truePositives > 0 || c.falsePositives > 0)) {
       console.log(
         `  ${s.classId.padEnd(30)} TP ${s.truePositives}  FP ${s.falsePositives}  (${(s.tpRate * 100).toFixed(0)}% TP)`,

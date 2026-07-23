@@ -150,7 +150,9 @@ export function Sidebar() {
             </div>
             <div className="flex flex-col">
               <span className="text-base font-bold text-gatepass-900 dark:text-gatepass-100">Gatepass</span>
-              <span className="text-xs text-gatepass-500 capitalize">{org ? `${org.planTier} tier` : "Precision AppSec"}</span>
+              <span className="text-xs text-gatepass-500 capitalize">
+                {org ? `${org.planTier} tier` : "Precision AppSec"}
+              </span>
             </div>
           </div>
           {org && (

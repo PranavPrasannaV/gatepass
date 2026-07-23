@@ -70,11 +70,21 @@ if (isEntry) {
 
   // Dev nicety: when running from the repo with an empty store, seed one REAL scan of the
   // bundled vulnerable fixture repo so the dashboard shows genuine findings, not mock data.
-  const evalRepo = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "corpus", "eval-repos", "vulnerable-nextjs-mcp");
+  const evalRepo = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "..",
+    "..",
+    "corpus",
+    "eval-repos",
+    "vulnerable-nextjs-mcp",
+  );
   if (!dbUrl && existsSync(evalRepo)) {
     try {
       const seed = await makeHandlers(store).createScan("demo", evalRepo);
-      console.log(`Seeded demo scan of corpus/eval-repos/vulnerable-nextjs-mcp (${seed.verified} verified, ${seed.research} research)`);
+      console.log(
+        `Seeded demo scan of corpus/eval-repos/vulnerable-nextjs-mcp (${seed.verified} verified, ${seed.research} research)`,
+      );
     } catch (err) {
       console.warn("demo scan seed failed:", (err as Error).message);
     }

@@ -119,8 +119,18 @@ export default function Home() {
 
       {/* Row 1: finding tallies (all real, summed across scans) */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <MetricCard label="Verified findings" value={totalVerified} icon={<ShieldCheck size={18} className="text-emerald-500" />} accent="text-emerald-600 dark:text-emerald-400" />
-        <MetricCard label="Research findings" value={totalResearch} icon={<FlaskConical size={18} className="text-blue-500" />} accent="text-blue-600 dark:text-blue-400" />
+        <MetricCard
+          label="Verified findings"
+          value={totalVerified}
+          icon={<ShieldCheck size={18} className="text-emerald-500" />}
+          accent="text-emerald-600 dark:text-emerald-400"
+        />
+        <MetricCard
+          label="Research findings"
+          value={totalResearch}
+          icon={<FlaskConical size={18} className="text-blue-500" />}
+          accent="text-blue-600 dark:text-blue-400"
+        />
         <MetricCard label="Critical" value={critical} accent="text-red-600 dark:text-red-400" />
         <MetricCard label="Scans" value={totalScanned} accent="text-gatepass-700 dark:text-gatepass-200" />
       </div>
@@ -151,7 +161,10 @@ export default function Home() {
               Latest findings{data?.latestRepo ? ` — ${data.latestRepo.split(/[\\/]/).pop()}` : ""}
             </h2>
           </div>
-          <Link href="/findings" className="flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-[#0D9488] hover:bg-gatepass-50 dark:hover:bg-gatepass-800">
+          <Link
+            href="/findings"
+            className="flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-[#0D9488] hover:bg-gatepass-50 dark:hover:bg-gatepass-800"
+          >
             View all
           </Link>
         </div>
@@ -160,7 +173,10 @@ export default function Home() {
             <thead>
               <tr className="bg-gatepass-50 dark:bg-gatepass-800/50">
                 {["Vulnerability", "Path", "Tier", "Risk"].map((h) => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500">
+                  <th
+                    key={h}
+                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gatepass-500"
+                  >
                     {h}
                   </th>
                 ))}
@@ -170,18 +186,27 @@ export default function Home() {
               {data!.latestFindings.slice(0, 8).map((f) => {
                 const loc = f.locations[0];
                 return (
-                  <tr key={f.fingerprint} className="border-b border-gatepass-100 last:border-b-0 hover:bg-gatepass-50/50 dark:border-gatepass-800 dark:hover:bg-gatepass-800/40">
+                  <tr
+                    key={f.fingerprint}
+                    className="border-b border-gatepass-100 last:border-b-0 hover:bg-gatepass-50/50 dark:border-gatepass-800 dark:hover:bg-gatepass-800/40"
+                  >
                     <td className="px-6 py-3 font-medium text-gatepass-900 dark:text-gatepass-100">{f.classId}</td>
                     <td className="px-6 py-3 font-mono text-xs text-gatepass-500">
                       {loc ? `${loc.path}:${loc.startLine}` : "—"}
                     </td>
                     <td className="px-6 py-3">
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${f.tier === "verified" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"}`}>
-                        {f.tier === "verified" ? "verified" : `research${typeof f.confidence === "number" ? ` ${Math.round(f.confidence * 100)}%` : ""}`}
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${f.tier === "verified" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"}`}
+                      >
+                        {f.tier === "verified"
+                          ? "verified"
+                          : `research${typeof f.confidence === "number" ? ` ${Math.round(f.confidence * 100)}%` : ""}`}
                       </span>
                     </td>
                     <td className="px-6 py-3">
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${RISK_BADGE[f.severity] ?? RISK_BADGE.low}`}>
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${RISK_BADGE[f.severity] ?? RISK_BADGE.low}`}
+                      >
                         {f.severity}
                       </span>
                     </td>
@@ -204,7 +229,17 @@ export default function Home() {
   );
 }
 
-function MetricCard({ label, value, icon, accent }: { label: string; value: number; icon?: React.ReactNode; accent: string }) {
+function MetricCard({
+  label,
+  value,
+  icon,
+  accent,
+}: {
+  label: string;
+  value: number;
+  icon?: React.ReactNode;
+  accent: string;
+}) {
   return (
     <div className="rounded-lg border border-gatepass-200 bg-white p-6 dark:border-gatepass-800 dark:bg-gatepass-900">
       <div className="flex items-center justify-between">
@@ -228,14 +263,25 @@ function SeverityChart({ scans }: { scans: ScanSummary[] }) {
       {scans.map((s, i) => {
         const total = totals[i]!;
         return (
-          <div key={s.id} className="flex shrink-0 flex-col items-center" style={{ width: 34 }} title={`${total} finding${total === 1 ? "" : "s"}`}>
+          <div
+            key={s.id}
+            className="flex shrink-0 flex-col items-center"
+            style={{ width: 34 }}
+            title={`${total} finding${total === 1 ? "" : "s"}`}
+          >
             <div className="flex w-full flex-col-reverse justify-start rounded-t-sm" style={{ height: MAX_BAR_HEIGHT }}>
               {SEVERITY_ORDER.slice()
                 .reverse()
                 .map((sev) => {
                   const count = s.bySeverity[sev] ?? 0;
                   if (count === 0) return null;
-                  return <div key={sev} style={{ height: (count / maxVal) * MAX_BAR_HEIGHT, background: SEVERITY_BAR[sev] }} className="w-full first:rounded-t-sm" />;
+                  return (
+                    <div
+                      key={sev}
+                      style={{ height: (count / maxVal) * MAX_BAR_HEIGHT, background: SEVERITY_BAR[sev] }}
+                      className="w-full first:rounded-t-sm"
+                    />
+                  );
                 })}
             </div>
             <span className="mt-2 h-4 truncate text-[9px] text-gatepass-400">

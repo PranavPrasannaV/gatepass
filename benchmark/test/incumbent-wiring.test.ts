@@ -28,7 +28,9 @@ describe("SARIF parsing + per-case attribution", () => {
             locations: [
               {
                 physicalLocation: {
-                  artifactLocation: { uri: "C:\\stage\\verified\\exposed-secret\\vuln-aws-in-bundle\\tree\\dist\\bundle.js" },
+                  artifactLocation: {
+                    uri: "C:\\stage\\verified\\exposed-secret\\vuln-aws-in-bundle\\tree\\dist\\bundle.js",
+                  },
                 },
               },
             ],
@@ -36,7 +38,11 @@ describe("SARIF parsing + per-case attribution", () => {
           {
             ruleId: "some.unmapped.rule",
             locations: [
-              { physicalLocation: { artifactLocation: { uri: "C:/stage/verified/cors-misconfig/clean-specific-origin/tree/server.ts" } } },
+              {
+                physicalLocation: {
+                  artifactLocation: { uri: "C:/stage/verified/cors-misconfig/clean-specific-origin/tree/server.ts" },
+                },
+              },
             ],
           },
         ],

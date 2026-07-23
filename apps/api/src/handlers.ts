@@ -109,7 +109,13 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
       },
       gateway,
     );
-    await store.putScan({ id: doc.scan.id, orgId: org.id, doc, disputes: new Map(), createdAt: new Date().toISOString() });
+    await store.putScan({
+      id: doc.scan.id,
+      orgId: org.id,
+      doc,
+      disputes: new Map(),
+      createdAt: new Date().toISOString(),
+    });
     if (store.putRepo) await store.putRepo(org.id, opts.repoRef ?? dir, doc.scan.id);
     const visible = await store.findingsOf(doc.scan.id);
     return {
@@ -350,7 +356,13 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
         executionMode: "hosted",
         semanticEnabled: true,
       });
-      await store.putScan({ id: doc.scan.id, orgId: server.orgId, doc, disputes: new Map(), createdAt: new Date().toISOString() });
+      await store.putScan({
+        id: doc.scan.id,
+        orgId: server.orgId,
+        doc,
+        disputes: new Map(),
+        createdAt: new Date().toISOString(),
+      });
       server.lastScanId = doc.scan.id;
       server.posture = posture(doc.findings);
       return server;

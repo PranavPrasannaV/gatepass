@@ -73,7 +73,13 @@ export default function BenchmarkClient({ data, error }: Props) {
   }
 
   if (data.length === 0) {
-    return <EmptyState icon={<BarChart3 size={48} />} title="No benchmark data" description="Benchmark results will appear here once published" />;
+    return (
+      <EmptyState
+        icon={<BarChart3 size={48} />}
+        title="No benchmark data"
+        description="Benchmark results will appear here once published"
+      />
+    );
   }
 
   return (
@@ -81,7 +87,9 @@ export default function BenchmarkClient({ data, error }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gatepass-900 dark:text-gatepass-100">Precision Benchmark</h1>
-          <p className="mt-1 text-sm text-gatepass-500">Measured accuracy across vulnerability classes, scored identically for every tool.</p>
+          <p className="mt-1 text-sm text-gatepass-500">
+            Measured accuracy across vulnerability classes, scored identically for every tool.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -108,16 +116,32 @@ export default function BenchmarkClient({ data, error }: Props) {
       {/* Headline metrics — Gatepass only (not averaged with incumbents) */}
       {primary && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <StatCard icon={<Database size={20} className="text-[#0891b2]" />} value={`${primaryDetected}/${totalClasses}`} label="Classes detected (Gatepass)" />
-          <StatCard icon={<Target size={20} className="text-[#0891b2]" />} value={primaryPrecision === null ? "—" : `${(primaryPrecision * 100).toFixed(1)}%`} label="Precision (Gatepass)" valueClass={primaryPrecision === null ? undefined : rateColor(primaryPrecision)} />
-          <StatCard icon={<Crosshair size={20} className="text-[#0891b2]" />} value={`${(primaryRecall * 100).toFixed(1)}%`} label="Recall (Gatepass)" valueClass={rateColor(primaryRecall)} />
+          <StatCard
+            icon={<Database size={20} className="text-[#0891b2]" />}
+            value={`${primaryDetected}/${totalClasses}`}
+            label="Classes detected (Gatepass)"
+          />
+          <StatCard
+            icon={<Target size={20} className="text-[#0891b2]" />}
+            value={primaryPrecision === null ? "—" : `${(primaryPrecision * 100).toFixed(1)}%`}
+            label="Precision (Gatepass)"
+            valueClass={primaryPrecision === null ? undefined : rateColor(primaryPrecision)}
+          />
+          <StatCard
+            icon={<Crosshair size={20} className="text-[#0891b2]" />}
+            value={`${(primaryRecall * 100).toFixed(1)}%`}
+            label="Recall (Gatepass)"
+            valueClass={rateColor(primaryRecall)}
+          />
         </div>
       )}
 
       {/* Head-to-head detection summary */}
       {incumbents.length > 0 && (
         <div className="rounded-lg border border-gatepass-200 bg-white p-5 dark:border-gatepass-800 dark:bg-gatepass-900">
-          <h2 className="text-sm font-semibold text-gatepass-900 dark:text-gatepass-100">Classes detected — head to head</h2>
+          <h2 className="text-sm font-semibold text-gatepass-900 dark:text-gatepass-100">
+            Classes detected — head to head
+          </h2>
           <div className="mt-4 space-y-3">
             {[primary!, ...incumbents].map((run) => {
               const d = detectedCount(run);
@@ -125,13 +149,21 @@ export default function BenchmarkClient({ data, error }: Props) {
               const isPrimary = run === primary;
               return (
                 <div key={run.tool} className="flex items-center gap-3">
-                  <span className={`w-64 shrink-0 truncate text-xs ${isPrimary ? "font-semibold text-gatepass-900 dark:text-gatepass-100" : "text-gatepass-500"}`} title={run.tool}>
+                  <span
+                    className={`w-64 shrink-0 truncate text-xs ${isPrimary ? "font-semibold text-gatepass-900 dark:text-gatepass-100" : "text-gatepass-500"}`}
+                    title={run.tool}
+                  >
                     {run.tool}
                   </span>
                   <div className="h-3 flex-1 overflow-hidden rounded-full bg-gatepass-100 dark:bg-gatepass-800">
-                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: isPrimary ? "#0D9488" : "#94a3b8" }} />
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${pct}%`, background: isPrimary ? "#0D9488" : "#94a3b8" }}
+                    />
                   </div>
-                  <span className={`w-12 shrink-0 text-right text-xs font-medium ${isPrimary ? "text-gatepass-900 dark:text-gatepass-100" : "text-gatepass-500"}`}>
+                  <span
+                    className={`w-12 shrink-0 text-right text-xs font-medium ${isPrimary ? "text-gatepass-900 dark:text-gatepass-100" : "text-gatepass-500"}`}
+                  >
                     {d}/{totalClasses}
                   </span>
                 </div>
@@ -148,17 +180,25 @@ export default function BenchmarkClient({ data, error }: Props) {
             Published: {new Date(current.publishedAt).toLocaleDateString()} &middot; {runs.length} tool run(s)
           </p>
           {[primary!, ...incumbents].filter(Boolean).map((run) => (
-            <div key={run.tool} className="rounded-lg border border-gatepass-200 bg-white dark:border-gatepass-800 dark:bg-gatepass-900">
+            <div
+              key={run.tool}
+              className="rounded-lg border border-gatepass-200 bg-white dark:border-gatepass-800 dark:bg-gatepass-900"
+            >
               <div className="flex items-center justify-between border-b border-gatepass-200 px-4 py-3 dark:border-gatepass-800">
                 <h3 className="text-sm font-semibold text-gatepass-900 dark:text-gatepass-100">{run.tool}</h3>
-                <span className="text-xs text-gatepass-500">{detectedCount(run)}/{run.perClass.length} classes</span>
+                <span className="text-xs text-gatepass-500">
+                  {detectedCount(run)}/{run.perClass.length} classes
+                </span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gatepass-200 bg-gatepass-50 dark:border-gatepass-800 dark:bg-gatepass-800/50">
                       {["Class", "TP", "FP", "FN", "Precision", "Recall"].map((h, i) => (
-                        <th key={h} className={`px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-gatepass-500 ${i === 0 ? "text-left" : "text-right"}`}>
+                        <th
+                          key={h}
+                          className={`px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-gatepass-500 ${i === 0 ? "text-left" : "text-right"}`}
+                        >
                           {h}
                         </th>
                       ))}
@@ -168,12 +208,23 @@ export default function BenchmarkClient({ data, error }: Props) {
                     {run.perClass.map((pc) => {
                       const prec = pc.tp + pc.fp > 0 ? pc.tp / (pc.tp + pc.fp) : null;
                       return (
-                        <tr key={pc.classId} className="border-b border-gatepass-100 last:border-b-0 hover:bg-gatepass-50/50 dark:border-gatepass-800 dark:hover:bg-gatepass-800/40">
-                          <td className="px-4 py-2.5 font-mono text-sm text-gatepass-900 dark:text-gatepass-100">{pc.classId}</td>
-                          <td className="px-4 py-2.5 text-right font-mono text-sm text-emerald-600 dark:text-emerald-400">{pc.tp}</td>
-                          <td className="px-4 py-2.5 text-right font-mono text-sm text-red-600 dark:text-red-400">{pc.fp}</td>
+                        <tr
+                          key={pc.classId}
+                          className="border-b border-gatepass-100 last:border-b-0 hover:bg-gatepass-50/50 dark:border-gatepass-800 dark:hover:bg-gatepass-800/40"
+                        >
+                          <td className="px-4 py-2.5 font-mono text-sm text-gatepass-900 dark:text-gatepass-100">
+                            {pc.classId}
+                          </td>
+                          <td className="px-4 py-2.5 text-right font-mono text-sm text-emerald-600 dark:text-emerald-400">
+                            {pc.tp}
+                          </td>
+                          <td className="px-4 py-2.5 text-right font-mono text-sm text-red-600 dark:text-red-400">
+                            {pc.fp}
+                          </td>
                           <td className="px-4 py-2.5 text-right font-mono text-sm text-gatepass-500">{pc.fn}</td>
-                          <td className={`px-4 py-2.5 text-right font-mono text-sm font-medium ${prec === null ? "text-gatepass-400" : rateColor(prec)}`}>
+                          <td
+                            className={`px-4 py-2.5 text-right font-mono text-sm font-medium ${prec === null ? "text-gatepass-400" : rateColor(prec)}`}
+                          >
                             {prec === null ? "—" : `${(prec * 100).toFixed(1)}%`}
                           </td>
                           <td className="px-4 py-2.5 text-right font-mono text-sm font-medium text-gatepass-900 dark:text-gatepass-100">
@@ -193,7 +244,17 @@ export default function BenchmarkClient({ data, error }: Props) {
   );
 }
 
-function StatCard({ icon, value, label, valueClass }: { icon: React.ReactNode; value: string; label: string; valueClass?: string }) {
+function StatCard({
+  icon,
+  value,
+  label,
+  valueClass,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  valueClass?: string;
+}) {
   return (
     <div className="rounded-lg border border-gatepass-200 bg-white p-5 dark:border-gatepass-800 dark:bg-gatepass-900">
       <div className="flex items-center gap-3">
