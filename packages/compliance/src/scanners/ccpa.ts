@@ -109,24 +109,36 @@ function checkWellKnownGpc(files: ScanContext["files"]): ComplianceCheck[] {
   return checks;
 }
 
+/**
+ * A CCPA "Do Not Sell" control is a LINK/BUTTON, not a mention. The first implementation
+ * flagged the bare token `ccpa` anywhere in the code — so the compliance scanner's own source
+ * tripped it. We now require the phrase to appear inside an actual navigational control (an
+ * anchor, button, Link, or an href to an opt-out route), which is what the law requires and
+ * what removes the false positives.
+ */
+const DO_NOT_SELL_PHRASE = /do\s*not\s*(sell|share)|your\s*privacy\s*choices|opt.?out\s*of\s*s(ale|haring)/i;
+const LINK_CONTEXT =
+  /<a[\s>]|<button[\s>]|<Link[\s>]|href\s*=|to\s*=\s*["'{]|role=["']link["']|class(Name)?=[^>]*(btn|link|nav|footer)/i;
+const OPT_OUT_HREF = /href\s*=\s*["'][^"']*(do-?not-?sell|opt-?out|privacy-?choices|ccpa)[^"']*["']/i;
+
 function checkDoNotSellLink(content: string, filePath: string): ComplianceCheck[] {
   const checks: ComplianceCheck[] = [];
   const lines = content.split(/\n/);
   const hits: { line: number; text: string }[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    DO_NOT_SELL_RE.lastIndex = 0;
-    if (DO_NOT_SELL_RE.test(lines[i]!)) {
-      hits.push({ line: i + 1, text: lines[i]!.trim() });
-    }
+    const line = lines[i]!;
+    // A real control: the do-not-sell phrase within a link/button, OR an href to an opt-out route.
+    const isControl = (DO_NOT_SELL_PHRASE.test(line) && LINK_CONTEXT.test(line)) || OPT_OUT_HREF.test(line);
+    if (isControl) hits.push({ line: i + 1, text: line.trim() });
   }
 
-  // Check footer or common locations
+  // Prominence: the control should sit in a footer/nav/banner region.
   const inFooter = hits.some((h) => {
-    const contextStart = Math.max(0, h.line - 5);
-    const contextEnd = Math.min(lines.length, h.line + 5);
+    const contextStart = Math.max(0, h.line - 6);
+    const contextEnd = Math.min(lines.length, h.line + 6);
     for (let j = contextStart; j < contextEnd; j++) {
-      if (/(footer|bottom|nav|banner)/i.test(lines[j]!)) return true;
+      if (/(footer|bottom-?nav|site-?nav|banner|privacy-?choices)/i.test(lines[j]!)) return true;
     }
     return false;
   });
@@ -181,9 +193,14 @@ function checkDsarWorkflow(content: string, filePath: string): ComplianceCheck[]
   }
 
   if (hits.length > 0) {
-    // Check for multi-system fan-out
+    // Multi-system fan-out: a real deletion workflow purges the primary store AND downstream
+    // systems (cache, backups, third-party providers). The original regex only matched a few
+    // exact phrasings and flagged legitimate implementations (cache.purge, notifyServiceProviders,
+    // Promise.all batch deletion) as incomplete — a false positive.
     const hasFanOut = lines.some((l) =>
-      /(fan.?out|delete.*cach|purge.*backup|service.provider.*delete|system.*delete)/gi.test(l),
+      /(fan.?out|delete.*cach|cach\w*\.(purge|del|clear|invalidate)|purge.*(backup|cache)|delete.*backup|(notify|delete|purge).*(service.?provider|third.?part|downstream|processor)|deleteMany|Promise\.all[\s\S]{0,80}(delete|purge|remov))/i.test(
+        l,
+      ),
     );
     if (hasFanOut) {
       checks.push(makeCheck("ccpa-dsar-workflow", "pass", []));

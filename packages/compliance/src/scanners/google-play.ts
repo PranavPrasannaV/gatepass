@@ -217,23 +217,15 @@ function checkPrivacyPolicyConsistency(src: CombinedSource): ComplianceCheck[] {
     return [makeCheck("play-privacy-policy-consistency", "pass", [])];
   }
 
-  if (privacyMentioned) {
-    return [
-      makeCheck("play-privacy-policy-consistency", "fail", [], {
-        kind: "code_change",
-        description:
-          "Privacy policy found but may not cover all data types declared in Data Safety form. Google reviewers cross-check both documents for consistency.",
-        diff: "// Ensure privacy policy includes:\n// 1. List of data types collected (matching Data Safety form)\n// 2. Purpose of collection\n// 3. Third-party SDK data practices\n// 4. Deletion mechanism URL\n// 5. Encryption practices",
-      }),
-    ];
-  }
-
+  // Whether the privacy policy matches the Play Console Data Safety declaration can only be
+  // confirmed against the live listing, which is not in the repository. We therefore surface
+  // this as manual_review with concrete guidance, never a fabricated fail.
   return [
-    makeCheck("play-privacy-policy-consistency", "fail", [], {
+    makeCheck("play-privacy-policy-consistency", "manual_review", [], {
       kind: "code_change",
       description:
-        "Privacy policy not found or doesn't adequately cover data collection practices. Google Play requires a valid privacy policy that matches Data Safety form declarations.",
-      diff: "// Create a privacy policy that covers:\n// - What data you collect (match Data Safety form categories)\n// - How you use it\n// - Third-party SDK data use\n// - Data deletion process\n// - Encryption practices",
+        "Google reviewers cross-check the privacy policy against the Play Console Data Safety form. That listing is not in the repo, so verify manually that the policy covers every declared data type, purpose, third-party SDK, deletion URL, and encryption practice.",
+      diff: "// Verify the privacy policy covers, matching the Data Safety form:\n// 1. Each data type collected (and by third-party SDKs)\n// 2. Purpose of collection\n// 3. Deletion mechanism URL\n// 4. Encryption-in-transit practices",
     }),
   ];
 }

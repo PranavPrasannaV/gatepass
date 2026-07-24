@@ -51,11 +51,20 @@ describe("runComplianceScan aggregate", () => {
     expect(result.totalChecks).toBe(result.checks.length);
   });
 
-  it("keeps the score within 0-100 and consistent with the fail ratio", () => {
+  it("scores over APPLICABLE checks only (not-applicable and manual excluded)", () => {
     expect(result.score).toBeGreaterThanOrEqual(0);
     expect(result.score).toBeLessThanOrEqual(100);
-    const expected = Math.round(Math.max(0, 100 - (result.failCount / result.totalChecks) * 100));
+    const applicable = result.passCount + result.failCount;
+    const expected = applicable === 0 ? 100 : Math.round(Math.max(0, 100 - (result.failCount / applicable) * 100));
     expect(result.score).toBe(expected);
+  });
+
+  it("does not fail Apple/Google-Play rules on a web-only project (applicability gating)", () => {
+    // The dominant false-positive class: a Next.js app has no iOS/Android target, so those
+    // domains must be not_applicable, never fail.
+    const mobile = result.checks.filter((c) => c.domain === "app_store" || c.domain === "google_play");
+    expect(mobile.length).toBeGreaterThan(0);
+    for (const c of mobile) expect(c.status).toBe("not_applicable");
   });
 
   it("emits per-domain rollups whose totals sum to the overall total", () => {

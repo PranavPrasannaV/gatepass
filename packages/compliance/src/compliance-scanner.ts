@@ -1,6 +1,7 @@
 import type { ScanContext } from "@gatepass/engine";
 import { COMPLIANCE_RULES } from "./compliance-rules.js";
 import type { ComplianceCheck, ComplianceDomain, ComplianceResult, ComplianceStatus } from "./compliance-schema.js";
+import { detectApplicability } from "./applicability.js";
 
 /**
  * Compliance scanner — runs all compliance checks against a scan context.
@@ -37,11 +38,16 @@ export function clearScanners(): void {
   scanners.clear();
 }
 
-/** Score a set of checks: 100 - (failRatio * 100) */
+/**
+ * Score over APPLICABLE checks only: fails / (pass + fail). Not-applicable and manual-review
+ * checks are excluded from the denominator — a web app with no iOS target must not be docked
+ * for Apple rules that do not apply to it, and an unresolved manual check is not a failure.
+ */
 function computeScore(checks: ComplianceCheck[]): number {
-  if (checks.length === 0) return 100;
-  const fails = checks.filter((c) => c.status === "fail").length;
-  return Math.round(Math.max(0, 100 - (fails / checks.length) * 100));
+  const applicable = checks.filter((c) => c.status === "pass" || c.status === "fail");
+  if (applicable.length === 0) return 100;
+  const fails = applicable.filter((c) => c.status === "fail").length;
+  return Math.round(Math.max(0, 100 - (fails / applicable.length) * 100));
 }
 
 /**
@@ -61,8 +67,21 @@ export function runComplianceScan(ctx: ScanContext, scanId: string): ComplianceR
     );
   }
 
+  // Determine which domains actually apply to this repo. Checks in a non-applicable domain
+  // are coerced to `not_applicable` (kept for visibility, excluded from the score) rather than
+  // reported as failures — the largest source of false positives in the first implementation.
+  const applicability = detectApplicability(ctx);
   for (const scanner of active) {
     const results = scanner.scan(ctx);
+    if (!applicability[scanner.domain]) {
+      const reason = applicability.reasons[scanner.domain] ?? "Not applicable to this project.";
+      for (const r of results) {
+        r.status = "not_applicable";
+        r.fix = undefined;
+        r.locations = [];
+        r.description = `${reason} (${r.description})`;
+      }
+    }
     allChecks.push(...results);
   }
 

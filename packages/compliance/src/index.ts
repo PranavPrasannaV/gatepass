@@ -1,6 +1,8 @@
 export * from "./compliance-schema.js";
 export * from "./compliance-rules.js";
 export * from "./compliance-scanner.js";
+export * from "./applicability.js";
+export { runComplianceMeasurement } from "./measure.js";
 
 // Scanner implementations — lazy-registered via side effect import
 export * from "./scanners/wcag.js";

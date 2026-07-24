@@ -87,7 +87,7 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
       "WCAG 2.2 SC 3.2.6 (A): When a help mechanism is repeated across pages, it must occur in the same relative order. Sticky chat widgets that move between routes fail this criterion.",
     severity: "info",
     standard: "WCAG 2.2 A 3.2.6",
-    scannable: true,
+    scannable: false,
     baselineVersion: "2026.1",
   },
   {
@@ -98,7 +98,7 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
       "WCAG 2.2 SC 3.3.7 (A): Within a single process, information the user already provided must be auto-populated or selectable. Browser autofill alone does not satisfy this.",
     severity: "info",
     standard: "WCAG 2.2 A 3.3.7",
-    scannable: true,
+    scannable: false,
     baselineVersion: "2026.1",
   },
   {
@@ -216,7 +216,7 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
       "The App Privacy nutrition labels in App Store Connect must be consistent with the PrivacyInfo.xcprivacy manifest. A mismatch (e.g., label says 'Data Not Collected' while manifest declares collection) is a 5.1.1 rejection.",
     severity: "critical",
     standard: "Apple App Review — 5.1.1",
-    scannable: true,
+    scannable: false,
     baselineVersion: "2026.1",
   },
 
@@ -275,7 +275,7 @@ export const COMPLIANCE_RULES: ComplianceRule[] = [
       "Google reviewers cross-check the Data Safety form against the privacy policy. Mismatches (e.g., form declares Location but policy doesn't mention it) trigger review flags and rejection.",
     severity: "warning",
     standard: "Google Play — Policy consistency",
-    scannable: true,
+    scannable: false,
     baselineVersion: "2026.1",
   },
 
