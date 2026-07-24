@@ -32,6 +32,7 @@ import {
 import { requireFeature, type PlanTier } from "@gatepass/shared";
 import { validateRunnerUpload } from "@gatepass/runner";
 import { scoreTool, type CorpusCaseLabel, type Detection } from "@gatepass/benchmark";
+import { runComplianceScan } from "@gatepass/compliance";
 import type { Store, StoredScan, FleetServer, OrgRecord } from "./store.js";
 
 /**
@@ -410,6 +411,27 @@ export function makeHandlers(store: Store, options: HandlerOptions = {}) {
         return [];
       }
       return rec;
+    },
+
+    // POST /v1/orgs/:org/compliance/scan { repoPath }
+    async complianceScan(orgId: string, repoPath: string) {
+      const org = await requireOrg(orgId);
+      const ctx = await buildScanContext(repoPath);
+      const scanId = `cmp-${randomUUID()}`;
+      const result = runComplianceScan(ctx, scanId);
+      if (store.putComplianceScan) {
+        await store.putComplianceScan(scanId, orgId, result);
+      }
+      return result;
+    },
+
+    // GET /v1/orgs/:org/compliance/results/:scanId
+    async complianceResult(orgId: string, scanId: string) {
+      await requireOrg(orgId);
+      if (!store.getComplianceScan) throw new Error("Store does not support compliance scan retrieval");
+      const result = await store.getComplianceScan(scanId);
+      if (!result) throw new NotFoundError(`compliance scan ${scanId}`);
+      return result;
     },
 
     // GET /v1/orgs/:org

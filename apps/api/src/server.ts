@@ -271,6 +271,14 @@ export async function createServer(opts: ServerOptions = {}): Promise<{ server: 
     if (M === "GET" && p[1] === "orgs" && p.length === 4 && p[3] === "repos") {
       return sendJson(res, 200, await h.listRepos(p[2]!));
     }
+    // POST /v1/orgs/:org/compliance/scan { repoPath } — run compliance scan
+    if (M === "POST" && p[1] === "orgs" && p[3] === "compliance" && p[4] === "scan") {
+      return sendJson(res, 201, await h.complianceScan(p[2]!, String(body.repoPath)));
+    }
+    // GET /v1/orgs/:org/compliance/results/:scanId — get compliance scan results
+    if (M === "GET" && p[1] === "orgs" && p[3] === "compliance" && p[4] === "results") {
+      return sendJson(res, 200, await h.complianceResult(p[2]!, p[5]!));
+    }
     sendJson(res, 404, { error: "not found" });
   }
 

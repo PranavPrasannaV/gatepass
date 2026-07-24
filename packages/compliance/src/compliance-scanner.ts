@@ -1,0 +1,111 @@
+import type { ScanContext } from "@gatepass/engine";
+import { COMPLIANCE_RULES } from "./compliance-rules.js";
+import type {
+  ComplianceCheck,
+  ComplianceDomain,
+  ComplianceResult,
+  ComplianceStatus,
+} from "./compliance-schema.js";
+
+/**
+ * Compliance scanner — runs all compliance checks against a scan context.
+ * Each domain has a dedicated scanner that produces ComplianceCheck results.
+ * The scanner engine aggregates them into a ComplianceResult with a score.
+ */
+
+/** Interface each domain scanner must implement */
+export interface DomainScanner {
+  domain: ComplianceDomain;
+  scan(ctx: ScanContext): ComplianceCheck[];
+}
+
+/** The registry of all domain scanners */
+const scanners: DomainScanner[] = [];
+
+/** Register a domain scanner */
+export function registerScanner(scanner: DomainScanner): void {
+  scanners.push(scanner);
+}
+
+/** Get all registered scanners */
+export function getScanners(): DomainScanner[] {
+  return scanners;
+}
+
+/** Score a set of checks: 100 - (failRatio * 100) */
+function computeScore(checks: ComplianceCheck[]): number {
+  if (checks.length === 0) return 100;
+  const fails = checks.filter((c) => c.status === "fail").length;
+  return Math.round(Math.max(0, 100 - (fails / checks.length) * 100));
+}
+
+/**
+ * Run the full compliance scan. Returns an aggregated ComplianceResult.
+ * Each domain gets its own sub-score; domains without checks contribute 100.
+ */
+export function runComplianceScan(ctx: ScanContext, scanId: string): ComplianceResult {
+  const allChecks: ComplianceCheck[] = [];
+
+  for (const scanner of scanners) {
+    const results = scanner.scan(ctx);
+    allChecks.push(...results);
+  }
+
+  const totalChecks = allChecks.length;
+  const passCount = allChecks.filter((c) => c.status === "pass").length;
+  const failCount = allChecks.filter((c) => c.status === "fail").length;
+  const naCount = allChecks.filter((c) => c.status === "not_applicable").length;
+  const manualCount = allChecks.filter((c) => c.status === "manual_review").length;
+
+  // Compute per-domain scores
+  const byDomain = {} as Record<ComplianceDomain, { total: number; pass: number; fail: number; score: number }>;
+  for (const domain of ["wcag", "ccpa", "app_store", "google_play", "eu_ai_act"] as const) {
+    const domainChecks = allChecks.filter((c) => c.domain === domain);
+    byDomain[domain] = {
+      total: domainChecks.length,
+      pass: domainChecks.filter((c) => c.status === "pass").length,
+      fail: domainChecks.filter((c) => c.status === "fail").length,
+      score: computeScore(domainChecks),
+    };
+  }
+
+  return {
+    scanId,
+    timestamp: new Date().toISOString(),
+    totalChecks,
+    passCount,
+    failCount,
+    naCount,
+    manualCount,
+    score: computeScore(allChecks),
+    byDomain,
+    checks: allChecks,
+  };
+}
+
+/**
+ * Convenience: run a single rule check given the rule ID, locations, and status.
+ * Returns a properly-structured ComplianceCheck.
+ */
+export function makeCheck(
+  ruleId: string,
+  status: ComplianceStatus,
+  locations: ComplianceCheck["locations"] = [],
+  fix?: ComplianceCheck["fix"],
+): ComplianceCheck {
+  const rule = COMPLIANCE_RULES.find((r) => r.id === ruleId);
+  if (!rule) {
+    throw new Error(`Unknown compliance rule: ${ruleId}`);
+  }
+
+  return {
+    ruleId,
+    domain: rule.domain,
+    status,
+    severity: rule.severity,
+    title: rule.title,
+    description: rule.description,
+    locations,
+    fix,
+  };
+}

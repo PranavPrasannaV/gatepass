@@ -57,6 +57,10 @@ export interface Store {
   getLatestScan?(): Promise<{ id: string; orgId: string } | undefined>;
   /** All scans for an org, oldest first (dashboard overview). */
   listScans?(orgId: string): Promise<StoredScan[]>;
+  /** Store a compliance scan result keyed by scanId. */
+  putComplianceScan?(scanId: string, orgId: string, result: unknown): Promise<void>;
+  /** Get a stored compliance scan result. */
+  getComplianceScan?(scanId: string): Promise<unknown | undefined>;
 }
 
 export class MemoryStore implements Store {
@@ -65,6 +69,8 @@ export class MemoryStore implements Store {
   readonly fleetServers = new Map<string, FleetServer>();
   /** Published benchmark runs keyed by corpus version (public, immutable once set). */
   readonly benchmarks = new Map<string, unknown>();
+  /** Compliance scan results keyed by scanId. */
+  readonly complianceScans = new Map<string, unknown>();
   /** Scanned repos keyed by orgId → map of repo-name → lastScanId. */
   readonly repos = new Map<string, Map<string, string>>();
   /** Org-level fingerprints suppressed by an accepted dispute (FR-011). */
@@ -170,5 +176,13 @@ export class MemoryStore implements Store {
         runs: [parsed],
       });
     }
+  }
+
+  async putComplianceScan(scanId: string, orgId: string, result: unknown): Promise<void> {
+    this.complianceScans.set(scanId, { scanId, orgId, result, createdAt: new Date().toISOString() });
+  }
+
+  async getComplianceScan(scanId: string): Promise<unknown | undefined> {
+    return this.complianceScans.get(scanId);
   }
 }

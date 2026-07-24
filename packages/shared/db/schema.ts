@@ -230,3 +230,63 @@ export const runnerTokens = pgTable("runner_tokens", {
   minRulesetVersion: text("min_ruleset_version").notNull(),
   revokedAt: timestamp("revoked_at", { withTimezone: true }),
 });
+
+// ── Compliance Tables ──────────────────────────────────────────────
+export const complianceDomainEnum = pgEnum("compliance_domain", [
+  "wcag",
+  "ccpa",
+  "app_store",
+  "google_play",
+  "eu_ai_act",
+]);
+export const complianceSeverityEnum = pgEnum("compliance_severity", ["critical", "warning", "info"]);
+export const complianceStatusEnum = pgEnum("compliance_status", [
+  "pass",
+  "fail",
+  "not_applicable",
+  "manual_review",
+]);
+export const complianceFixKindEnum = pgEnum("compliance_fix_kind", [
+  "diff",
+  "file_create",
+  "config_change",
+  "code_change",
+]);
+
+/** Per-scan compliance posture result */
+export const complianceScans = pgTable("compliance_scans", {
+  id: text("id").primaryKey(),
+  scanId: text("scan_id")
+    .notNull()
+    .references(() => scans.id, { onDelete: "cascade" }),
+  orgId: text("org_id")
+    .notNull()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  score: integer("score").notNull(), // 0–100
+  totalChecks: integer("total_checks").notNull(),
+  passCount: integer("pass_count").notNull(),
+  failCount: integer("fail_count").notNull(),
+  byDomain: text("by_domain").notNull(), // jsonb — per-domain breakdown
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Individual compliance check result */
+export const complianceChecks = pgTable("compliance_checks", {
+  id: text("id").primaryKey(),
+  complianceScanId: text("compliance_scan_id")
+    .notNull()
+    .references(() => complianceScans.id, { onDelete: "cascade" }),
+  ruleId: text("rule_id").notNull(),
+  domain: complianceDomainEnum("domain").notNull(),
+  status: complianceStatusEnum("status").notNull(),
+  severity: complianceSeverityEnum("severity").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  locations: text("locations"), // jsonb array
+  fixKind: complianceFixKindEnum("fix_kind"),
+  fixDescription: text("fix_description"),
+  fixDiff: text("fix_diff"),
+  fixFilePath: text("fix_file_path"),
+  fixNewContent: text("fix_new_content"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

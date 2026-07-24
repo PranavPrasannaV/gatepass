@@ -10,6 +10,8 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
+    "@gatepass/compliance": "workspace:*",
+    "@gatepass/engine": "workspace:*",
     "@gatepass/findings": "workspace:^",
     "@gatepass/shared": "workspace:^",
     "lucide-react": "^0.469.0",
