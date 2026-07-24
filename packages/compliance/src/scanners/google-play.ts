@@ -2,6 +2,13 @@ import type { ScanContext } from "@gatepass/engine";
 import type { ComplianceCheck } from "../compliance-schema.js";
 import { registerScanner, makeCheck } from "../compliance-scanner.js";
 import type { DomainScanner } from "../compliance-scanner.js";
+import {
+  combineFiles,
+  complianceRelevantFiles,
+  resolveLocations,
+  REPO_WIDE,
+  type CombinedSource,
+} from "../source-map.js";
 
 /**
  * Google Play Store compliance scanner.
@@ -19,8 +26,10 @@ import type { DomainScanner } from "../compliance-scanner.js";
 const DATA_SAFETY_RE = /data.?safety|data.?security|data.?collection.*declaration|google.*play.*data/gi;
 const HTTP_ENDPOINT_RE = /http:\/\/[a-zA-Z0-9.-]+(?!\.local|\.localhost|\.test|\.dev)/gi;
 const HTTPS_RE = /https:\/\//gi;
-const DELETION_URL_RE = /(delet|account.*remov|right.*to.*delet|data.*remov|delete.*account|\/delete.*data|\/account.*delet)/gi;
-const SDK_RE = /(firebase|admob|crashlytics|sentry|mixpanel|amplitude|appsflyer|branch|onesignal|revenuecat|facebook.*sdk|google.*analytics)/gi;
+const DELETION_URL_RE =
+  /(delet|account.*remov|right.*to.*delet|data.*remov|delete.*account|\/delete.*data|\/account.*delet)/gi;
+const SDK_RE =
+  /(firebase|admob|crashlytics|sentry|mixpanel|amplitude|appsflyer|branch|onesignal|revenuecat|facebook.*sdk|google.*analytics)/gi;
 
 // Android permission ↔ data type mapping
 const PERMISSION_DATA_MAP: Array<{ permission: RegExp; dataType: string }> = [
@@ -34,7 +43,8 @@ const PERMISSION_DATA_MAP: Array<{ permission: RegExp; dataType: string }> = [
   { permission: /INTERNET|ACCESS_NETWORK_STATE/gi, dataType: "App Info & Performance" },
 ];
 
-function checkDataSafetyDeclarations(content: string): ComplianceCheck[] {
+function checkDataSafetyDeclarations(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   // Check for Data Safety-related comments or configs
   const hasDataSafety = DATA_SAFETY_RE.test(content);
 
@@ -48,27 +58,41 @@ function checkDataSafetyDeclarations(content: string): ComplianceCheck[] {
   }
 
   if (hasDataSafety && foundPermissions.length > 0) {
-    return [makeCheck("play-data-safety-form", "pass", foundPermissions.map((dt) => ({
-      path: "compliance:play-store",
-      snippet: `Data type '${dt}' has corresponding permission declared`,
-    })))];
+    return [
+      makeCheck(
+        "play-data-safety-form",
+        "pass",
+        foundPermissions.map((dt) => ({
+          path: REPO_WIDE,
+          snippet: `Data type '${dt}' has corresponding permission declared`,
+        })),
+      ),
+    ];
   }
 
   if (foundPermissions.length > 0) {
-    return [makeCheck("play-data-safety-form", "fail", foundPermissions.map((dt) => ({
-      path: "compliance:play-store",
-      snippet: `Permission for '${dt}' found — must declare in Google Play Data Safety form`,
-    })), {
-      kind: "config_change",
-      description: `Android permissions found (${foundPermissions.join(", ")}) that require corresponding Data Safety declarations in Google Play Console. These count as data collection even if your code doesn't directly use them — SDKs count too.`,
-      diff: `// Cross-reference in Google Play Console → App content → Data safety:\n// ${foundPermissions.join("\n// - ")}}\n// Each must be declared with appropriate collection purpose\n// Also check: https://play.google.com/console/app-content/data-safety`,
-    })];
+    return [
+      makeCheck(
+        "play-data-safety-form",
+        "fail",
+        foundPermissions.map((dt) => ({
+          path: REPO_WIDE,
+          snippet: `Permission for '${dt}' found — must declare in Google Play Data Safety form`,
+        })),
+        {
+          kind: "config_change",
+          description: `Android permissions found (${foundPermissions.join(", ")}) that require corresponding Data Safety declarations in Google Play Console. These count as data collection even if your code doesn't directly use them — SDKs count too.`,
+          diff: `// Cross-reference in Google Play Console → App content → Data safety:\n// ${foundPermissions.join("\n// - ")}}\n// Each must be declared with appropriate collection purpose\n// Also check: https://play.google.com/console/app-content/data-safety`,
+        },
+      ),
+    ];
   }
 
   return [makeCheck("play-data-safety-form", "not_applicable", [])];
 }
 
-function checkEncryptionInTransit(content: string): ComplianceCheck[] {
+function checkEncryptionInTransit(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const lines = content.split(/\n/);
   const httpEndpoints: { line: number; url: string }[] = [];
   let httpsCount = 0;
@@ -85,28 +109,40 @@ function checkEncryptionInTransit(content: string): ComplianceCheck[] {
   }
 
   if (httpEndpoints.length > 0) {
-    return [makeCheck("play-encrypted-in-transit", "fail", httpEndpoints.slice(0, 5).map((ep) => ({
-      path: "compliance:network",
-      startLine: ep.line,
-      snippet: `Plaintext HTTP endpoint: ${ep.url}`,
-    })), {
-      kind: "code_change",
-      description: `Found ${httpEndpoints.length} plaintext HTTP endpoints. Google Play requires all data to be encrypted in transit (HTTPS/TLS) — including SDK network calls.`,
-      diff: `// Replace HTTP endpoints with HTTPS:\n${httpEndpoints.slice(0, 3).map((ep) => `// ${ep.url} → ${ep.url.replace("http://", "https://")}`).join("\n")}\n\n// Also check SDK configurations for plaintext endpoints`,
-    })];
+    return [
+      makeCheck(
+        "play-encrypted-in-transit",
+        "fail",
+        httpEndpoints.slice(0, 5).map((ep) => ({
+          ...src.resolve(ep.line),
+          snippet: `Plaintext HTTP endpoint: ${ep.url}`,
+        })),
+        {
+          kind: "code_change",
+          description: `Found ${httpEndpoints.length} plaintext HTTP endpoints. Google Play requires all data to be encrypted in transit (HTTPS/TLS) — including SDK network calls.`,
+          diff: `// Replace HTTP endpoints with HTTPS:\n${httpEndpoints
+            .slice(0, 3)
+            .map((ep) => `// ${ep.url} → ${ep.url.replace("http://", "https://")}`)
+            .join("\n")}\n\n// Also check SDK configurations for plaintext endpoints`,
+        },
+      ),
+    ];
   }
 
   if (httpsCount > 0) {
     return [makeCheck("play-encrypted-in-transit", "pass", [])];
   }
 
-  return [makeCheck("play-encrypted-in-transit", "manual_review", [], {
-    kind: "code_change",
-    description: "No network endpoints detected. If this app makes network calls, ensure they use HTTPS/TLS.",
-  })];
+  return [
+    makeCheck("play-encrypted-in-transit", "manual_review", [], {
+      kind: "code_change",
+      description: "No network endpoints detected. If this app makes network calls, ensure they use HTTPS/TLS.",
+    }),
+  ];
 }
 
-function checkDeletionUrl(content: string): ComplianceCheck[] {
+function checkDeletionUrl(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const deletionHits: { line: number; text: string }[] = [];
   const lines = content.split(/\n/);
 
@@ -118,21 +154,30 @@ function checkDeletionUrl(content: string): ComplianceCheck[] {
   }
 
   if (deletionHits.length > 0) {
-    return [makeCheck("play-deletion-url", "pass", deletionHits.slice(0, 3).map((h) => ({
-      path: "compliance:deletion",
-      startLine: h.line,
-      snippet: h.text,
-    })))];
+    return [
+      makeCheck(
+        "play-deletion-url",
+        "pass",
+        deletionHits.slice(0, 3).map((h) => ({
+          ...src.resolve(h.line),
+          snippet: h.text,
+        })),
+      ),
+    ];
   }
 
-  return [makeCheck("play-deletion-url", "fail", [], {
-    kind: "code_change",
-    description: "No data deletion mechanism found. Google Play requires a publicly accessible HTTPS URL where users can request data deletion, even after uninstalling the app.",
-    diff: `// Create a deletion page accessible at /privacy/delete-data\napp.get('/privacy/delete-data', (req, res) => {\n  res.render('deletion-form', {\n    description: 'Request deletion of your personal data. ' +\n      'We will process your request within 30 days.',\n    emailRequired: true,\n    retentionInfo: 'Some data may be retained for legal compliance (up to 90 days).'\n  });\n});\n\n// Add to privacy policy and Google Play Console Data Safety form`,
-  })];
+  return [
+    makeCheck("play-deletion-url", "fail", [], {
+      kind: "code_change",
+      description:
+        "No data deletion mechanism found. Google Play requires a publicly accessible HTTPS URL where users can request data deletion, even after uninstalling the app.",
+      diff: `// Create a deletion page accessible at /privacy/delete-data\napp.get('/privacy/delete-data', (req, res) => {\n  res.render('deletion-form', {\n    description: 'Request deletion of your personal data. ' +\n      'We will process your request within 30 days.',\n    emailRequired: true,\n    retentionInfo: 'Some data may be retained for legal compliance (up to 90 days).'\n  });\n});\n\n// Add to privacy policy and Google Play Console Data Safety form`,
+    }),
+  ];
 }
 
-function checkSdkDisclosures(content: string): ComplianceCheck[] {
+function checkSdkDisclosures(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const foundSdks: Set<string> = new Set();
   SDK_RE.lastIndex = 0;
   let m: RegExpExecArray | null;
@@ -141,53 +186,69 @@ function checkSdkDisclosures(content: string): ComplianceCheck[] {
   }
 
   if (foundSdks.size > 0) {
-    return [makeCheck("play-sdk-disclosure", "fail", [...foundSdks].map((sdk) => ({
-      path: "compliance:play-store",
-      snippet: `SDK '${sdk}' detected — must be declared in Data Safety form`,
-    })), {
-      kind: "config_change",
-      description: `SDKs found (${[...foundSdks].join(", ")}). Each SDK's data collection must be declared in the Data Safety form. Android ID usage by any SDK must be disclosed under 'Device or other IDs'. Check each SDK's Data Safety mapping.`,
-      diff: `// For each SDK, check published Data Safety mappings:\n// Firebase: https://firebase.google.com/docs/analytics/googleplay-data-safety\n// AdMob: https://support.google.com/admob/answer/13529569\n// Verify Android ID (Settings.Secure.ANDROID_ID) is not collected by any SDK`,
-    })];
+    return [
+      makeCheck(
+        "play-sdk-disclosure",
+        "fail",
+        [...foundSdks].map((sdk) => ({
+          path: REPO_WIDE,
+          snippet: `SDK '${sdk}' detected — must be declared in Data Safety form`,
+        })),
+        {
+          kind: "config_change",
+          description: `SDKs found (${[...foundSdks].join(", ")}). Each SDK's data collection must be declared in the Data Safety form. Android ID usage by any SDK must be disclosed under 'Device or other IDs'. Check each SDK's Data Safety mapping.`,
+          diff: `// For each SDK, check published Data Safety mappings:\n// Firebase: https://firebase.google.com/docs/analytics/googleplay-data-safety\n// AdMob: https://support.google.com/admob/answer/13529569\n// Verify Android ID (Settings.Secure.ANDROID_ID) is not collected by any SDK`,
+        },
+      ),
+    ];
   }
 
   return [makeCheck("play-sdk-disclosure", "pass", [])];
 }
 
-function checkPrivacyPolicyConsistency(content: string): ComplianceCheck[] {
+function checkPrivacyPolicyConsistency(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const privacyMentioned = /privacy|data.*collect|personal.*information|ccpa|gdpr|user.*data/i.test(content);
-  const dataCollectionMentioned = /collect.*(data|information|personal)|data.*(collect|process|share|store)/i.test(content);
+  const dataCollectionMentioned = /collect.*(data|information|personal)|data.*(collect|process|share|store)/i.test(
+    content,
+  );
 
   if (privacyMentioned && dataCollectionMentioned) {
     return [makeCheck("play-privacy-policy-consistency", "pass", [])];
   }
 
   if (privacyMentioned) {
-    return [makeCheck("play-privacy-policy-consistency", "fail", [], {
-      kind: "code_change",
-      description: "Privacy policy found but may not cover all data types declared in Data Safety form. Google reviewers cross-check both documents for consistency.",
-      diff: "// Ensure privacy policy includes:\n// 1. List of data types collected (matching Data Safety form)\n// 2. Purpose of collection\n// 3. Third-party SDK data practices\n// 4. Deletion mechanism URL\n// 5. Encryption practices",
-    })];
+    return [
+      makeCheck("play-privacy-policy-consistency", "fail", [], {
+        kind: "code_change",
+        description:
+          "Privacy policy found but may not cover all data types declared in Data Safety form. Google reviewers cross-check both documents for consistency.",
+        diff: "// Ensure privacy policy includes:\n// 1. List of data types collected (matching Data Safety form)\n// 2. Purpose of collection\n// 3. Third-party SDK data practices\n// 4. Deletion mechanism URL\n// 5. Encryption practices",
+      }),
+    ];
   }
 
-  return [makeCheck("play-privacy-policy-consistency", "fail", [], {
-    kind: "code_change",
-    description: "Privacy policy not found or doesn't adequately cover data collection practices. Google Play requires a valid privacy policy that matches Data Safety form declarations.",
-    diff: "// Create a privacy policy that covers:\n// - What data you collect (match Data Safety form categories)\n// - How you use it\n// - Third-party SDK data use\n// - Data deletion process\n// - Encryption practices",
-  })];
+  return [
+    makeCheck("play-privacy-policy-consistency", "fail", [], {
+      kind: "code_change",
+      description:
+        "Privacy policy not found or doesn't adequately cover data collection practices. Google Play requires a valid privacy policy that matches Data Safety form declarations.",
+      diff: "// Create a privacy policy that covers:\n// - What data you collect (match Data Safety form categories)\n// - How you use it\n// - Third-party SDK data use\n// - Data deletion process\n// - Encryption practices",
+    }),
+  ];
 }
 
 const googlePlayScanner: DomainScanner = {
   domain: "google_play",
   scan(ctx: ScanContext): ComplianceCheck[] {
     const checks: ComplianceCheck[] = [];
-    const combinedContent = ctx.files.map((f) => f.content).join("\n");
+    const src = combineFiles(complianceRelevantFiles(ctx.files));
 
-    checks.push(...checkDataSafetyDeclarations(combinedContent));
-    checks.push(...checkEncryptionInTransit(combinedContent));
-    checks.push(...checkDeletionUrl(combinedContent));
-    checks.push(...checkSdkDisclosures(combinedContent));
-    checks.push(...checkPrivacyPolicyConsistency(combinedContent));
+    checks.push(...checkDataSafetyDeclarations(src));
+    checks.push(...checkEncryptionInTransit(src));
+    checks.push(...checkDeletionUrl(src));
+    checks.push(...checkSdkDisclosures(src));
+    checks.push(...checkPrivacyPolicyConsistency(src));
 
     return checks;
   },

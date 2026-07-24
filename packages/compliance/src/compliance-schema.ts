@@ -6,13 +6,7 @@ import { z } from "zod";
  * It carries a suggested code-level fix for every failing check.
  */
 
-export const COMPLIANCE_DOMAINS = [
-  "wcag",
-  "ccpa",
-  "app_store",
-  "google_play",
-  "eu_ai_act",
-] as const;
+export const COMPLIANCE_DOMAINS = ["wcag", "ccpa", "app_store", "google_play", "eu_ai_act"] as const;
 export type ComplianceDomain = (typeof COMPLIANCE_DOMAINS)[number];
 
 export const COMPLIANCE_SEVERITIES = ["critical", "warning", "info"] as const;
@@ -75,12 +69,15 @@ export const complianceResultSchema = z.object({
   naCount: z.number().int(),
   manualCount: z.number().int(),
   score: z.number().min(0).max(100), // 0-100 compliance score
-  byDomain: z.record(z.enum(COMPLIANCE_DOMAINS), z.object({
-    total: z.number().int(),
-    pass: z.number().int(),
-    fail: z.number().int(),
-    score: z.number().min(0).max(100),
-  })),
+  byDomain: z.record(
+    z.enum(COMPLIANCE_DOMAINS),
+    z.object({
+      total: z.number().int(),
+      pass: z.number().int(),
+      fail: z.number().int(),
+      score: z.number().min(0).max(100),
+    }),
+  ),
   checks: z.array(complianceCheckSchema),
 });
 export type ComplianceResult = z.infer<typeof complianceResultSchema>;

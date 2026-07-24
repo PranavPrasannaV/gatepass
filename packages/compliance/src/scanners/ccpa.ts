@@ -2,6 +2,13 @@ import type { ScanContext } from "@gatepass/engine";
 import type { ComplianceCheck } from "../compliance-schema.js";
 import { registerScanner, makeCheck } from "../compliance-scanner.js";
 import type { DomainScanner } from "../compliance-scanner.js";
+import {
+  combineFiles,
+  complianceRelevantFiles,
+  resolveLocations,
+  REPO_WIDE,
+  type CombinedSource,
+} from "../source-map.js";
 
 /**
  * CCPA/CPRA compliance scanner.
@@ -19,7 +26,8 @@ import type { DomainScanner } from "../compliance-scanner.js";
 const GPC_HEADER_RE = /Sec-GPC|globalPrivacyControl|navigator\.globalPrivacyControl/gi;
 const GPC_WELL_KNOWN_RE = /\.well-known\/gpc\.json|gpc\.json/gi;
 const DO_NOT_SELL_RE = /(do\s*not\s*(sell|share)|don['']t\s*sell|opt.*out.*sale|your\s*privacy\s*rights|ccpa)/gi;
-const DSAR_RE = /(data\s*(deletion|subject|access|request)|dsar|right\s*to\s*(delete|be\s*forgotten|access)|deletion.*(request|workflow)|\/delete.*account|account.*deletion)/gi;
+const DSAR_RE =
+  /(data\s*(deletion|subject|access|request)|dsar|right\s*to\s*(delete|be\s*forgotten|access)|deletion.*(request|workflow)|\/delete.*account|account.*deletion)/gi;
 const PRIVACY_POLICY_RE = /(privacy(\s*policy|\s*notice)?|privacy\.md|privacy\.html)/gi;
 
 function checkGpcSignal(content: string, filePath: string): ComplianceCheck[] {
@@ -43,16 +51,22 @@ function checkGpcSignal(content: string, filePath: string): ComplianceCheck[] {
       checks.push(makeCheck("ccpa-gpc-signal", "pass", []));
     } else {
       checks.push(
-        makeCheck("ccpa-gpc-signal", "fail", gpcHits.slice(0, 3).map((h) => ({
-          path: filePath,
-          startLine: h.line,
-          endLine: h.line,
-          snippet: h.text,
-        })), {
-          kind: "code_change",
-          description: "GPC signal is detected but not propagated to opt-out logic. The signal must result in actual suppression of data selling/sharing.",
-          diff: "// Detect GPC and apply opt-out:\nif (navigator.globalPrivacyControl) {\n  // Block third-party tracking domains\n  disableTracking();\n  // Update CMP consent state\n  window.__uspapi('setUSPData', { optOut: 'Y' });\n  // Show confirmation (required from Jan 2026)\n  showOptOutConfirmation();\n}",
-        }),
+        makeCheck(
+          "ccpa-gpc-signal",
+          "fail",
+          gpcHits.slice(0, 3).map((h) => ({
+            path: filePath,
+            startLine: h.line,
+            endLine: h.line,
+            snippet: h.text,
+          })),
+          {
+            kind: "code_change",
+            description:
+              "GPC signal is detected but not propagated to opt-out logic. The signal must result in actual suppression of data selling/sharing.",
+            diff: "// Detect GPC and apply opt-out:\nif (navigator.globalPrivacyControl) {\n  // Block third-party tracking domains\n  disableTracking();\n  // Update CMP consent state\n  window.__uspapi('setUSPData', { optOut: 'Y' });\n  // Show confirmation (required from Jan 2026)\n  showOptOutConfirmation();\n}",
+          },
+        ),
       );
     }
   } else {
@@ -60,7 +74,8 @@ function checkGpcSignal(content: string, filePath: string): ComplianceCheck[] {
     checks.push(
       makeCheck("ccpa-gpc-signal", "fail", [], {
         kind: "code_change",
-        description: "No Global Privacy Control (GPC) signal handling detected. CCPA/CPRA requires honoring GPC as a valid opt-out of sale/sharing. The signal arrives via Sec-GPC HTTP header and navigator.globalPrivacyControl.",
+        description:
+          "No Global Privacy Control (GPC) signal handling detected. CCPA/CPRA requires honoring GPC as a valid opt-out of sale/sharing. The signal arrives via Sec-GPC HTTP header and navigator.globalPrivacyControl.",
         diff: "// Add GPC detection to your app's entry point:\n// Server-side (middleware):\nif (request.headers.get('Sec-GPC') === '1') {\n  response.headers.set('Set-GPC', '1');\n  // Skip marketing/tracking scripts in HTML response\n}\n\n// Client-side:\nif (typeof navigator !== 'undefined' && navigator.globalPrivacyControl) {\n  window.__gpcEnabled = true;\n  // Block third-party tracking scripts\n  document.querySelectorAll('[data-tracking]').forEach(el => el.remove());\n}\n\n// Also create: /.well-known/gpc.json with {\"gpc\":true,\"lastUpdate\":\"2026-01-01\"}",
       }),
     );
@@ -71,8 +86,8 @@ function checkGpcSignal(content: string, filePath: string): ComplianceCheck[] {
 
 function checkWellKnownGpc(files: ScanContext["files"]): ComplianceCheck[] {
   const checks: ComplianceCheck[] = [];
-  const hasWellKnown = files.some((f) =>
-    /\.well-known\/gpc\.json/.test(f.relPath) || f.relPath === ".well-known/gpc.json",
+  const hasWellKnown = files.some(
+    (f) => /\.well-known\/gpc\.json/.test(f.relPath) || f.relPath === ".well-known/gpc.json",
   );
 
   // Also check content for gpc.json references
@@ -121,24 +136,31 @@ function checkDoNotSellLink(content: string, filePath: string): ComplianceCheck[
       checks.push(makeCheck("ccpa-do-not-sell-link", "pass", []));
     } else {
       checks.push(
-        makeCheck("ccpa-do-not-sell-link", "fail", hits.slice(0, 3).map((h) => ({
-          path: filePath,
-          startLine: h.line,
-          endLine: h.line,
-          snippet: h.text,
-        })), {
-          kind: "code_change",
-          description: "\"Do Not Sell\" link found but not in a prominent location (footer/nav). CCPA requires the link to be on the homepage and mobile app in a conspicuous location.",
-          diff: "<!-- Add CCPA link to footer -->\n<footer>\n  <a href=\"/privacy#opt-out\">Do Not Sell or Share My Personal Information</a>\n</footer>",
-        }),
+        makeCheck(
+          "ccpa-do-not-sell-link",
+          "fail",
+          hits.slice(0, 3).map((h) => ({
+            path: filePath,
+            startLine: h.line,
+            endLine: h.line,
+            snippet: h.text,
+          })),
+          {
+            kind: "code_change",
+            description:
+              '"Do Not Sell" link found but not in a prominent location (footer/nav). CCPA requires the link to be on the homepage and mobile app in a conspicuous location.',
+            diff: '<!-- Add CCPA link to footer -->\n<footer>\n  <a href="/privacy#opt-out">Do Not Sell or Share My Personal Information</a>\n</footer>',
+          },
+        ),
       );
     }
   } else {
     checks.push(
       makeCheck("ccpa-do-not-sell-link", "fail", [], {
         kind: "code_change",
-        description: "No 'Do Not Sell or Share My Personal Information' link detected. CCPA/CPRA requires this link on the homepage and in-app.",
-        diff: "<!-- Add to footer or navigation -->\n<a href=\"/do-not-sell\" class=\"text-sm\">\n  Do Not Sell or Share My Personal Information\n</a>\n\n// Also create a /do-not-sell page that processes opt-out requests",
+        description:
+          "No 'Do Not Sell or Share My Personal Information' link detected. CCPA/CPRA requires this link on the homepage and in-app.",
+        diff: '<!-- Add to footer or navigation -->\n<a href="/do-not-sell" class="text-sm">\n  Do Not Sell or Share My Personal Information\n</a>\n\n// Also create a /do-not-sell page that processes opt-out requests',
       }),
     );
   }
@@ -167,24 +189,31 @@ function checkDsarWorkflow(content: string, filePath: string): ComplianceCheck[]
       checks.push(makeCheck("ccpa-dsar-workflow", "pass", []));
     } else {
       checks.push(
-        makeCheck("ccpa-dsar-workflow", "fail", hits.slice(0, 3).map((h) => ({
-          path: filePath,
-          startLine: h.line,
-          endLine: h.line,
-          snippet: h.text,
-        })), {
-          kind: "code_change",
-          description: "DSAR deletion mechanism found but may not fan out deletion requests across all systems (databases, caches, backups, service providers).",
-          diff: "// DSAR deletion with cross-system fan-out:\nasync function handleDeletionRequest(userId: string) {\n  await Promise.all([\n    db.deleteUser(userId),          // Primary DB\n    cache.purge(`user:${userId}`),  // Redis/Memcached\n    fs.rm(`backups/${userId}`, { recursive: true }), // Backups\n    notifyServiceProviders(userId),  // Third-party systems\n  ]);\n  logDeletionEvent({ userId, timestamp, systems: ['db', 'cache', 'backups', 'service_providers'] });\n}",
-        }),
+        makeCheck(
+          "ccpa-dsar-workflow",
+          "fail",
+          hits.slice(0, 3).map((h) => ({
+            path: filePath,
+            startLine: h.line,
+            endLine: h.line,
+            snippet: h.text,
+          })),
+          {
+            kind: "code_change",
+            description:
+              "DSAR deletion mechanism found but may not fan out deletion requests across all systems (databases, caches, backups, service providers).",
+            diff: "// DSAR deletion with cross-system fan-out:\nasync function handleDeletionRequest(userId: string) {\n  await Promise.all([\n    db.deleteUser(userId),          // Primary DB\n    cache.purge(`user:${userId}`),  // Redis/Memcached\n    fs.rm(`backups/${userId}`, { recursive: true }), // Backups\n    notifyServiceProviders(userId),  // Third-party systems\n  ]);\n  logDeletionEvent({ userId, timestamp, systems: ['db', 'cache', 'backups', 'service_providers'] });\n}",
+          },
+        ),
       );
     }
   } else {
     checks.push(
       makeCheck("ccpa-dsar-workflow", "fail", [], {
         kind: "code_change",
-        description: "No data deletion/subject access request (DSAR) workflow detected. CCPA/CPRA requires a mechanism for consumers to request deletion of their personal information.",
-        diff: "// Create DSAR endpoint in your API:\n// POST /api/privacy/deletion-request\napp.post('/api/privacy/deletion-request', async (req, res) => {\n  const { email } = req.body;\n  // Validate request, initiate deletion across all systems\n  await enqueueDeletionJob({ email, requestedAt: new Date() });\n  res.json({ status: 'processing', estimatedCompletion: '30 days' });\n});\n\n// Frontend form:\n<form action=\"/privacy/delete-data\">\n  <label>Email address for data deletion request</label>\n  <input type=\"email\" name=\"email\" required />\n  <button type=\"submit\">Request Data Deletion</button>\n</form>",
+        description:
+          "No data deletion/subject access request (DSAR) workflow detected. CCPA/CPRA requires a mechanism for consumers to request deletion of their personal information.",
+        diff: '// Create DSAR endpoint in your API:\n// POST /api/privacy/deletion-request\napp.post(\'/api/privacy/deletion-request\', async (req, res) => {\n  const { email } = req.body;\n  // Validate request, initiate deletion across all systems\n  await enqueueDeletionJob({ email, requestedAt: new Date() });\n  res.json({ status: \'processing\', estimatedCompletion: \'30 days\' });\n});\n\n// Frontend form:\n<form action="/privacy/delete-data">\n  <label>Email address for data deletion request</label>\n  <input type="email" name="email" required />\n  <button type="submit">Request Data Deletion</button>\n</form>',
       }),
     );
   }
@@ -205,7 +234,8 @@ function checkPrivacyPolicy(content: string, filePath: string): ComplianceCheck[
     checks.push(
       makeCheck("ccpa-privacy-policy", "fail", [], {
         kind: "file_create",
-        description: "No privacy policy found. CCPA/CPRA requires a publicly accessible privacy policy disclosing data collection practices.",
+        description:
+          "No privacy policy found. CCPA/CPRA requires a publicly accessible privacy policy disclosing data collection practices.",
         filePath: "/public/privacy.md",
         newContent: `# Privacy Policy\n\n**Last updated:** ${new Date().toISOString().split("T")[0]}\n\n## Information We Collect\n- Account information (email, name)\n- Usage data (pages visited, features used)\n- Device information (browser, OS)\n\n## How We Use Your Information\n- Service delivery and improvement\n- Communications\n- Analytics\n\n## Your Rights (CCPA/CPRA)\n- Right to Know: You can request what data we collect\n- Right to Delete: You can request deletion of your data\n- Right to Opt-Out: You can opt out of sale/sharing\n\n## Contact\nprivacy@yourdomain.com\n`,
       }),
@@ -219,14 +249,15 @@ const ccpaScanner: DomainScanner = {
   domain: "ccpa",
   scan(ctx: ScanContext): ComplianceCheck[] {
     const checks: ComplianceCheck[] = [];
-    const combinedContent = ctx.files.map((f) => `/* ${f.relPath} */\n${f.content}`).join("\n");
-    const combinedPath = ctx.files.map((f) => f.relPath).join(",");
+    const src = combineFiles(complianceRelevantFiles(ctx.files));
 
-    checks.push(...checkGpcSignal(combinedContent, "ccpa"));
+    // These checks report hit lines into the combined buffer; resolveLocations() maps each
+    // one back to its real file:line so every reported location is openable.
+    checks.push(...resolveLocations(checkGpcSignal(src.content, REPO_WIDE), src));
     checks.push(...checkWellKnownGpc(ctx.files));
-    checks.push(...checkDoNotSellLink(combinedContent, "ccpa"));
-    checks.push(...checkDsarWorkflow(combinedContent, "ccpa"));
-    checks.push(...checkPrivacyPolicy(combinedContent, combinedPath));
+    checks.push(...resolveLocations(checkDoNotSellLink(src.content, REPO_WIDE), src));
+    checks.push(...resolveLocations(checkDsarWorkflow(src.content, REPO_WIDE), src));
+    checks.push(...resolveLocations(checkPrivacyPolicy(src.content, REPO_WIDE), src));
 
     return checks;
   },

@@ -1,11 +1,6 @@
 import type { ScanContext } from "@gatepass/engine";
 import { COMPLIANCE_RULES } from "./compliance-rules.js";
-import type {
-  ComplianceCheck,
-  ComplianceDomain,
-  ComplianceResult,
-  ComplianceStatus,
-} from "./compliance-schema.js";
+import type { ComplianceCheck, ComplianceDomain, ComplianceResult, ComplianceStatus } from "./compliance-schema.js";
 
 /**
  * Compliance scanner — runs all compliance checks against a scan context.
@@ -19,17 +14,27 @@ export interface DomainScanner {
   scan(ctx: ScanContext): ComplianceCheck[];
 }
 
-/** The registry of all domain scanners */
-const scanners: DomainScanner[] = [];
+/**
+ * Registry of domain scanners, keyed by domain so registration is IDEMPOTENT. Re-importing a
+ * scanner module (test reloads, HMR, duplicate package instances) previously pushed a second
+ * copy and silently double-counted every check, corrupting the score.
+ */
+const scanners = new Map<ComplianceDomain, DomainScanner>();
 
-/** Register a domain scanner */
+/** Register a domain scanner. Re-registering the same domain replaces it rather than duplicating. */
 export function registerScanner(scanner: DomainScanner): void {
-  scanners.push(scanner);
+  scanners.set(scanner.domain, scanner);
 }
 
-/** Get all registered scanners */
+/** Get all registered scanners, in stable domain order so results are deterministic. */
 export function getScanners(): DomainScanner[] {
-  return scanners;
+  const order: ComplianceDomain[] = ["wcag", "ccpa", "app_store", "google_play", "eu_ai_act"];
+  return order.filter((d) => scanners.has(d)).map((d) => scanners.get(d)!);
+}
+
+/** Test/reset hook — clears the registry. */
+export function clearScanners(): void {
+  scanners.clear();
 }
 
 /** Score a set of checks: 100 - (failRatio * 100) */
@@ -46,7 +51,17 @@ function computeScore(checks: ComplianceCheck[]): number {
 export function runComplianceScan(ctx: ScanContext, scanId: string): ComplianceResult {
   const allChecks: ComplianceCheck[] = [];
 
-  for (const scanner of scanners) {
+  const active = getScanners();
+  if (active.length === 0) {
+    // Fail loudly rather than returning a perfect 100 from an empty registry. An empty
+    // registry means the scanner modules were tree-shaken or not imported — reporting
+    // "fully compliant" in that state would be the worst possible failure mode.
+    throw new Error(
+      "No compliance scanners registered. Import '@gatepass/compliance' (which registers all domain scanners) before calling runComplianceScan.",
+    );
+  }
+
+  for (const scanner of active) {
     const results = scanner.scan(ctx);
     allChecks.push(...results);
   }

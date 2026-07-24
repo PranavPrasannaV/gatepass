@@ -240,12 +240,7 @@ export const complianceDomainEnum = pgEnum("compliance_domain", [
   "eu_ai_act",
 ]);
 export const complianceSeverityEnum = pgEnum("compliance_severity", ["critical", "warning", "info"]);
-export const complianceStatusEnum = pgEnum("compliance_status", [
-  "pass",
-  "fail",
-  "not_applicable",
-  "manual_review",
-]);
+export const complianceStatusEnum = pgEnum("compliance_status", ["pass", "fail", "not_applicable", "manual_review"]);
 export const complianceFixKindEnum = pgEnum("compliance_fix_kind", [
   "diff",
   "file_create",

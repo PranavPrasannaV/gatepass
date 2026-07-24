@@ -188,6 +188,9 @@ importers:
       '@gatepass/findings':
         specifier: workspace:*
         version: link:../findings
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
 
   packages/detectors:
     dependencies:

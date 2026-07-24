@@ -2,6 +2,13 @@ import type { ScanContext } from "@gatepass/engine";
 import type { ComplianceCheck } from "../compliance-schema.js";
 import { registerScanner, makeCheck } from "../compliance-scanner.js";
 import type { DomainScanner } from "../compliance-scanner.js";
+import {
+  combineFiles,
+  complianceRelevantFiles,
+  resolveLocations,
+  REPO_WIDE,
+  type CombinedSource,
+} from "../source-map.js";
 
 /**
  * EU AI Act compliance scanner.
@@ -19,15 +26,20 @@ import type { DomainScanner } from "../compliance-scanner.js";
  * - eu-ai-accuracy-robustness: Checks for adversarial defense measures
  */
 
-const HMAC_LOG_RE = /(hmac|sha256|sha-256|hash.?chain|tamper.?evident|append.?only|integrity.?hash|crypto.?log|audit.?log.*chain|merkle|trillian|rekor)/gi;
+const HMAC_LOG_RE =
+  /(hmac|sha256|sha-256|hash.?chain|tamper.?evident|append.?only|integrity.?hash|crypto.?log|audit.?log.*chain|merkle|trillian|rekor)/gi;
 const LOG_RETENTION_RE = /(log.*retention|retain.*log|log.*store.*year|log.*persist|immutable.*log)/gi;
-const OVERRIDE_RE = /(override|human.?in.?the.?loop|approv.*reject|confirm.*action|review.*gate|override.?button|stop.*button|emergency.*stop|halt|kill.*switch)/gi;
-const EXPLAIN_RE = /(explainab|explain.*output|why.*recommend|reason.*behind|confidence.*score|model.*interpret|feature.*importance)/gi;
+const OVERRIDE_RE =
+  /(override|human.?in.?the.?loop|approv.*reject|confirm.*action|review.*gate|override.?button|stop.*button|emergency.*stop|halt|kill.*switch)/gi;
+const EXPLAIN_RE =
+  /(explainab|explain.*output|why.*recommend|reason.*behind|confidence.*score|model.*interpret|feature.*importance)/gi;
 const THRESHOLD_RE = /(confidence.?threshold|score.*threshold|probability.*threshold|trigger.*review|flag.*review)/gi;
 const ROLE_ACCESS_RE = /(role.?based|rbac|access.?control|permission.*review|cannot.*override.*without.*role)/gi;
 const RISK_RE = /(risk.*(register|assessment|management|matrix)|risk.*mitigation|risk.*identif)/gi;
-const ADVERSARIAL_RE = /(adversarial|prompt.?inject|model.?poison|red.?team|security.*test|robustness.*test|input.*sanitiz|output.*filter)/gi;
-const MODEL_DOC_RE = /(model.*card|model.*doc|model.*version|training.*data|data.*sheet|dataset.*card|model.*metadata)/gi;
+const ADVERSARIAL_RE =
+  /(adversarial|prompt.?inject|model.?poison|red.?team|security.*test|robustness.*test|input.*sanitiz|output.*filter)/gi;
+const MODEL_DOC_RE =
+  /(model.*card|model.*doc|model.*version|training.*data|data.*sheet|dataset.*card|model.*metadata)/gi;
 
 // Event types that EU AI Act Article 12 requires
 const REQUIRED_LOG_EVENTS = [
@@ -38,7 +50,8 @@ const REQUIRED_LOG_EVENTS = [
   /delet.*attempt|delet.*denied/gi,
 ];
 
-function checkTamperEvidentLogs(content: string): ComplianceCheck[] {
+function checkTamperEvidentLogs(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const lines = content.split(/\n/);
   const hmacHits: { line: number; text: string }[] = [];
   const retentionHits: { line: number; text: string }[] = [];
@@ -68,31 +81,38 @@ function checkTamperEvidentLogs(content: string): ComplianceCheck[] {
   const hasEvents = eventLogHits.length >= 3;
 
   if (hasHmacChain && hasRetention && hasEvents) {
-    return [makeCheck("eu-ai-tamper-evident-logs", "pass", [{
-      path: "compliance:logging",
-      snippet: "HMAC-chained logging, retention policy, and required event types detected",
-    }])];
+    return [
+      makeCheck("eu-ai-tamper-evident-logs", "pass", [
+        {
+          path: REPO_WIDE,
+          snippet: "HMAC-chained logging, retention policy, and required event types detected",
+        },
+      ]),
+    ];
   }
 
   const missing: string[] = [];
   if (!hasHmacChain) missing.push("HMAC-SHA256 cryptographic chain");
   if (!hasRetention) missing.push("log retention policy (min 6 months per Art. 19)");
-  if (!hasEvents) missing.push(`required event types (found ${eventLogHits.length}, need ≥3: inference, deployment, config changes, access)`);
+  if (!hasEvents)
+    missing.push(
+      `required event types (found ${eventLogHits.length}, need ≥3: inference, deployment, config changes, access)`,
+    );
 
   const locations = [...hmacHits, ...retentionHits].slice(0, 5).map((h) => ({
-    path: "compliance:logging",
-    startLine: h.line,
+    ...src.resolve(h.line),
     snippet: h.text,
   }));
 
   const fallbackLocation = {
-    path: "compliance:logging",
+    path: REPO_WIDE,
     snippet: `Missing: ${missing.join(", ")}`,
   };
-  return [makeCheck("eu-ai-tamper-evident-logs", "fail", locations.length > 0 ? locations : [fallbackLocation], {
-    kind: "code_change",
-    description: `Article 12 compliance gap: ${missing.join("; ")}. High-risk AI systems must maintain tamper-evident audit logs with cryptographic chaining, automatic event recording, and minimum 6-month retention (Art. 19).`,
-    diff: `// Implement tamper-evident audit logging (Article 12):
+  return [
+    makeCheck("eu-ai-tamper-evident-logs", "fail", locations.length > 0 ? locations : [fallbackLocation], {
+      kind: "code_change",
+      description: `Article 12 compliance gap: ${missing.join("; ")}. High-risk AI systems must maintain tamper-evident audit logs with cryptographic chaining, automatic event recording, and minimum 6-month retention (Art. 19).`,
+      diff: `// Implement tamper-evident audit logging (Article 12):
 import { createHash, randomBytes } from 'node:crypto';
 
 interface AuditEvent {
@@ -144,10 +164,12 @@ class TamperEvidentLog {
 // Usage:
 const auditLog = new TamperEvidentLog();
 auditLog.append('inference', { modelId: 'v2.1', input: { /* feature vector */ }, output: { score: 0.95, decision: 'approved' } });`,
-  })];
+    }),
+  ];
 }
 
-function checkHumanOversight(content: string): ComplianceCheck[] {
+function checkHumanOversight(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const lines = content.split(/\n/);
   const overrideHits: { line: number; text: string }[] = [];
   const explainHits: { line: number; text: string }[] = [];
@@ -167,10 +189,14 @@ function checkHumanOversight(content: string): ComplianceCheck[] {
   const hasRoles = roleHits.length > 0;
 
   if (hasOverride && hasExplain && hasRoles) {
-    return [makeCheck("eu-ai-human-oversight", "pass", [{
-      path: "compliance:oversight",
-      snippet: "Override, explainability, and access control mechanisms detected",
-    }])];
+    return [
+      makeCheck("eu-ai-human-oversight", "pass", [
+        {
+          path: REPO_WIDE,
+          snippet: "Override, explainability, and access control mechanisms detected",
+        },
+      ]),
+    ];
   }
 
   const missing: string[] = [];
@@ -180,19 +206,19 @@ function checkHumanOversight(content: string): ComplianceCheck[] {
   if (!hasRoles) missing.push("role-based access control for oversight (Article 14(3))");
 
   const locations = [...overrideHits, ...explainHits, ...thresholdHits, ...roleHits].slice(0, 5).map((h) => ({
-    path: "compliance:oversight",
-    startLine: h.line,
+    ...src.resolve(h.line),
     snippet: h.text,
   }));
 
   const oversightFallback = {
-    path: "compliance:oversight",
+    path: REPO_WIDE,
     snippet: `Missing: ${missing.join("; ")}`,
   };
-  return [makeCheck("eu-ai-human-oversight", "fail", locations.length > 0 ? locations : [oversightFallback], {
-    kind: "code_change",
-    description: `Article 14 compliance gap: ${missing.join("; ")}. Human oversight must include: the ability to understand/override/stop the system, confidence thresholds that trigger review, and gating oversight to authorized personnel.`,
-    diff: `// Implement human oversight (Article 14):
+  return [
+    makeCheck("eu-ai-human-oversight", "fail", locations.length > 0 ? locations : [oversightFallback], {
+      kind: "code_change",
+      description: `Article 14 compliance gap: ${missing.join("; ")}. Human oversight must include: the ability to understand/override/stop the system, confidence thresholds that trigger review, and gating oversight to authorized personnel.`,
+      diff: `// Implement human oversight (Article 14):
 
 // 1. Override/rejection mechanism
 async function getHumanReview(decision: AIDecision): Promise<HumanReview> {
@@ -224,51 +250,67 @@ function emergencyStop(reason: string, userId: string) {
 // 4. Role-based access for oversight
 // Use RBAC: only users with 'ai_reviewer' role can override
 // only users with 'ai_admin' role can emergency-stop`,
-  })];
+    }),
+  ];
 }
 
-function checkRiskManagement(content: string): ComplianceCheck[] {
+function checkRiskManagement(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const hasRiskRegister = RISK_RE.test(content);
 
   if (hasRiskRegister) {
     return [makeCheck("eu-ai-risk-management", "pass", [])];
   }
 
-  return [makeCheck("eu-ai-risk-management", "manual_review", [], {
-    kind: "code_change",
-    description: "Article 9 requires a continuous risk management process with a living risk register. This cannot be fully auto-detected. Maintain a risk register document covering: system design risks, identified hazards, mitigation strategies, and periodic review cycle.",
-    diff: "// Create a risk register document (docs/risk-register.md):\n// ## AI System Risk Register\n// | Risk ID | Hazard | Likelihood | Severity | Mitigation | Review Date |\n// |---------|--------|-----------|----------|-----------|-------------|\n// | R-001 | Model hallucination | Medium | High | Human review at <85% confidence | 2026-08-15 |\n// | R-002 | Data bias | Low | High | Training data audit, fairness metrics | 2026-09-01 |",
-  })];
+  return [
+    makeCheck("eu-ai-risk-management", "manual_review", [], {
+      kind: "code_change",
+      description:
+        "Article 9 requires a continuous risk management process with a living risk register. This cannot be fully auto-detected. Maintain a risk register document covering: system design risks, identified hazards, mitigation strategies, and periodic review cycle.",
+      diff: "// Create a risk register document (docs/risk-register.md):\n// ## AI System Risk Register\n// | Risk ID | Hazard | Likelihood | Severity | Mitigation | Review Date |\n// |---------|--------|-----------|----------|-----------|-------------|\n// | R-001 | Model hallucination | Medium | High | Human review at <85% confidence | 2026-08-15 |\n// | R-002 | Data bias | Low | High | Training data audit, fairness metrics | 2026-09-01 |",
+    }),
+  ];
 }
 
-function checkTechnicalDocumentation(content: string): ComplianceCheck[] {
+function checkTechnicalDocumentation(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const hasModelDocs = MODEL_DOC_RE.test(content);
 
   if (hasModelDocs) {
     return [makeCheck("eu-ai-technical-documentation", "pass", [])];
   }
 
-  return [makeCheck("eu-ai-technical-documentation", "manual_review", [], {
-    kind: "code_change",
-    description: "Article 11 / Annex IV requires comprehensive technical documentation. Maintain a model card and technical documentation covering: system design, development methodology, training data, performance metrics, and logging specifications.",
-    diff: "// Create documentation structure:\n// docs/\n//   model-card.md (per Article 11 + Annex IV)\n//   technical-documentation.md\n//   training-data.md (Article 10)\n//   logging-spec.md (Article 12 reference)\n// Include: purpose, version, training data provenance, performance metrics, known limitations",
-  })];
+  return [
+    makeCheck("eu-ai-technical-documentation", "manual_review", [], {
+      kind: "code_change",
+      description:
+        "Article 11 / Annex IV requires comprehensive technical documentation. Maintain a model card and technical documentation covering: system design, development methodology, training data, performance metrics, and logging specifications.",
+      diff: "// Create documentation structure:\n// docs/\n//   model-card.md (per Article 11 + Annex IV)\n//   technical-documentation.md\n//   training-data.md (Article 10)\n//   logging-spec.md (Article 12 reference)\n// Include: purpose, version, training data provenance, performance metrics, known limitations",
+    }),
+  ];
 }
 
-function checkAccuracyRobustness(content: string): ComplianceCheck[] {
+function checkAccuracyRobustness(src: CombinedSource): ComplianceCheck[] {
+  const content = src.content;
   const hasAdversarialDefense = ADVERSARIAL_RE.test(content);
 
   if (hasAdversarialDefense) {
-    return [makeCheck("eu-ai-accuracy-robustness", "pass", [{
-      path: "compliance:robustness",
-      snippet: "Adversarial defense measures detected",
-    }])];
+    return [
+      makeCheck("eu-ai-accuracy-robustness", "pass", [
+        {
+          path: REPO_WIDE,
+          snippet: "Adversarial defense measures detected",
+        },
+      ]),
+    ];
   }
 
-  return [makeCheck("eu-ai-accuracy-robustness", "fail", [], {
-    kind: "code_change",
-    description: "Article 15 requires measures against adversarial manipulation, model poisoning, and prompt injection. No such defenses detected.",
-    diff: `// Implement Article 15 safeguards:
+  return [
+    makeCheck("eu-ai-accuracy-robustness", "fail", [], {
+      kind: "code_change",
+      description:
+        "Article 15 requires measures against adversarial manipulation, model poisoning, and prompt injection. No such defenses detected.",
+      diff: `// Implement Article 15 safeguards:
 
 // 1. Input sanitization
 function sanitizeInput(input: string): string {
@@ -299,20 +341,21 @@ const ALLOWED_MODELS = new Set([MODEL_VERSION]);
 if (!ALLOWED_MODELS.has(request.modelVersion)) {
   throw new Error('Untrusted model version');
 }`,
-  })];
+    }),
+  ];
 }
 
 const euAiActScanner: DomainScanner = {
   domain: "eu_ai_act",
   scan(ctx: ScanContext): ComplianceCheck[] {
     const checks: ComplianceCheck[] = [];
-    const combinedContent = ctx.files.map((f) => f.content).join("\n");
+    const src = combineFiles(complianceRelevantFiles(ctx.files));
 
-    checks.push(...checkTamperEvidentLogs(combinedContent));
-    checks.push(...checkHumanOversight(combinedContent));
-    checks.push(...checkRiskManagement(combinedContent));
-    checks.push(...checkTechnicalDocumentation(combinedContent));
-    checks.push(...checkAccuracyRobustness(combinedContent));
+    checks.push(...checkTamperEvidentLogs(src));
+    checks.push(...checkHumanOversight(src));
+    checks.push(...checkRiskManagement(src));
+    checks.push(...checkTechnicalDocumentation(src));
+    checks.push(...checkAccuracyRobustness(src));
 
     return checks;
   },
